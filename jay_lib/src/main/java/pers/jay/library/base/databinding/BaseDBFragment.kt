@@ -1,4 +1,4 @@
-package pers.jay.library.base
+package pers.jay.library.base.databinding
 
 import android.os.Bundle
 import android.util.Log
@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import pers.jay.library.base.BaseFragment
 
 /**
  * 基于DataBinding的Fragment基类

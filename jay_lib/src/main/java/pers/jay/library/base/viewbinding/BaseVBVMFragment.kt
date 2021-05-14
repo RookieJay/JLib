@@ -1,10 +1,12 @@
-package pers.jay.library.base
+package pers.jay.library.base.viewbinding
 
 import android.util.Log
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
 import com.blankj.utilcode.util.LogUtils
+import pers.jay.library.base.BaseModel
+import pers.jay.library.base.BaseViewModel
 import java.lang.reflect.ParameterizedType
 
 /**

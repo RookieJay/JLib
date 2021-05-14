@@ -1,9 +1,10 @@
-package pers.jay.library.base
+package pers.jay.library.base.databinding
 
 import android.os.Bundle
 import android.view.InflateException
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import pers.jay.library.base.BaseActivity
 
 /**
  * 基于DataBinding的基类Activity

@@ -1,9 +1,10 @@
-package pers.jay.library.base
+package pers.jay.library.base.viewbinding
 
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import androidx.viewbinding.ViewBinding
+import pers.jay.library.base.BaseActivity
 import java.lang.reflect.ParameterizedType
 
 /**

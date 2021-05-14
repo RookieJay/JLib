@@ -1,4 +1,4 @@
-package pers.jay.library.base
+package pers.jay.library.base.databinding
 
 import android.util.Log
 import androidx.databinding.ViewDataBinding
