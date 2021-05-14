@@ -1,0 +1,100 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion rootProject.ext.android.compileSdkVersion
+    buildToolsVersion rootProject.ext.android.buildToolsVersion
+
+    defaultConfig {
+        multiDexEnabled true
+        minSdkVersion rootProject.ext.android.minSdkVersion
+        targetSdkVersion rootProject.ext.android.targetSdkVersion
+        versionCode rootProject.ext.android.versionCode
+        versionName rootProject.ext.android.versionName
+        testInstrumentationRunner rootProject.ext.common.androidJUnitRunner
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    /**
+     * DataBinding & ViewBinding configuration
+     */
+    // gradle version<=5.0
+//    viewBinding {
+//        enabled = true
+//    }
+//    dataBinding {
+//        enabled = true
+//    }
+
+    // gradle version>5.0
+    buildFeatures{
+        dataBinding = true
+        viewBinding = true
+    }
+
+}
+
+/**
+ * 各项依赖
+ *  api表示依赖可以传递
+ *  implementation则会隐藏依赖，在下级子模块无法引用当前依赖
+ */
+dependencies {
+    api fileTree(dir: 'libs', include: ['*.jar'])
+
+    def test = rootProject.ext.test
+    def tools = rootProject.ext.tools
+    def imageLoad = rootProject.ext.imageLoad
+    def common = rootProject.ext.common
+    def jetPack = rootProject.ext.jetpack
+    def kotlin = rootProject.ext.kotlin
+    def ui = rootProject.ext.ui
+
+    // appcompat
+    api common.appcompat
+    // test
+    testImplementation test.junit
+
+    // kotlin
+    api kotlin.ktx
+    api kotlin.stdlib
+    api kotlin.coroutines_android
+
+    // ui
+    api ui.recyclerviewX
+    api ui.constraintlayoutx
+
+    // utils
+    api tools.AndroidutilCode
+    api tools.androideventbus
+
+    // network
+    api network.retrofit
+    api network.retrofitConverterGson
+    api network.retrofitConverterScalars
+    api network.okhttp3
+    api network.loggingInterceptor
+    api network.loggingInterceptorCustom
+
+    // image-load
+    api imageLoad.glide
+
+    // jetpack
+    api jetPack.lifecycleExt
+    api jetPack.lifecycleV8
+    api jetPack.lifeCycleKtx
+    api jetPack.viewmodel
+
+}

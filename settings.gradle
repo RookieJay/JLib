@@ -1,0 +1,3 @@
+include ':jay_lib'
+include ':app'
+rootProject.name = "JLib"
