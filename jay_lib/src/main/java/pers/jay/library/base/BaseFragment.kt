@@ -7,16 +7,26 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import pers.jay.library.lifecycle.FragmentLifecycleLogObserver
 
-abstract class BaseFragment : Fragment(), IView {
+/**
+ * @Author RookieJay
+ * @Time 2021/5/21 18:19
+ * @description Fragment基类，
+ */
+abstract class BaseFragment : Fragment(), IFragment {
 
-    protected val TAG = javaClass.simpleName
-
-    protected lateinit var mContext: Context
+    private lateinit var mContext: Context
 
     private var isViewCreated // 界面是否已创建完成
             = false
     private var isDataLoaded // 数据是否已请求
             = false
+
+    companion object {
+
+        @JvmField
+        val TAG: String = BaseFragment::class.java.simpleName
+
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -36,16 +46,12 @@ abstract class BaseFragment : Fragment(), IView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initParams()
-    }
-
-    open fun initParams() {
-
+        initParams(savedInstanceState)
     }
 
     /**
      * 是否启用懒加载，默认不开启
-     * @return ture:开启 false:关闭
+     * @return true:开启 false:关闭
      */
     open fun enableLazyLoad(): Boolean {
         return false
@@ -65,6 +71,8 @@ abstract class BaseFragment : Fragment(), IView {
     open fun onBackPressed() {
 
     }
+
+    override fun getContext() = mContext
 
 
 }

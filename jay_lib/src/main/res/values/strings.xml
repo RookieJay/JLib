@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="NET_ERROR_MSG_PARSE_ERROR">解析数据失败</string>
+    <string name="NET_ERROR_MSG_BAD_NETWORK">当前网络存在问题，请稍后再试</string>
+    <string name="NET_ERROR_MSG_CONNECT_ERROR">连接错误</string>
+    <string name="NET_ERROR_MSG_CONNECT_TIMEOUT">连接超时</string>
+    <string name="NET_ERROR_MSG_UNKNOWN_ERROR">未知错误</string>
+</resources>

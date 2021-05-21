@@ -1,18 +1,11 @@
 package pers.jay.library.base
 
-import android.os.Bundle
-
+/**
+ * @Author RookieJay
+ * @Time 2021/5/21 16:26
+ * @description 所有view的顶层接口
+ */
 interface IView {
-
-    /**
-     * 初始化各种View
-     */
-    fun initView(savedInstanceState: Bundle?)
-
-    /**
-     * 初始化布局数据
-     */
-    fun initData(savedInstanceState: Bundle?)
 
     /**
      * 展示加载
@@ -25,23 +18,18 @@ interface IView {
     fun hideLoading() {}
 
     /**
-     * 加载更多
+     * 展示错误
      */
-    fun loadMore() {}
+    fun showError(message: String? = null) {}
 
     /**
-     * 结束加载更多
+     * 展示无网络
      */
-    fun finishLoadMore() {}
+    fun showNoNetwork() {}
 
     /**
-     * 展示空视图
+     * 杀死自己
      */
-    fun showEmptyView() {}
-
-    /**
-     * 展示错误视图
-     */
-    fun showErrorView() {}
+    fun killSelf() {}
 
 }

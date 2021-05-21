@@ -1,4 +1,4 @@
-package pers.jay.library.http
+package pers.jay.library.network
 
 /**
  * Http常量

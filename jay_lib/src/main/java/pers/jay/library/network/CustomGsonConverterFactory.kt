@@ -1,4 +1,4 @@
-package pers.jay.library.http
+package pers.jay.library.network
 
 import com.google.gson.Gson
 import com.google.gson.TypeAdapter
@@ -8,6 +8,7 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
 import okio.Buffer
+import pers.jay.library.network.errorhandle.CustomServerException
 import retrofit2.Converter
 import retrofit2.Retrofit
 import java.io.ByteArrayInputStream

@@ -1,8 +1,9 @@
-package pers.jay.library.http
+package pers.jay.library.network.coroutine
 
 import android.util.Log
 import com.blankj.utilcode.util.ToastUtils
 import com.google.gson.JsonSyntaxException
+import pers.jay.library.network.errorhandle.CustomServerException
 import retrofit2.HttpException
 import java.io.EOFException
 import java.net.ConnectException

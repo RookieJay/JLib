@@ -10,7 +10,9 @@ import pers.jay.library.base.BaseViewModel
 import java.lang.reflect.ParameterizedType
 
 /**
- * 基于ViewBinding和ViewModel的基类Activity，利用反射获取特定ViewBinding中的inflate方法填充视图
+ * @Author RookieJay
+ * @Time 2021/5/21 17:53
+ * @description 基于ViewBinding和ViewModel的基类Activity
  */
 @Suppress("UNCHECKED_CAST")
 abstract class BaseVBVMActivity<VB : ViewBinding, VM : BaseViewModel<out BaseModel>> :
@@ -21,10 +23,10 @@ abstract class BaseVBVMActivity<VB : ViewBinding, VM : BaseViewModel<out BaseMod
      */
     protected lateinit var mViewModel: VM
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun beforeInit(savedInstanceState: Bundle?) {
+        super.beforeInit(savedInstanceState)
         initViewModelByReflect()
         handleError()
-        super.onCreate(savedInstanceState)
     }
 
     /**
@@ -33,7 +35,7 @@ abstract class BaseVBVMActivity<VB : ViewBinding, VM : BaseViewModel<out BaseMod
     private fun handleError() {
         mViewModel.apply {
             mCoroutineErrorData.observe(this@BaseVBVMActivity, Observer {
-                hideLoading()
+                showError(it)
             })
         }
     }
@@ -42,7 +44,6 @@ abstract class BaseVBVMActivity<VB : ViewBinding, VM : BaseViewModel<out BaseMod
      *  反射，获取特定ViewModel泛型的class
      */
     private fun initViewModelByReflect() {
-        Log.e(TAG, "initViewModelByReflect")
         val type = javaClass.genericSuperclass
         if (type is ParameterizedType) {
             val clazz = type.actualTypeArguments[1] as Class<VM>

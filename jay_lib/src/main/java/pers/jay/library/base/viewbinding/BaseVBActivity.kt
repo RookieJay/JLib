@@ -3,48 +3,47 @@ package pers.jay.library.base.viewbinding
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.lifecycle.ViewModel
 import androidx.viewbinding.ViewBinding
 import pers.jay.library.base.BaseActivity
 import java.lang.reflect.ParameterizedType
 
 /**
- * 基于ViewBinding的基类Activity，利用反射获取特定ViewBinding中的inflate方法填充视图
+ * @Author RookieJay
+ * @Time 2021/5/21 18:42
+ * @description 基于[ViewBinding]和[ViewModel]的Activity基类
  */
 @Suppress("UNCHECKED_CAST")
-abstract class BaseVBActivity<VB : ViewBinding> : BaseActivity() {
-
-    // 这里使用了委托，表示只有使用到instance才会执行该段代码
-    protected val instance by lazy { this }
+abstract class BaseVBActivity<VB : ViewBinding> : BaseActivity(), IViewBinding<VB> {
 
     /**
      * 页面布局绑定，所有视图从这里获取
      */
     protected lateinit var mBinding: VB
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.e(TAG, "onCreate")
         super.onCreate(savedInstanceState)
-        initParams()
+        beforeInit(savedInstanceState)
         init(savedInstanceState)
     }
 
-    open fun initParams() {
-
-    }
+    open fun beforeInit(savedInstanceState: Bundle?) {}
 
     private fun init(savedInstanceState: Bundle?) {
-        initRootView()
+        if (useVBReflect()) {
+            initRootViewByReflect()
+        } else {
+            initRootViewCommon()
+        }
         initView(savedInstanceState)
         initData(savedInstanceState)
-
     }
 
     /**
      *  反射，调用特定ViewBinding中的inflate方法填充视图
      */
-    private fun initRootView() {
-        Log.i(TAG, "initRootView")
+    override fun initRootViewByReflect(container: ViewGroup?): VB? {
         val type = javaClass.genericSuperclass
         // ParameterizedType 参数化类型 声明类型中带有“<>”的都是参数化类型
         if (type is ParameterizedType) {
@@ -52,7 +51,17 @@ abstract class BaseVBActivity<VB : ViewBinding> : BaseActivity() {
             val method = clazz.getMethod("inflate", LayoutInflater::class.java)
             mBinding = method.invoke(null, layoutInflater) as VB
             setContentView(mBinding.root)
-            Log.i(TAG, "initRootView finish.")
         }
+        return mBinding
     }
+
+    /**
+     * 默认使用反射初始化布局
+     * 若想使用常规方式请重写此方法并返回false
+     */
+    override fun useVBReflect(): Boolean {
+        return true
+    }
+
+
 }

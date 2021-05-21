@@ -1,18 +1,20 @@
-package pers.jay.library.http
+package pers.jay.library.network
 
-import com.blankj.utilcode.util.LogUtils
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 
-
+/**
+ * OkHttp的基类拦截器，根据需求重写方法确定是否拦截
+ */
 abstract class BaseInterceptor : Interceptor {
 
-    protected val TAG = javaClass.simpleName
+    companion object {
+        protected val TAG: String = BaseInterceptor::class.java.simpleName
+    }
 
     override fun intercept(chain: Interceptor.Chain): Response {
-        var request = chain.request()
-//        LogUtils.dTag(TAG, "intercept: ${request.url.toString()}")
+        val request = chain.request()
         if (needIntercept(request)) {
             return doIntercept(chain, request)
         }

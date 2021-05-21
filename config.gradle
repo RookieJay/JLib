@@ -44,7 +44,8 @@ ext {
             doraemonkitVersion          : "2.0.0",
             navigationVersion           : "2.3.0",
             lifecycleVersion            : "2.2.0",
-            pagingVersion               : "3.0.0-alpha02"
+            pagingVersion               : "3.0.0-alpha02",
+            moshiVersion                : "1.12.0"
     ]
 
     network = [
@@ -57,7 +58,9 @@ ext {
             "okhttp3"                   : "com.squareup.okhttp3:okhttp:3.12.1",
             "okhttp-urlconnection"      : "com.squareup.okhttp:okhttp-urlconnection:2.0.0",
             "loggingInterceptor"        : "com.squareup.okhttp3:logging-interceptor:3.4.1",
-            "loggingInterceptorCustom"  : "com.github.ihsanbal:LoggingInterceptor:3.1.0"
+            "loggingInterceptorCustom"  : "com.github.ihsanbal:LoggingInterceptor:3.1.0",
+            "moshi"                     : "com.squareup.moshi:moshi:${version["moshiVersion"]}",
+            "moshiCodeGen"              : "com.squareup.moshi:moshi-kotlin-codegen:${version["moshiVersion"]}"
     ]
 
     imageLoad = [

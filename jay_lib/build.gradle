@@ -79,6 +79,8 @@ dependencies {
     // utils
     api tools.AndroidutilCode
     api tools.androideventbus
+    api tools.rxjava2
+    api tools.rxandroid2
 
     // network
     api network.retrofit
@@ -87,6 +89,7 @@ dependencies {
     api network.okhttp3
     api network.loggingInterceptor
     api network.loggingInterceptorCustom
+    api network.moshi
 
     // image-load
     api imageLoad.glide

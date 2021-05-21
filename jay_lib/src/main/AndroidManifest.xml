@@ -1,2 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="pers.jay.library" />
+    package="pers.jay.library" >
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+</manifest>

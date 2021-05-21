@@ -17,7 +17,7 @@ import java.lang.reflect.ParameterizedType
  * ②常规方式获取，重写userReflect()方法返回false,并重写initViewBinding()方法自行创建ViewBinding并返回
  */
 @Suppress("UNCHECKED_CAST")
-abstract class BaseVBFragment<VB : ViewBinding> : BaseFragment() {
+abstract class BaseVBFragment<VB : ViewBinding> : BaseFragment(), IViewBinding<VB> {
 
     protected lateinit var mBinding: VB
 
@@ -30,38 +30,23 @@ abstract class BaseVBFragment<VB : ViewBinding> : BaseFragment() {
     }
 
     private fun initRootView(container: ViewGroup?): View? {
-        mBinding = if (useVBReflect()) {
-            recursiveFindViewBinding(javaClass, container)
+        if (useVBReflect()) {
+            initRootViewByReflect(container)
         } else {
-            initViewBinding(container)
+            initRootViewCommon(container)
         }
         return mBinding.root
     }
 
-    /**
-     * 常规方式获取ViewBinding，重写此方法自行创建，
-     * fixme 默认还是使用反射根据当前方法返回类型获取，在方法内部获取自身的返回类型有问题。
-     */
-    open fun initViewBinding(container: ViewGroup?): VB {
-//        LogUtils.d("当前实现类:${javaClass.simpleName}")
-//        for (method in javaClass.methods) {
-//            LogUtils.d("遍历method： ${method.name}")
-//        }
-//
-//        val method = javaClass.getDeclaredMethod("initViewBinding", ViewGroup::class.java)
-//        val returnType = method.returnType
-//        val inflateMethod = returnType.getDeclaredMethod(
-//            "inflate",
-//            LayoutInflater::class.java,
-//            ViewGroup::class.java,
-//            Boolean::class.java
-//        )
-//        mBinding = inflateMethod.invoke(null, layoutInflater, container, false) as VB
-        return mBinding
+    override fun initRootViewByReflect(container: ViewGroup?): VB {
+        super.initRootViewByReflect(container)
+        return recursiveFindViewBinding(javaClass, container)
     }
 
     /**
+     * 应用场景：子类第一个泛型不是VB类型
      * 递归查找当前fragment->父类的泛型参数,当前类没有泛型，则向上查找父类，直到找到为止
+     * todo 虽能实现但方法欠妥，考虑优化
      */
     private fun recursiveFindViewBinding(
         fragmentClazz: Class<*>,
@@ -71,14 +56,14 @@ abstract class BaseVBFragment<VB : ViewBinding> : BaseFragment() {
         return if (type is ParameterizedType) {
             val aClass = type.actualTypeArguments[0] as Class<VB>
             LogUtils.d("aClass: ${aClass.simpleName}")
-            createViewBinding(aClass, container)
+            createViewBindingByReflect(aClass, container)
         } else {
             val clazz = fragmentClazz.superclass as Class<*>
             recursiveFindViewBinding(clazz, container)
         }
     }
 
-    private fun createViewBinding(aClass: Class<VB>, container: ViewGroup?): VB {
+    private fun createViewBindingByReflect(aClass: Class<VB>, container: ViewGroup?): VB {
         val method = aClass.getDeclaredMethod(
             "inflate",
             LayoutInflater::class.java,
@@ -97,7 +82,11 @@ abstract class BaseVBFragment<VB : ViewBinding> : BaseFragment() {
 
     abstract fun beforeInit()
 
-    open fun useVBReflect(): Boolean {
+    /**
+     * 默认使用反射初始化布局
+     * 若想使用常规方式请重写此方法并返回false
+     */
+    override fun useVBReflect(): Boolean {
         return true
     }
 }

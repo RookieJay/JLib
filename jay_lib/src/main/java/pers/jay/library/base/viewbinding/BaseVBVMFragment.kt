@@ -1,7 +1,7 @@
 package pers.jay.library.base.viewbinding
 
-import android.util.Log
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
 import com.blankj.utilcode.util.LogUtils
@@ -10,7 +10,9 @@ import pers.jay.library.base.BaseViewModel
 import java.lang.reflect.ParameterizedType
 
 /**
- * 基于ViewBinding的Fragment基类
+ * @Author RookieJay
+ * @Time 2021/5/21 18:42
+ * @description 基于[ViewBinding]和[ViewModel]的Fragment基类
  */
 @Suppress("UNCHECKED_CAST")
 abstract class BaseVBVMFragment<VB : ViewBinding, VM : BaseViewModel<out BaseModel>> :
@@ -22,7 +24,6 @@ abstract class BaseVBVMFragment<VB : ViewBinding, VM : BaseViewModel<out BaseMod
      *  反射，获取特定ViewModel泛型的class
      */
     private fun initViewModelByReflect(): VM {
-        Log.e(TAG, "initViewModelByReflect")
         return recursiveFindViewModel(javaClass)
     }
 
@@ -76,9 +77,6 @@ abstract class BaseVBVMFragment<VB : ViewBinding, VM : BaseViewModel<out BaseMod
      * 默认也是反射实现
      */
     open fun initViewModel(): VM {
-//        val method = this.javaClass.getDeclaredMethod("initViewModel")
-//        val returnType = method.returnType as Class<VM>
-//        mViewModel = ViewModelProvider(this).get(returnType)
         return mViewModel
     }
 }

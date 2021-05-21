@@ -1,12 +1,10 @@
 package pers.jay.library.base
 
 import android.util.Log
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
-import pers.jay.library.http.errorHandle
+import pers.jay.library.network.coroutine.errorHandle
 import java.lang.reflect.ParameterizedType
 
 /**
