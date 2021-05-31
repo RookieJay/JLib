@@ -10,7 +10,7 @@ import pers.jay.library.lifecycle.FragmentLifecycleLogObserver
 /**
  * @Author RookieJay
  * @Time 2021/5/21 18:19
- * @description Fragment基类，
+ * @Description Fragment基类，
  */
 abstract class BaseFragment : Fragment(), IFragment {
 

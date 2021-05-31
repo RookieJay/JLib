@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit
 /**
  * @Author RookieJay
  * @Time 2021/5/19 16:00
- * @description 描述：网络管理基类，用于创建及配置okHttp及Retrofit
+ * @Description 描述：网络管理基类，用于创建及配置okHttp及Retrofit
  *
  */
 abstract class NetworkManager {

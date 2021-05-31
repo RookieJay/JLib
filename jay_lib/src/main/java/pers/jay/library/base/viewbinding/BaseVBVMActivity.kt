@@ -1,21 +1,20 @@
 package pers.jay.library.base.viewbinding
 
 import android.os.Bundle
-import android.util.Log
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
-import pers.jay.library.base.BaseModel
-import pers.jay.library.base.BaseViewModel
+import pers.jay.library.base.repository.BaseRepository
+import pers.jay.library.base.viewmodel.BaseViewModel
 import java.lang.reflect.ParameterizedType
 
 /**
  * @Author RookieJay
  * @Time 2021/5/21 17:53
- * @description 基于ViewBinding和ViewModel的基类Activity
+ * @Description 基于ViewBinding和ViewModel的基类Activity
  */
 @Suppress("UNCHECKED_CAST")
-abstract class BaseVBVMActivity<VB : ViewBinding, VM : BaseViewModel<out BaseModel>> :
+abstract class BaseVBVMActivity<VB : ViewBinding, VM : BaseViewModel<out BaseRepository>> :
     BaseVBActivity<VB>() {
 
     /**

@@ -7,7 +7,7 @@ import com.blankj.utilcode.util.ToastUtils
 /**
  * @Author RookieJay
  * @Time 2021/5/21 16:26
- * @description 所有页面的顶层接口，包括Activity、Fragment等
+ * @Description 所有页面的顶层接口，包括Activity、Fragment等
  */
 interface IPage : IView {
 

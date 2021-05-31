@@ -27,6 +27,10 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
     /**
      * DataBinding & ViewBinding configuration
      */
@@ -75,6 +79,7 @@ dependencies {
     // ui
     api ui.recyclerviewX
     api ui.constraintlayoutx
+    api ui.loadSir
 
     // utils
     api tools.AndroidutilCode
@@ -98,6 +103,6 @@ dependencies {
     api jetPack.lifecycleExt
     api jetPack.lifecycleV8
     api jetPack.lifeCycleKtx
-    api jetPack.viewmodel
+    api jetPack.lifecycleViewmodel
 
 }

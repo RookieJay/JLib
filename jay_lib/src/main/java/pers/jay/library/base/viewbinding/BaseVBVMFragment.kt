@@ -5,17 +5,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
 import com.blankj.utilcode.util.LogUtils
-import pers.jay.library.base.BaseModel
-import pers.jay.library.base.BaseViewModel
+import pers.jay.library.base.repository.BaseRepository
+import pers.jay.library.base.viewmodel.BaseViewModel
 import java.lang.reflect.ParameterizedType
 
 /**
  * @Author RookieJay
  * @Time 2021/5/21 18:42
- * @description 基于[ViewBinding]和[ViewModel]的Fragment基类
+ * @Description 基于[ViewBinding]和[ViewModel]的Fragment基类
  */
 @Suppress("UNCHECKED_CAST")
-abstract class BaseVBVMFragment<VB : ViewBinding, VM : BaseViewModel<out BaseModel>> :
+abstract class BaseVBVMFragment<VB : ViewBinding, VM : BaseViewModel<out BaseRepository>> :
     BaseVBFragment<VB>() {
 
     protected lateinit var mViewModel: VM

@@ -43,7 +43,7 @@ ext {
             koinVersion                 : "2.1.5",
             doraemonkitVersion          : "2.0.0",
             navigationVersion           : "2.3.0",
-            lifecycleVersion            : "2.2.0",
+            lifecycleVersion            : "2.3.1",
             pagingVersion               : "3.0.0-alpha02",
             moshiVersion                : "1.12.0"
     ]
@@ -117,6 +117,7 @@ ext {
             "fragmentX"                 : "androidx.fragment:fragment:latest.release",
             "percentlayoutX"            : "androidx.percentlayout:percentlayout:latest.release",
             "swipeRecyclerview"         : "com.yanzhenjie.recyclerview:x:1.3.2",
+            "loadSir"                   : "com.kingja.loadsir:loadsir:1.3.8"
     ]
 
     animation = [
@@ -242,7 +243,7 @@ ext {
     kotlin = [
             "ktx"                       : "androidx.core:core-ktx:1.3.0",
             "stdlib"                    : "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${version["kotlin_version"]}",
-            "coroutines_android"        : "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.6"
+            "coroutines_android"        : "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0"
     ]
 
     jetpack = [
@@ -250,9 +251,6 @@ ext {
             //paging
             pagingCommon                : "androidx.paging:paging-common:${version.pagingVersion}",
             pagingRuntime               : "androidx.paging:paging-runtime:${version.pagingVersion}",
-
-            //viewmodel
-            viewmodel                   : "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0-alpha05",
 
             // Koin AndroidX Scope feature
             koinScop                    : "org.koin:koin-androidx-scope:${version.koinVersion}",
@@ -265,10 +263,16 @@ ext {
             navigationUi                : "androidx.navigation:navigation-ui:${version.navigationVersion}",
             navigationFragmentKtx       : "androidx.navigation:navigation-fragment-ktx:${version.navigationVersion}",
 
-            // lifeCycle
-            lifecycleExt                : "androidx.lifecycle:lifecycle-extensions:${version.lifecycleVersion}",
+            // lifeCycleExt,注意：根据 Lifecycle 2.2.0 版本说明，不再发布 lifecycle-extensions
+            lifecycleExt                : "androidx.lifecycle:lifecycle-extensions:2.2.0",
+            // lifeCycleV8
             lifecycleV8                 : "androidx.lifecycle:lifecycle-common-java8:${version.lifecycleVersion}",
-            lifeCycleKtx               : "androidx.lifecycle:lifecycle-runtime-ktx:${version.lifecycleVersion}",
+            // Lifecycles only (without ViewModel or LiveData)
+            lifeCycleKtx                : "androidx.lifecycle:lifecycle-runtime-ktx:${version.lifecycleVersion}",
+            // LiveData
+            lifeCycleLiveData           : "androidx.lifecycle:lifecycle-livedata-ktx:${version.lifecycleVersion}",
+            //viewmodel
+            lifecycleViewmodel          : "androidx.lifecycle:lifecycle-viewmodel-ktx:${version.lifecycleVersion}",
     ]
 
     other = [

@@ -6,7 +6,7 @@ import androidx.viewbinding.ViewBinding
 /**
  * @Author RookieJay
  * @Time 2021/5/21 17:00
- * @description 使用ViewBinding页面的顶层接口
+ * @Description 使用ViewBinding页面的顶层接口
  */
 interface IViewBinding<VB : ViewBinding> {
 

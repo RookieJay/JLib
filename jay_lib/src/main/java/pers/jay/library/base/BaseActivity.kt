@@ -8,7 +8,7 @@ import pers.jay.library.lifecycle.ActivityLifecycleLogObserver
 /**
  * @Author RookieJay
  * @Time 2021/5/21 18:20
- * @description Activity基类
+ * @Description Activity基类
  */
 abstract class BaseActivity : AppCompatActivity(), IActivity {
 
@@ -16,10 +16,7 @@ abstract class BaseActivity : AppCompatActivity(), IActivity {
 
     override fun getContext() = mContext
 
-    companion object {
-        @JvmField
-        val TAG: String = BaseActivity::class.java.simpleName
-    }
+    protected val TAG: String = javaClass.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -1,7 +1,6 @@
 package pers.jay.library.base.viewbinding
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModel
@@ -12,7 +11,7 @@ import java.lang.reflect.ParameterizedType
 /**
  * @Author RookieJay
  * @Time 2021/5/21 18:42
- * @description 基于[ViewBinding]和[ViewModel]的Activity基类
+ * @Description 基于[ViewBinding]和[ViewModel]的Activity基类
  */
 @Suppress("UNCHECKED_CAST")
 abstract class BaseVBActivity<VB : ViewBinding> : BaseActivity(), IViewBinding<VB> {

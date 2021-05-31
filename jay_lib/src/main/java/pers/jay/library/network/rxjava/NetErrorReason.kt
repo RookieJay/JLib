@@ -3,7 +3,7 @@ package pers.jay.library.network.rxjava
 /**
  * @Author RookieJay
  * @Time 2021/5/20 9:37
- * @description 网络请求失败原因
+ * @Description 网络请求失败原因
  */
 enum class NetErrorReason {
 

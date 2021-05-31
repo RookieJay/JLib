@@ -6,16 +6,16 @@ import pers.jay.library.R
 import pers.jay.library.app.BaseApplication
 import pers.jay.library.network.rxjava.NetErrorReason
 
+/**
+ * @Author RookieJay
+ * @Time 2021/5/31 10:56
+ * @Description 解析异常信息帮助类
+ */
+object ErrorMessageParser {
 
-object NetErrorHandler {
+    private val TAG = ErrorMessageParser::class.java.simpleName
 
-    private val TAG = NetErrorHandler::class.java.simpleName
-
-
-    /**
-     * 统一处理异常
-     */
-    fun handleException(reason: NetErrorReason) : String {
+    fun getErrorMessage(reason: NetErrorReason) : String {
         Log.e(TAG, "handleException, $reason")
         return when (reason) {
             NetErrorReason.BAD_NETWORK -> getStringRes(R.string.NET_ERROR_MSG_BAD_NETWORK)

@@ -3,7 +3,7 @@ package pers.jay.library.base
 /**
  * @Author RookieJay
  * @Time 2021/5/21 16:26
- * @description 所有view的顶层接口
+ * @Description 所有view的顶层接口
  */
 interface IView {
 

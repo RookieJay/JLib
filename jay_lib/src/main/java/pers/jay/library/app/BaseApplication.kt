@@ -27,7 +27,22 @@ abstract class BaseApplication: Application(), Application.ActivityLifecycleCall
         super.onCreate()
         instance = this
         LogUtils.d("onCreate-" + this.javaClass.simpleName)
+        initLibs()
         lazyInit()
+    }
+
+    private fun initLibs() {
+        initLoadSir()
+    }
+
+    /**
+     * 初始化loadSir，根据需求实现
+     */
+    open fun initLoadSir() {
+//        LoadSir.beginBuilder()
+//            .addCallback(ProgressCallback.Builder().setTitle("加载中").build())
+//            .setDefaultCallback(ProgressCallback::class.java)
+//            .commit()
     }
 
     abstract fun lazyInit()

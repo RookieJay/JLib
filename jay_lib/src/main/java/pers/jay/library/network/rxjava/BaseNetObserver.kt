@@ -5,7 +5,7 @@ import com.blankj.utilcode.util.NetworkUtils
 import com.google.gson.JsonParseException
 import io.reactivex.observers.ResourceObserver
 import org.json.JSONException
-import pers.jay.library.network.errorhandle.NetErrorHandler
+import pers.jay.library.network.errorhandle.ErrorMessageParser
 import retrofit2.HttpException
 import java.io.InterruptedIOException
 import java.net.ConnectException
@@ -16,7 +16,7 @@ import javax.net.ssl.SSLException
 /**
  * @Author RookieJay
  * @Time 2021/5/21 11:43
- * @description 基于rxJava的通用网络请求观察者，自动进行网络异常处理并回调
+ * @Description 基于rxJava的通用网络请求观察者，自动进行网络异常处理并回调
  */
 abstract class BaseNetObserver<T> : ResourceObserver<T>() {
 
@@ -71,7 +71,7 @@ abstract class BaseNetObserver<T> : ResourceObserver<T>() {
         onException(errorMsg)
     }
 
-    private fun handleException(netErrorReason: NetErrorReason) = NetErrorHandler.handleException(netErrorReason)
+    private fun handleException(netErrorReason: NetErrorReason) = ErrorMessageParser.getErrorMessage(netErrorReason)
 
     /**
      * @desc 事件结束

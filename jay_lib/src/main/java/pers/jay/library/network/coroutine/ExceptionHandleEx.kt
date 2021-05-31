@@ -1,80 +1,43 @@
 package pers.jay.library.network.coroutine
 
-import android.util.Log
-import com.blankj.utilcode.util.ToastUtils
-import com.google.gson.JsonSyntaxException
-import pers.jay.library.network.errorhandle.CustomServerException
+import android.net.ParseException
+import com.google.gson.JsonParseException
+import org.json.JSONException
+import pers.jay.library.network.errorhandle.ErrorMessageParser
+import pers.jay.library.network.rxjava.NetErrorReason
 import retrofit2.HttpException
-import java.io.EOFException
+import java.io.InterruptedIOException
 import java.net.ConnectException
-import java.net.SocketException
-import java.net.SocketTimeoutException
+import java.net.NoRouteToHostException
 import java.net.UnknownHostException
 import javax.net.ssl.SSLException
 
 /**
  * 统一异常处理(网络,接口错误…)
  *
- * 对Retrofit的Call<T>类进行扩展，捕捉异常进行处理
  */
 
 const val TAG = "Net Error"
 
-fun Exception.errorHandle(e: Exception, customErrorHandle: (code: Int, msg: String?) -> Unit) {
-    var code = 0
-    var message = "未知错误"
-    when (e) {
-        is CustomServerException -> {
-            code = e.errorCode
-            message = e.message.toString()
+fun Throwable.errorHandle(exception: Throwable, customErrorHandle: (errorReason: NetErrorReason) -> Unit) {
+    val errorReason = when (exception) {
+        is ConnectException, is UnknownHostException, is NoRouteToHostException -> {
+            NetErrorReason.CONNECT_ERROR
+        }
+        is InterruptedIOException, is SSLException -> {
+            NetErrorReason.CONNECT_TIMEOUT
         }
         is HttpException -> {
-            code = e.code()
-            message = e.message.toString()
+            NetErrorReason.BAD_NETWORK
         }
-        is UnknownHostException -> {
-            code = 400
-            message = "无法连接到服务器:未知主机"
+        is JsonParseException, is JSONException, is ParseException -> {
+            NetErrorReason.PARSE_ERROR
         }
-        is SocketTimeoutException -> {
-            code = 400
-            message = "连接服务器超时"
-        }
-        is ConnectException -> {
-            code = 400
-            message = "连接到服务器失败"
-        }
-        is SocketException -> {
-            code = 400
-            message = "链接关闭"
-        }
-        is EOFException -> {
-            code = 400
-            message = "链接关闭"
-        }
-        is IllegalArgumentException -> {
-            code = 400
-            message = "参数错误"
-        }
-        is SSLException -> {
-            code = 400
-            message = "证书错误"
-        }
-        is NullPointerException -> {
-            message = "数据为空"
-        }
-        is JsonSyntaxException -> {
-            message = "数据解析异常"
+        else -> {
+            NetErrorReason.UNKNOWN_ERROR
         }
     }
-    defaultError(code, message)
-    Log.e("$TAG 原始错误信息", e.toString())
-    e.printStackTrace()
-    customErrorHandle(code, message)
+    customErrorHandle(errorReason)
 }
 
-private val defaultError = fun(code: Int, msg: String?) {
-    val displayMsg = String.format("%s(%s)", msg, code)
-    Log.e(TAG, displayMsg)
-    ToastUtils.showShort(msg)
-}
+fun NetErrorReason.handleException(netErrorReason: NetErrorReason) = ErrorMessageParser.getErrorMessage(netErrorReason)

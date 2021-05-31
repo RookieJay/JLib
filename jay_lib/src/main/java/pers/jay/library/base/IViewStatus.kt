@@ -3,7 +3,7 @@ package pers.jay.library.base
 /**
  * @Author RookieJay
  * @Time 2021/5/21 16:08
- * @description 状态视图接口，界面状态事件回调
+ * @Description 状态视图接口，界面状态事件回调
  */
 interface IViewStatus {
 

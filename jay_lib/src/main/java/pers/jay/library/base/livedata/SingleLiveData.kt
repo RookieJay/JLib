@@ -1,4 +1,4 @@
-package pers.jay.library.base
+package pers.jay.library.base.livedata
 
 import androidx.annotation.MainThread
 import androidx.annotation.Nullable
@@ -7,8 +7,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import java.util.concurrent.atomic.AtomicBoolean
 
-
-class SingleLiveEvent<T> : MutableLiveData<T>() {
+/**
+ * @Author RookieJay
+ * @Time 2021/5/28 9:49
+ * @Description 使用原子Boolean变量，防止LiveData数据倒灌
+ */
+open class SingleLiveData<T> : MutableLiveData<T>() {
 
     private val mPending: AtomicBoolean = AtomicBoolean(false)
 

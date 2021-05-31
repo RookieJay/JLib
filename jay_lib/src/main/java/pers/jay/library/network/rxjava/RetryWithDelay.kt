@@ -11,7 +11,7 @@ import java.util.concurrent.TimeoutException
 /**
  * @Author RookieJay
  * @Time 2021/5/21 14:33
- * @description rxJava异常重试处理：根据传入参数确定重试次数（默认3次）和间隔时间（默认3s）
+ * @Description rxJava异常重试处理：根据传入参数确定重试次数（默认3次）和间隔时间（默认3s）
  */
 class RetryWithDelay(
     private val maxRetryCount: Int = 3,
