@@ -156,13 +156,16 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
                 .onCompletion {
                     // 请求结束，对返回数据进行判断，返回相应状态
 //                    baseResponse.dataState = DataState.STATE_COMPLETED
+//                    stateLiveData.postValue(baseResponse)
                     flowObserver.onFLowCompletion()
-                    stateLiveData.postValue(baseResponse)
                 }
                 .collect { response ->
+                    // 成功返回数据，根据数据返回相应状态
                     run {
                         baseResponse = response
-                        if (baseResponse.data == null
+                        if (!baseResponse.isSuccessful) {
+                            baseResponse.dataState = DataState.STATE_FAILED
+                        } else if (baseResponse.data == null
                             || baseResponse.data is List<*> && (baseResponse.data as List<*>).size == 0
                         ) {
                             // 数据为空，修改状态为Empty
