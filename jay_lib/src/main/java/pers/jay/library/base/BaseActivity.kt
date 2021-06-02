@@ -3,6 +3,7 @@ package pers.jay.library.base
 import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import pers.jay.library.app.BaseApplication
 import pers.jay.library.lifecycle.ActivityLifecycleLogObserver
 
 /**
@@ -21,9 +22,11 @@ abstract class BaseActivity : AppCompatActivity(), IActivity {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // 生命周期日志记录
-        lifecycle.addObserver(ActivityLifecycleLogObserver(TAG))
+        if (BaseApplication.instance().isDebug()) {
+            lifecycle.addObserver(ActivityLifecycleLogObserver(TAG))
+        }
         mContext = this
-        initParams(savedInstanceState)
+        initParams(intent)
     }
 
     /**

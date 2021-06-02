@@ -7,24 +7,22 @@ import pers.jay.demo.loadsir.ErrorCallback
 import pers.jay.demo.loadsir.LoadingCallback
 import pers.jay.demo.loadsir.RetryCallback
 import pers.jay.library.app.BaseApplication
-import pers.jay.library.network.IAppInfo
 
-class JApp: BaseApplication(), IAppInfo {
+class JApp: BaseApplication() {
 
     override fun lazyInit() {
-
-    }
-
-    override fun getAppVersion() {
-
+        initLoadSir()
     }
 
     override fun getAppContext(): Context {
         return this
     }
 
-    override fun initLoadSir() {
-        super.initLoadSir()
+    override fun isDebug(): Boolean {
+        return BuildConfig.DEBUG
+    }
+
+    private fun initLoadSir() {
         LoadSir.beginBuilder()
             .addCallback(LoadingCallback())
             .addCallback(EmptyCallback())

@@ -12,11 +12,6 @@ import com.blankj.utilcode.util.ToastUtils
 interface IPage : IView {
 
     /**
-     * 初始化页面参数
-     */
-    fun initParams(savedInstanceState: Bundle?) {}
-
-    /**
      * 初始化页面各种View
      */
     fun initView(savedInstanceState: Bundle?)
@@ -36,6 +31,6 @@ interface IPage : IView {
     /**
      * 获取当前页面上下文
      */
-    fun getContext(): Context?
+    fun getContext(): Context
 
 }

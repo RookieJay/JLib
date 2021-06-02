@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import pers.jay.library.app.BaseApplication
 import pers.jay.library.lifecycle.FragmentLifecycleLogObserver
 
 /**
@@ -30,7 +31,10 @@ abstract class BaseFragment : Fragment(), IFragment {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        lifecycle.addObserver(FragmentLifecycleLogObserver(TAG))
+        mContext = context
+        if (BaseApplication.instance().isDebug()) {
+            lifecycle.addObserver(FragmentLifecycleLogObserver(TAG))
+        }
         // 这里监听生命周期,执行懒加载。
         // 在androidx中，onResume回调只会发生在fragment可见时
         lifecycle.addObserver(object : DefaultLifecycleObserver {
@@ -41,12 +45,11 @@ abstract class BaseFragment : Fragment(), IFragment {
                 }
             }
         })
-        mContext = context
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initParams(savedInstanceState)
+        initParams(arguments)
     }
 
     /**
@@ -66,10 +69,15 @@ abstract class BaseFragment : Fragment(), IFragment {
     }
 
     /**
-     * 返回键回调
+     * 返回键回调，分发给本Fragment下的各个子Fragment
      */
     open fun onBackPressed() {
-
+        val subFragments = childFragmentManager.fragments
+        for (subFragment in subFragments) {
+            if (subFragment is BaseFragment && subFragment.isVisible) {
+                subFragment.onBackPressed()
+            }
+        }
     }
 
     override fun getContext() = mContext

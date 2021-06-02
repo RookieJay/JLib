@@ -10,7 +10,7 @@ import android.content.Context
  */
 interface IAppInfo {
 
-    fun getAppVersion()
+    fun getAppContext(): Context
 
-    fun getAppContext() : Context
+    fun isDebug(): Boolean
 }

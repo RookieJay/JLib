@@ -6,6 +6,7 @@ import android.content.Context
 import android.os.Bundle
 import androidx.multidex.MultiDex
 import com.blankj.utilcode.util.LogUtils
+import pers.jay.library.network.IAppInfo
 
 /**
  * 静态内部类式单例kotlin实现
@@ -18,7 +19,7 @@ import com.blankj.utilcode.util.LogUtils
         }
     }
  */
-abstract class BaseApplication: Application(), Application.ActivityLifecycleCallbacks {
+abstract class BaseApplication: Application(), IAppInfo, Application.ActivityLifecycleCallbacks {
 
     companion object {
         private lateinit var instance : BaseApplication
@@ -34,26 +35,10 @@ abstract class BaseApplication: Application(), Application.ActivityLifecycleCall
         super.onCreate()
         instance = this
         LogUtils.d("onCreate-" + this.javaClass.simpleName)
-        initLibs()
         lazyInit()
     }
 
-    private fun initLibs() {
-        initLoadSir()
-    }
-
-    /**
-     * 初始化loadSir，根据需求实现
-     */
-    open fun initLoadSir() {
-//        LoadSir.beginBuilder()
-//            .addCallback(ProgressCallback.Builder().setTitle("加载中").build())
-//            .setDefaultCallback(ProgressCallback::class.java)
-//            .commit()
-    }
-
     abstract fun lazyInit()
-
 
     override fun onActivityPaused(activity: Activity) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
