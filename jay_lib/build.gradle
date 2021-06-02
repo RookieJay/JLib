@@ -66,6 +66,7 @@ dependencies {
     def jetPack = rootProject.ext.jetpack
     def kotlin = rootProject.ext.kotlin
     def ui = rootProject.ext.ui
+    def network = rootProject.ext.network
 
     // appcompat
     api common.appcompat
@@ -109,5 +110,6 @@ dependencies {
     api jetPack.lifecycleV8
     api jetPack.lifeCycleKtx
     api jetPack.lifecycleViewmodel
+    api jetPack.lifeCycleLiveData
 
 }
