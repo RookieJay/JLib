@@ -40,7 +40,17 @@ abstract class BaseFlowObserver<T> {
         e.errorHandle(e, customErrorHandle = {errorReason ->
             val errorMsg = errorReason.handleException(errorReason)
             Log.e("onCatch", "errorMsg=$errorMsg")
+            onError(errorMsg)
         })
+    }
+
+    /**
+     * @desc   错误信息回调
+     * @param  msg 错误信息
+     * @return Unit
+     */
+    open fun onError(msg: String) {
+
     }
 
     /**
