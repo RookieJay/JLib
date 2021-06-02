@@ -1,8 +1,10 @@
 package pers.jay.demo.net
 
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 import pers.jay.library.network.BaseResponse
 
+@JsonClass(generateAdapter = true)
 class WanResponse<T> : BaseResponse<T>() {
 
     // Gson解析用法

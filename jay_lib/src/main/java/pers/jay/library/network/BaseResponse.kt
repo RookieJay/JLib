@@ -1,6 +1,5 @@
 package pers.jay.library.network
 
-import com.squareup.moshi.JsonClass
 import pers.jay.library.base.repository.DataState
 
 /**
@@ -8,7 +7,6 @@ import pers.jay.library.base.repository.DataState
  * @Time 2021/5/27 13:37
  * @Description 统一返回数据封装实体, 按需对各open属性进行重写
  */
-@JsonClass(generateAdapter = true)
 open class BaseResponse<T> {
 
     open var code: Int = -999
