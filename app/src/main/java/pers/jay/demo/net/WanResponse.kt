@@ -20,6 +20,8 @@ class WanResponse<T> : BaseResponse<T>() {
     override var code: Int = -999
     @Json(name = "errorMsg")
     override var msg: String? = null
+    @Json(name = "data")
+    override var data: T? = null
 
     override val isSuccessful: Boolean
         get() = code == 0

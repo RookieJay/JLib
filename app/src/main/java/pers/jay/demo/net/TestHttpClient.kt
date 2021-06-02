@@ -26,9 +26,12 @@ object TestHttpClient: NetworkManager() {
     override fun applyRetrofitConfig(builder: Retrofit.Builder) {
         super.applyRetrofitConfig(builder)
 
-        // 使用moshi进行json解析，
-        // 已知使用条件：KotlinJsonAdapterFactory+@JsonClass
-        // 注意事项：经试验，当属性与json字段名称不一致时，使用@Json注解，但属性声明必须是var才会生效
+        /**
+         * 使用moshi进行json解析，
+         * 已知使用条件：KotlinJsonAdapterFactory+@JsonClass
+         * 注意事项：经试验，当属性与json字段名称不一致时，使用@Json注解，但属性声明必须是var才会生效.
+         * 示例见[WanResponse]
+         */
 
         val moshi = Moshi.Builder().addLast(KotlinJsonAdapterFactory()).build()
         builder.addConverterFactory(MoshiConverterFactory.create(moshi))
