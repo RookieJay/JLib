@@ -2,7 +2,9 @@ package pers.jay.library.app
 
 import android.app.Activity
 import android.app.Application
+import android.content.Context
 import android.os.Bundle
+import androidx.multidex.MultiDex
 import com.blankj.utilcode.util.LogUtils
 
 /**
@@ -21,6 +23,11 @@ abstract class BaseApplication: Application(), Application.ActivityLifecycleCall
     companion object {
         private lateinit var instance : BaseApplication
         fun instance() = instance
+    }
+
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(base)
+        MultiDex.install(this)
     }
 
     override fun onCreate() {

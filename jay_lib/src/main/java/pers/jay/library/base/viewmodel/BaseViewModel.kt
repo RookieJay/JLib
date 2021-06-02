@@ -3,6 +3,7 @@ package pers.jay.library.base.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.blankj.utilcode.util.LogUtils
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import pers.jay.library.base.livedata.SingleLiveData
@@ -131,11 +132,14 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
     /**
      * @desc   使用协程FLow进行通用请求，对每一个环节进行封装。统一处理
      * @param  flow Flow 冷的异步数据流，必须要observe才会发送
-     * @return Unit
+     * @param  flowObserver 通用Flow流的观察者，可对每个步骤进行统一处理
+     * @param  fetchData 是否需要获取数据，默认为true，若无需获取数据请传入false
+     * @return [StateLiveData] 含有数据状态的LiveData，封装了[BaseResponse]
      */
     protected fun <T> requestOnFlow(
         flow: Flow<BaseResponse<T>>,
-        flowObserver: BaseFlowObserver<T>
+        flowObserver: BaseFlowObserver<T>,
+        fetchData: Boolean = true
     ): StateLiveData<T> {
         val stateLiveData = createStateLiveData<T>()
         launchOnUI {
@@ -143,35 +147,36 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
             flow.onStart {
                 // 请求开始，修改状态为Loading
                 baseResponse.dataState = DataState.STATE_LOADING
-                flowObserver.onFlowStart(baseResponse)
+                flowObserver.onStart(baseResponse)
                 stateLiveData.postValue(baseResponse)
             }
                 .catch { e ->
                     // 请求失败，修改状态为Error
                     baseResponse.dataState = DataState.STATE_ERROR
-                    baseResponse.msg = e.message
-                    flowObserver.onFlowCatch(e)
+                    baseResponse.errorReason = e.message
+                    flowObserver.onCatch(e)
                     stateLiveData.postValue(baseResponse)
                 }
                 .onCompletion {
-                    // 请求结束，对返回数据进行判断，返回相应状态
-//                    baseResponse.dataState = DataState.STATE_COMPLETED
-//                    stateLiveData.postValue(baseResponse)
-                    flowObserver.onFLowCompletion()
+                    // 请求结束
+                    flowObserver.onCompletion()
                 }
                 .collect { response ->
                     // 成功返回数据，根据数据返回相应状态
                     run {
                         baseResponse = response
                         if (!baseResponse.isSuccessful) {
+                            LogUtils.e(TAG, "请求成功但后台返回错误，baseResponse class=${baseResponse.toString()}")
                             baseResponse.dataState = DataState.STATE_FAILED
-                        } else if (baseResponse.data == null
-                            || baseResponse.data is List<*> && (baseResponse.data as List<*>).size == 0
+                            baseResponse.errorReason = baseResponse.msg
+                        } else if (fetchData && (baseResponse.data == null
+                            || (baseResponse.data is List<*> && (baseResponse.data as List<*>).size == 0))
                         ) {
                             // 数据为空，修改状态为Empty
                             baseResponse.dataState = DataState.STATE_EMPTY
                         } else {
                             baseResponse.dataState = DataState.STATE_SUCCESS
+                            flowObserver.onSuccess(baseResponse)
                         }
                         stateLiveData.postValue(baseResponse)
                     }

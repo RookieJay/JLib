@@ -81,11 +81,11 @@ class CustomGsonConverterFactory private constructor(private val gson: Gson) : C
         override fun convert(value: ResponseBody): T {
             val body = value.string()
             val response = gson.fromJson(body, BaseResponse::class.java)
-            //验证status返回是否正常
-            if (response.code != HttpConst.HttpStatus_200) {
+            //验证返回数据是否正常
+            if (!response.isSuccessful) {
                 value.close()
                 // 响应数据不正确，抛出自定义异常
-                throw CustomServerException(response.code, response.msg)
+                throw CustomServerException(HttpConst.HttpStatus_500, response.errorReason)
             }
 
             //继续处理body数据反序列化，注意value.string() 不可重复使用

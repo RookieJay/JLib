@@ -1,6 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
@@ -86,6 +87,7 @@ dependencies {
     api tools.androideventbus
     api tools.rxjava2
     api tools.rxandroid2
+    api tools.multidex
 
     // network
     api network.retrofit
@@ -95,6 +97,9 @@ dependencies {
     api network.loggingInterceptor
     api network.loggingInterceptorCustom
     api network.moshi
+    api network.moshiKotlin
+    api network.retrofitConverterMoshi
+    kapt network.moshiCodeGen
 
     // image-load
     api imageLoad.glide

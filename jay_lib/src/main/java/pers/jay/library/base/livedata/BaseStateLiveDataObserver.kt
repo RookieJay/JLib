@@ -85,7 +85,7 @@ abstract class BaseStateLiveDataObserver<T>(view: View?) : Observer<BaseResponse
                 }
                 DataState.STATE_FAILED, DataState.STATE_ERROR -> {
                     //请求错误
-                    onError(response.msg)
+                    onError(response.errorReason)
                 }
                 else -> {
 

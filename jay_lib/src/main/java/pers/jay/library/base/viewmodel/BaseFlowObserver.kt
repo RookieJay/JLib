@@ -17,7 +17,16 @@ abstract class BaseFlowObserver<T> {
      * @param
      * @return  Unit
      */
-    open fun onFlowStart(baseResponse: BaseResponse<T>) {
+    open fun onStart(baseResponse: BaseResponse<T>) {
+
+    }
+
+    /**
+     * @Author RookieJay
+     * @Time 2021/6/1 13:46
+     * @Description 请求成功且数据正确
+     */
+    open fun onSuccess(response: BaseResponse<T>) {
 
     }
 
@@ -26,10 +35,11 @@ abstract class BaseFlowObserver<T> {
      * @param   e 异常
      * @return  Unit
      */
-    open fun onFlowCatch(e: Throwable) {
+    open fun onCatch(e: Throwable) {
+        e.printStackTrace()
         e.errorHandle(e, customErrorHandle = {errorReason ->
             val errorMsg = errorReason.handleException(errorReason)
-            Log.e("onFlowCatch", "errorMsg=$errorMsg")
+            Log.e("onCatch", "errorMsg=$errorMsg")
         })
     }
 
@@ -38,7 +48,7 @@ abstract class BaseFlowObserver<T> {
      * @param
      * @return Unit
      */
-    open fun onFLowCompletion() {
+    open fun onCompletion() {
 
     }
 
