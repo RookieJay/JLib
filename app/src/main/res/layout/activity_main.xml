@@ -18,10 +18,19 @@
 
     <Button
         android:id="@+id/btRequest"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="请求"
+        android:text="请求示例"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="DataBinding示例"
+        app:layout_constraintTop_toBottomOf="@+id/btRequest"
+        android:textAllCaps="false"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

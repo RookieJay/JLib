@@ -11,7 +11,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
  * @Time 2021/5/19 16:06
  * @Description
  */
-object TestHttpClient: NetworkManager() {
+object WanHttpClient: NetworkManager() {
 
     override fun getBaseUrl(): String {
         return "https://www.wanandroid.com/"

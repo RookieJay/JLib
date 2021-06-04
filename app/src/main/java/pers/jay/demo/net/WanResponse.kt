@@ -27,7 +27,7 @@ class WanResponse<T> : BaseResponse<T>() {
         get() = code == 0
 
     override fun toString(): String {
-        return "BaseResponse(code=$code, errorCode=$code, data=${data}, msg=$msg, dataState=$dataState, errorReason=$errorReason)"
+        return "BaseResponse(code=$code, data=${data}, msg=$msg, dataState=$dataState, errorReason=$errorReason)"
     }
 
 
