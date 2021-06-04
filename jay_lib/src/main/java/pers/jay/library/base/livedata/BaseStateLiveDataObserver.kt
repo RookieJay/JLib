@@ -16,7 +16,7 @@ import pers.jay.library.network.BaseResponse
  * @Time 2021/5/27 13:44
  * @Description 包含状态分发的LiveData Observer基类，子类需要继承并实现LoadSir的各种Callback
  * 主要结合LoadSir，根据BaseResp里面的State分别加载不同的UI，如Loading，Error
- * 开发者可以在UI层，每个接口请求时，直接创建IStateObserver，重写相应[Callback]。
+ * 注意：需要重写相应[Callback]实现自定义状态视图。
  */
 abstract class BaseStateLiveDataObserver<T>(view: View?) : Observer<BaseResponse<T>>,
     Callback.OnReloadListener {
@@ -42,12 +42,8 @@ abstract class BaseStateLiveDataObserver<T>(view: View?) : Observer<BaseResponse
                         DataState.STATE_EMPTY ->
                             getEmptyCallback()
                         //请求失败
-                        DataState.STATE_FAILED, DataState.STATE_ERROR -> {
+                        DataState.STATE_FAILED, DataState.STATE_ERROR, DataState.STATE_UNKNOWN -> {
                             getErrorCallback()
-                        }
-                        //请求完成
-                        DataState.STATE_COMPLETED, DataState.STATE_UNKNOWN -> {
-                            getLoadingCallback()
                         }
                         else -> {
                             SuccessCallback::class.java
@@ -67,7 +63,7 @@ abstract class BaseStateLiveDataObserver<T>(view: View?) : Observer<BaseResponse
     abstract fun getLoadingCallback(): Class<out Callback>
 
     /**
-     * @desc   LiveData数据发生改变时回调
+     * @desc   LiveData数据发生改变时回调，只解析view层需要单独处理的，统一处理的(loading)等则不解析
      * @param  response 返回的新数据
      * @return Unit
      */

@@ -9,5 +9,4 @@ import pers.jay.library.network.BaseResponse
  */
 class StateLiveData<T> : SingleLiveData<BaseResponse<T>>() {
 
-
 }

@@ -8,23 +8,26 @@ import pers.jay.library.network.coroutine.handleException
 /**
  * @Author RookieJay
  * @Time 2021/5/27 16:42
- * @Description 通用Flow流的观察者，可对每个步骤进行统一处理，想单独处理则继承此类
+ * @Description 通用状态变化的观察者，用于对Flow每个步骤进行统一处理，若想单独处理则继承此类重写对应方法
  */
-abstract class BaseFlowObserver<T> {
+abstract class BaseStateObserver<T> {
+
+    companion object {
+        protected val TAG: String = BaseStateObserver::class.java.simpleName
+    }
 
     /**
      * @desc    在调用 flow 请求数据之前，做一些准备工作，例如显示正在加载数据的进度条
-     * @param
+     * @param   response [BaseResponse]
      * @return  Unit
      */
-    open fun onStart(baseResponse: BaseResponse<T>) {
+    open fun onStart(response: BaseResponse<T>) {
 
     }
 
     /**
-     * @Author RookieJay
-     * @Time 2021/6/1 13:46
-     * @Description 请求成功且数据正确
+     * @desc   请求成功且数据正确，成功返回数据，根据数据返回相应状态
+     * @return Unit
      */
     open fun onSuccess(response: BaseResponse<T>) {
 
@@ -35,9 +38,9 @@ abstract class BaseFlowObserver<T> {
      * @param   e 异常
      * @return  Unit
      */
-    open fun onCatch(e: Throwable) {
+    open fun onCatch(response: BaseResponse<T>, e: Throwable) {
         e.printStackTrace()
-        e.errorHandle(e, customErrorHandle = {errorReason ->
+        e.errorHandle(e, customErrorHandle = { errorReason ->
             val errorMsg = errorReason.handleException(errorReason)
             Log.e("onCatch", "errorMsg=$errorMsg")
             onError(errorMsg)

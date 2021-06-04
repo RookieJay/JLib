@@ -129,57 +129,66 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
         return StateLiveData()
     }
 
+    protected fun <T> requestOnFlow(
+        flow: Flow<BaseResponse<T>>,
+        stateObserver: BaseStateObserver<T>? = null
+    ): StateLiveData<T> {
+        return requestOnFlow(true, flow, stateObserver)
+    }
+
     /**
-     * @desc   使用协程FLow进行通用请求，对每一个环节进行封装。统一处理
-     * @param  flow Flow 冷的异步数据流，必须要observe才会发送
-     * @param  flowObserver 通用Flow流的观察者，可对每个步骤进行统一处理
+     *  结合[BaseRepository.createFlowRequest],使用协程FLow进行通用请求，对每一个环节进行封装。
+     *  此方法既能将状态通过stateObserver回调到viewModel层，又能通过StateLiveData通知view层。
+     *
      * @param  fetchData 是否需要获取数据，默认为true，若无需获取数据请传入false
+     * @param  flow Flow 冷的异步数据流，必须要observe才会发送
+     * @param  stateObserver 可空。通用数据变化的观察者，可对每个步骤进行统一处理，交由viewModel处理
+     *
      * @return [StateLiveData] 含有数据状态的LiveData，封装了[BaseResponse]
      */
     protected fun <T> requestOnFlow(
+        fetchData: Boolean = true,
         flow: Flow<BaseResponse<T>>,
-        flowObserver: BaseFlowObserver<T>,
-        fetchData: Boolean = true
+        stateObserver: BaseStateObserver<T>? = null
     ): StateLiveData<T> {
         val stateLiveData = createStateLiveData<T>()
         launchOnUI {
-            var baseResponse = BaseResponse<T>()
+            var response = BaseResponse<T>()
             flow.onStart {
                 // 请求开始，修改状态为Loading
-                baseResponse.dataState = DataState.STATE_LOADING
-                flowObserver.onStart(baseResponse)
-                stateLiveData.postValue(baseResponse)
+                response.dataState = DataState.STATE_LOADING
+                stateLiveData.postValue(response)
+                stateObserver?.onStart(response)
             }
                 .catch { e ->
                     // 请求失败，修改状态为Error
-                    baseResponse.dataState = DataState.STATE_ERROR
-                    baseResponse.errorReason = e.message
-                    flowObserver.onCatch(e)
-                    stateLiveData.postValue(baseResponse)
+                    response.dataState = DataState.STATE_ERROR
+                    response.errorReason = e.message
+                    stateLiveData.postValue(response)
+                    stateObserver?.onCatch(response, e)
                 }
                 .onCompletion {
                     // 请求结束
-                    flowObserver.onCompletion()
+//                    response.dataState = DataState.STATE_COMPLETED
+//                    stateLiveData.postValue(response)
+                    stateObserver?.onCompletion()
                 }
-                .collect { response ->
-                    // 成功返回数据，根据数据返回相应状态
-                    run {
-                        baseResponse = response
-                        if (!baseResponse.isSuccessful) {
-                            LogUtils.e(TAG, "请求成功但后台返回错误，baseResponse class=${baseResponse.toString()}")
-                            baseResponse.dataState = DataState.STATE_FAILED
-                            baseResponse.errorReason = baseResponse.msg
-                        } else if (fetchData && (baseResponse.data == null
-                            || (baseResponse.data is List<*> && (baseResponse.data as List<*>).size == 0))
-                        ) {
-                            // 数据为空，修改状态为Empty
-                            baseResponse.dataState = DataState.STATE_EMPTY
-                        } else {
-                            baseResponse.dataState = DataState.STATE_SUCCESS
-                            flowObserver.onSuccess(baseResponse)
-                        }
-                        stateLiveData.postValue(baseResponse)
+                .collect {
+                    response = it
+                    if (!response.isSuccessful) {
+                        LogUtils.e(TAG, "request successfully but response error from server,baseResponse class=${response.toString()}")
+                        response.dataState = DataState.STATE_FAILED
+                        response.errorReason = response.msg
+                    } else if (fetchData && (response.data == null
+                                || (response.data is List<*> && (response.data as List<*>).size == 0))
+                    ) {
+                        // 数据为空，修改状态为Empty
+                        response.dataState = DataState.STATE_EMPTY
+                    } else {
+                        response.dataState = DataState.STATE_SUCCESS
                     }
+                    stateLiveData.postValue(response)
+                    stateObserver?.onSuccess(response)
                 }
         }
         return stateLiveData

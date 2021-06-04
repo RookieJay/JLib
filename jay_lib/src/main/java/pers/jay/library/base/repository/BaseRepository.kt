@@ -13,11 +13,11 @@ import kotlinx.coroutines.flow.flowOn
 abstract class BaseRepository {
 
     /**
-     * @desc   通过flow来处理请求，返回一个Flow对象交由ViewModel处理
-     * @param  requestBlock 请求方法体
-     * @return Unit
+     * @desc   通过flow来处理请求，并返回一个Flow对象
+     * @param  requestBlock 请求方法体，返回值为T
+     * @return [Flow]
      */
-    fun <T> requestOnFlow(requestBlock: suspend () -> T): Flow<T> {
+    fun <T> createFlowRequest(requestBlock: suspend () -> T): Flow<T> {
         return flow<T> {
             val response = requestBlock.invoke()
             emit(response)
