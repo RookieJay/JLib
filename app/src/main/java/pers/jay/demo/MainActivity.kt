@@ -1,11 +1,11 @@
 package pers.jay.demo
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import com.blankj.utilcode.util.LogUtils
 import pers.jay.demo.databinding.ActivityMainBinding
 import pers.jay.demo.databinding.InfoActivity
+import pers.jay.library.base.ext.startActivity
 import pers.jay.library.base.viewbinding.BaseVBVMActivity
 
 class MainActivity : BaseVBVMActivity<ActivityMainBinding, DemoViewModel>() {
@@ -16,7 +16,7 @@ class MainActivity : BaseVBVMActivity<ActivityMainBinding, DemoViewModel>() {
                 requestDemo()
             }
             btInfo.setOnClickListener {
-                startActivity(Intent(this@MainActivity, InfoActivity::class.java))
+                startActivity<InfoActivity>()
             }
         }
     }

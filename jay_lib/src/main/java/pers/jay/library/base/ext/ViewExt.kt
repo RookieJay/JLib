@@ -1,5 +1,7 @@
 package pers.jay.library.base.ext
 
+import android.content.Context
+import android.content.Intent
 import com.blankj.utilcode.util.ToastUtils
 
 /**
@@ -11,12 +13,13 @@ fun showMessage(format: String, args: Any?) = ToastUtils.showShort(format, args)
 
 fun showLongMessage(message: String) = ToastUtils.showLong(message)
 
-
-///**
-// * 基于BaseFragment的扩展方法
-// */
-//fun BaseFragment.showMessage(message : String) = ToastUtils.showShort(message)
-//
-//fun BaseFragment.showMessage(format : String, args : Any?) = ToastUtils.showShort(format, args)
-//
-//fun BaseFragment.showError() = ToastUtils.showShort("错误")
+/**
+ * inline（内联函数）： Kotlin编译器将内联函数的字节码插入到每一次调用方法的地方
+ * reified（实化类型参数）： 在插入的字节码中，使用类型实参的确切类型代替类型实参
+ * 注意：无法从 Java 代码里调用带实化类型参数的内联函数
+ */
+inline fun <reified T> Context.startActivity() {
+    Intent(this, T::class.java).apply {
+        startActivity(this)
+    }
+}
