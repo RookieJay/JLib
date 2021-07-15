@@ -7,6 +7,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 
 /**
@@ -15,6 +16,7 @@ import java.util.concurrent.TimeUnit
  * @Description 描述：网络管理基类，用于创建及配置okHttp及Retrofit
  *
  */
+@Suppress("UNCHECKED_CAST")
 abstract class NetworkManager {
 
     protected val mOkHttpClient: OkHttpClient by lazy {
@@ -25,18 +27,15 @@ abstract class NetworkManager {
         getRetrofit()
     }
 
-    companion object {
-        // 默认接口响应读写超时时间
-        const val DEFAULT_READ_WRITE_TIME_OUT = 5000L
-        // 默认接口请求超时时间
-        const val DEFAULT_CONNECT_TIME_OUT = 5000L
+    protected val mServiceMap by lazy {
+        ConcurrentHashMap<Class<*>, Any>()
     }
 
     private fun createOkHttpClient(): OkHttpClient {
         val builder = OkHttpClient.Builder()
-            .readTimeout(DEFAULT_READ_WRITE_TIME_OUT, TimeUnit.MILLISECONDS)
-            .writeTimeout(DEFAULT_READ_WRITE_TIME_OUT, TimeUnit.MILLISECONDS)
-            .connectTimeout(DEFAULT_CONNECT_TIME_OUT, TimeUnit.MILLISECONDS)
+            .readTimeout(HttpConfig.DEFAULT_READ_WRITE_TIME_OUT, TimeUnit.MILLISECONDS)
+            .writeTimeout(HttpConfig.DEFAULT_READ_WRITE_TIME_OUT, TimeUnit.MILLISECONDS)
+            .connectTimeout(HttpConfig.DEFAULT_CONNECT_TIME_OUT, TimeUnit.MILLISECONDS)
         if (needPrintNetworkLog()) {
             builder.addNetworkInterceptor(LoggingInterceptor.Builder().build())
         }
@@ -63,13 +62,20 @@ abstract class NetworkManager {
     }
 
     /**
-     * @desc   获取apiService
-     * @param  tClass 具体apiService的泛型类型
+     * @desc   获取apiService，使用缓存获取单例
+     * @param  apiClass 具体apiService的泛型类型
      * @return 由Retrofit生成的service实例
      */
-    fun <T> getApiService(tClass: Class<T>): T {
-        Objects.requireNonNull(tClass, "api service class can not be null")
-        return mRetrofit.create(tClass)
+    fun <T> getApiService(apiClass: Class<T>): T {
+        Objects.requireNonNull(apiClass, "api service class can not be null")
+        val api = mServiceMap[apiClass]
+        return if (api != null) {
+            api as T
+        } else {
+            val t = mRetrofit.create(apiClass)
+            mServiceMap[apiClass] = t!!
+            t
+        }
     }
 
     /**
