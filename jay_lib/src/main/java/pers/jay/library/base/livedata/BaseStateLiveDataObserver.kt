@@ -29,10 +29,11 @@ abstract class BaseStateLiveDataObserver<T>(view: View?) : Observer<BaseResponse
     }
 
     init {
+        // 实例化view传空时，代表不走状态视图加载逻辑
         if (view != null) {
             mLoadService = LoadSir.getDefault().register(view, this,
                 Convertor<BaseResponse<T>> { response ->
-                    val callbackClazz: Class<out Callback> = when (response?.dataState) {
+                    val callbackClazz: Class<out Callback>? = when (response?.dataState) {
                         //数据刚开始请求，loading
                         DataState.STATE_CREATE, DataState.STATE_LOADING ->
                             getLoadingCallback()
@@ -50,18 +51,24 @@ abstract class BaseStateLiveDataObserver<T>(view: View?) : Observer<BaseResponse
                             SuccessCallback::class.java
                         }
                     }
-                    Log.d(TAG, "callbackClazz :${callbackClazz.simpleName}")
+                    Log.d(TAG, "callbackClazz :${callbackClazz?.simpleName}")
                     callbackClazz
                 })
         }
 
     }
 
-    abstract fun getErrorCallback(): Class<out Callback>
+    open fun getErrorCallback(): Class<out Callback>? {
+        return null
+    }
 
-    abstract fun getEmptyCallback(): Class<out Callback>
+    open fun getEmptyCallback(): Class<out Callback>? {
+        return null
+    }
 
-    abstract fun getLoadingCallback(): Class<out Callback>
+    open fun getLoadingCallback(): Class<out Callback>? {
+        return null
+    }
 
     /**
      * @desc   LiveData数据发生改变时回调，只解析view层需要单独处理的，统一处理的(loading)等则不解析
