@@ -1,5 +1,6 @@
 package pers.jay.library.base.livedata
 
+import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import androidx.lifecycle.Observer
@@ -69,11 +70,12 @@ abstract class BaseStateLiveDataObserver<T>(view: View?) : Observer<BaseResponse
      */
     override fun onChanged(response: BaseResponse<T>?) {
         response?.apply {
-            Log.d(TAG, "onChanged: ${response.dataState}")
-            when (response.dataState) {
+            val dataState = response.dataState
+            Log.d(TAG, "onChanged: $dataState")
+            when (dataState) {
                 DataState.STATE_SUCCESS -> {
                     //请求成功，数据不为null
-                    onSuccess(response.data)
+                    onSuccess(response.data!!)
                 }
                 DataState.STATE_EMPTY -> {
                     //数据为空
@@ -81,7 +83,11 @@ abstract class BaseStateLiveDataObserver<T>(view: View?) : Observer<BaseResponse
                 }
                 DataState.STATE_FAILED, DataState.STATE_ERROR -> {
                     //请求错误
-                    onError(response.errorReason)
+                    var reason = response.errorReason
+                    if (TextUtils.isEmpty(reason)) {
+                        reason = dataState.getReason()
+                    }
+                    onError(reason!!)
                 }
                 else -> {
 
@@ -96,7 +102,7 @@ abstract class BaseStateLiveDataObserver<T>(view: View?) : Observer<BaseResponse
     /**
      * 请求成功且数据不为空
      */
-    open fun onSuccess(data: T?) {
+    open fun onSuccess(data: T) {
 
     }
 
@@ -110,7 +116,7 @@ abstract class BaseStateLiveDataObserver<T>(view: View?) : Observer<BaseResponse
     /**
      * 请求错误
      */
-    open fun onError(msg: String?) {
+    open fun onError(msg: String) {
 
     }
 

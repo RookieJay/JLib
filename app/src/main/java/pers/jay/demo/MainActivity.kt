@@ -23,7 +23,7 @@ class MainActivity : BaseVBVMActivity<ActivityMainBinding, DemoViewModel>() {
 
     private fun requestDemo() {
         mViewModel.test().observe(this, object : TestStateObserver<List<Tab>>(mBinding.text) {
-            override fun onSuccess(data: List<Tab>?) {
+            override fun onSuccess(data: List<Tab>) {
                 super.onSuccess(data)
                 LogUtils.d(TAG, data.toString())
                 mBinding.text.text =
@@ -35,7 +35,7 @@ class MainActivity : BaseVBVMActivity<ActivityMainBinding, DemoViewModel>() {
                 LogUtils.d(TAG, "onDataEmpty")
             }
 
-            override fun onError(msg: String?) {
+            override fun onError(msg: String) {
                 super.onError(msg)
                 LogUtils.d(TAG, "onError, msg:$msg")
             }

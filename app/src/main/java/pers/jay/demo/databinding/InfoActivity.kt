@@ -21,7 +21,7 @@ class InfoActivity : BaseDBVMActivity<ActivityInfoBinding, InfoViewModel>() {
 
     override fun initData(savedInstanceState: Bundle?) {
         mViewModel.loadData().observe(this, object : TestStateObserver<Tab>(mBinding.tvTabName) {
-            override fun onSuccess(data: Tab?) {
+            override fun onSuccess(data: Tab) {
                 super.onSuccess(data)
                 mBinding.tab = data
             }
