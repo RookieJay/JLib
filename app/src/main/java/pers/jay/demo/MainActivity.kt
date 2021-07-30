@@ -18,6 +18,9 @@ class MainActivity : BaseVBVMActivity<ActivityMainBinding, DemoViewModel>() {
             btInfo.setOnClickListener {
                 startActivity<InfoActivity>()
             }
+            btCompose.setOnClickListener {
+
+            }
         }
     }
 

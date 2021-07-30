@@ -45,7 +45,8 @@ ext {
             navigationVersion           : "2.3.0",
             lifecycleVersion            : "2.3.1",
             pagingVersion               : "3.0.0-alpha02",
-            moshiVersion                : "1.12.0"
+            moshiVersion                : "1.12.0",
+            composeVersion              : "1.0.0-rc02"
     ]
 
     network = [
@@ -274,8 +275,29 @@ ext {
             lifeCycleKtx                : "androidx.lifecycle:lifecycle-runtime-ktx:${version.lifecycleVersion}",
             // LiveData
             lifeCycleLiveData           : "androidx.lifecycle:lifecycle-livedata-ktx:${version.lifecycleVersion}",
-            //viewmodel
+            // viewmodel
             lifecycleViewmodel          : "androidx.lifecycle:lifecycle-viewmodel-ktx:${version.lifecycleVersion}",
+
+            // ---compose---
+            composeUI                   : "androidx.compose.ui:ui:${version.composeVersion}",
+            // Tooling support (Previews, etc.)
+            composeUITool               : "androidx.compose.ui:ui-tooling:${version.composeVersion}",
+            // Foundation (Border, Background, Box, Image, Scroll, shapes, animations, etc.)
+            composeFoundation           : "androidx.compose.foundation:foundation:${version.composeVersion}",
+            // Material Design
+            composeMaterial             : "androidx.compose.material:material:${version.composeVersion}",
+            // Material design icons
+            composeMDIconsCore          : "androidx.compose.material:material-icons-core:${version.composeVersion}",
+            composeMDIconsExt           : "androidx.compose.material:material-icons-extended:${version.composeVersion}",
+            // Integration with activities
+            composeActivity             : "androidx.activity:activity-compose:1.3.0-rc02",
+            // Integration with ViewModels
+            composeViewModel            : "androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07",
+            // Integration with observables
+            composeLiveData             : "androidx.compose.runtime:runtime-livedata:${version.composeVersion}",
+            composeRxJava2              : "androidx.compose.runtime:runtime-rxjava2:${version.composeVersion}",
+            // UI Tests
+            composeUITest               : "androidx.compose.ui:ui-test-junit4:${version.composeVersion}"
     ]
 
     other = [
