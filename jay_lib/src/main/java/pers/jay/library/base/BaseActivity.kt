@@ -4,7 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import pers.jay.library.app.BaseApplication
-import pers.jay.library.lifecycle.ActivityLifecycleLogObserver
+import pers.jay.library.lifecycle.LifecycleLogObserver
 
 /**
  * @Author RookieJay
@@ -23,7 +23,7 @@ abstract class BaseActivity : AppCompatActivity(), IActivity {
         super.onCreate(savedInstanceState)
         // 生命周期日志记录
         if (BaseApplication.instance().isDebug()) {
-            lifecycle.addObserver(ActivityLifecycleLogObserver(TAG))
+            lifecycle.addObserver(LifecycleLogObserver(TAG))
         }
         mContext = this
         initParams(intent)

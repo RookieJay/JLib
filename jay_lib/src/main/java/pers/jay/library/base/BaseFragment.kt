@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import pers.jay.library.app.BaseApplication
-import pers.jay.library.lifecycle.FragmentLifecycleLogObserver
+import pers.jay.library.lifecycle.LifecycleLogObserver
 
 /**
  * @Author RookieJay
@@ -33,7 +33,7 @@ abstract class BaseFragment : Fragment(), IFragment {
         super.onAttach(context)
         mContext = context
         if (BaseApplication.instance().isDebug()) {
-            lifecycle.addObserver(FragmentLifecycleLogObserver(TAG))
+            lifecycle.addObserver(LifecycleLogObserver(TAG))
         }
         // 这里监听生命周期,执行懒加载。
         // 在androidx中，onResume回调只会发生在fragment可见时
