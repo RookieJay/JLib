@@ -70,6 +70,8 @@ dependencies {
 
     // appcompat
     api common.appcompat
+    api common.activityKtx
+
     // test
     testImplementation test.junit
 
