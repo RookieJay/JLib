@@ -36,30 +36,33 @@ android {
     buildFeatures {
         dataBinding true
         viewBinding true
-        compose true
+//        compose true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion '1.0.0-rc02'
-    }
+//    composeOptions {
+//        kotlinCompilerExtensionVersion '1.0.0-rc02'
+//    }
 }
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation project(':jay_lib')
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    def common = rootProject.ext.common
     def network = rootProject.ext.network
     def jetpack = rootProject.ext.jetpack
+    def ui = rootProject.ext.ui
     kapt network.moshiCodeGen
-    implementation jetpack.composeUI
-    implementation jetpack.composeUITool
-    implementation jetpack.composeFoundation
-    implementation jetpack.composeMaterial
-    implementation jetpack.composeMDIconsCore
-    implementation jetpack.composeMDIconsExt
-    implementation jetpack.composeActivity
-    implementation jetpack.composeViewModel
-    implementation jetpack.composeLiveData
-    implementation jetpack.composeUITest
+    implementation common.activityKtx
+    implementation common.appcompat
+    implementation ui.constraintlayoutx
+//    implementation jetpack.composeUI
+//    implementation jetpack.composeUITool
+//    implementation jetpack.composeFoundation
+//    implementation jetpack.composeMaterial
+//    implementation jetpack.composeMDIconsCore
+//    implementation jetpack.composeMDIconsExt
+//    implementation jetpack.composeActivity
+//    implementation jetpack.composeViewModel
+//    implementation jetpack.composeLiveData
+//    implementation jetpack.composeUITest
 }
