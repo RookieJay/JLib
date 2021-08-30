@@ -17,9 +17,11 @@ fun showLongMessage(message: String) = ToastUtils.showLong(message)
  * inline（内联函数）： Kotlin编译器将内联函数的字节码插入到每一次调用方法的地方
  * reified（实化类型参数）： 在插入的字节码中，使用类型实参的确切类型代替类型实参
  * 注意：无法从 Java 代码里调用带实化类型参数的内联函数
+ * @param map Intent携带参数
  */
-inline fun <reified T> Context.startActivity() {
+inline fun <reified T> Context.startActivity(putExtraBlock: Intent.() -> Unit) {
     Intent(this, T::class.java).apply {
+        putExtraBlock.invoke(this)
         startActivity(this)
     }
 }

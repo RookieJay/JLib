@@ -19,11 +19,11 @@ open class CustomCallback(private val msg: String): Callback() {
 
     override fun onViewCreate(context: Context?, view: View?) {
         super.onViewCreate(context, view)
-        val text = view as TextView
-        text.text = msg
+        val tvLoading = view?.findViewById<TextView>(R.id.tvLoadSir)
+        tvLoading?.text = msg
     }
 
     override fun onReloadEvent(context: Context?, view: View?): Boolean {
-        return true;
+        return true
     }
 }

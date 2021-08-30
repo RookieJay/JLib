@@ -17,6 +17,7 @@ abstract class BaseDBActivity<DB : ViewDataBinding> : BaseActivity() {
         super.onCreate(savedInstanceState)
         beforeInit()
         initRootView(savedInstanceState)
+        initLoadSir()
         initView(savedInstanceState)
         initData(savedInstanceState)
     }

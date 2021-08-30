@@ -1,5 +1,6 @@
 package pers.jay.library.base.viewmodel
 
+import android.text.TextUtils
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,6 +12,8 @@ import pers.jay.library.base.livedata.StateLiveData
 import pers.jay.library.base.repository.BaseRepository
 import pers.jay.library.base.repository.DataState
 import pers.jay.library.network.BaseResponse
+import pers.jay.library.network.coroutine.errorHandle
+import pers.jay.library.network.coroutine.handleException
 import java.lang.reflect.ParameterizedType
 
 /**
@@ -29,21 +32,16 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
     val mCoroutineErrorData: SingleLiveData<String> = SingleLiveData()
 
     /**
-     * ui异常处理
-     */
-    private val mUiErrorData: SingleLiveData<String> = SingleLiveData()
-
-    /**
      * Model实例
      */
-    lateinit var mRepo: M
-
-//    val mModel by lazy {
-//        initModel()
-//    }
-
-    init {
+    val mRepo: M by lazy {
         initModelByReflect()
+    }
+
+    private fun initModelByReflect(): M {
+        val type = javaClass.genericSuperclass as ParameterizedType
+        val modelClass = type.actualTypeArguments[0] as Class<M>
+        return modelClass.newInstance()
     }
 
     fun launchOnUI(block: suspend CoroutineScope.() -> Unit) {
@@ -51,8 +49,8 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
             try {
                 block()
             } catch (e: Exception) {
-                Log.e(TAG, e.message!!)
-                mUiErrorData.postValue(e.message)
+                Log.e(TAG, "launchOnUI error:${e.message}")
+                mCoroutineErrorData.postValue(e.message)
                 cancel("launchOnUI exception occurred, msg:${e.message}")
             }
         }
@@ -60,7 +58,13 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
 
     protected fun launchOnIO(block: suspend CoroutineScope.() -> Unit): Job {
         return viewModelScope.launch(Dispatchers.IO) {
-            block()
+            try {
+                block()
+            } catch (e: Exception) {
+                Log.e(TAG, "launchOnIO error:${e.message}")
+                mCoroutineErrorData.postValue(e.message)
+                cancel("launchOnIO exception occurred, msg:${e.message}")
+            }
         }
     }
 
@@ -78,6 +82,9 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
         withContext(Dispatchers.Main, block)
     }
 
+    /**
+     * 批量异步执行IO任务
+     */
     protected fun asyncIO(vararg blocks: suspend CoroutineScope.() -> Unit) {
         launchOnIO {
             async {
@@ -86,12 +93,6 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
                 }
             }
         }
-    }
-
-    private fun initModelByReflect() {
-        val type = javaClass.genericSuperclass as ParameterizedType
-        val modelClass = type.actualTypeArguments[0] as Class<M>
-        mRepo = modelClass.newInstance()
     }
 
     protected fun <T> createSingleLiveEvent(): SingleLiveData<T> {
@@ -114,7 +115,7 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
      * 创建一个简单的事件并发送数据
      * @param requestBlock 请求函数体，最后一行表示返回数据，直接通过LiveData发送
      */
-    protected fun <T> createStateLiveEvent(requestBlock: suspend CoroutineScope.(StateLiveData<T>) -> BaseResponse<T>): StateLiveData<T> {
+    open fun <T> createStateLiveEvent(requestBlock: suspend CoroutineScope.(StateLiveData<T>) -> BaseResponse<T>): StateLiveData<T> {
         val stateLiveData = createStateLiveData<T>()
         launchOnIO {
             stateLiveData.postValue(requestBlock(stateLiveData))
@@ -129,11 +130,11 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
         return StateLiveData()
     }
 
-    protected fun <T> requestOnFlow(
+    protected fun <T> requestWithFlow(
         flow: Flow<BaseResponse<T>>,
-        stateObserver: BaseStateObserver<T>? = null
+        listenerBuilder: StateListener<T>.() -> Unit
     ): StateLiveData<T> {
-        return requestOnFlow(true, flow, stateObserver)
+        return requestWithFlow(true, flow, listenerBuilder)
     }
 
     /**
@@ -142,57 +143,99 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
      *
      * @param  fetchData 是否需要获取数据，默认为true，若无需获取数据请传入false
      * @param  flow Flow 冷的异步数据流，必须要observe才会发送
-     * @param  stateObserver 可空。通用数据变化的观察者，可对每个步骤进行统一处理，交由viewModel处理
+     * @param  listenerBuilder 可空。通用数据变化的观察者，可对每个步骤进行统一处理，交由viewModel处理
      *
      * @return [StateLiveData] 含有数据状态的LiveData，封装了[BaseResponse]
      */
-    protected fun <T> requestOnFlow(
+    private fun <T> requestWithFlow(
         fetchData: Boolean = true,
         flow: Flow<BaseResponse<T>>,
-        stateObserver: BaseStateObserver<T>? = null
+        listenerBuilder: StateListener<T>.() -> Unit
     ): StateLiveData<T> {
         val stateLiveData = createStateLiveData<T>()
+        val listener = StateListener<T>().also(listenerBuilder)
         launchOnUI {
             var response = BaseResponse<T>()
             flow.onStart {
                 // 请求开始，修改状态为Loading
                 response.dataState = DataState.STATE_LOADING
                 stateLiveData.postValue(response)
-                stateObserver?.onStart(response)
+                listener.startAction?.invoke()
             }
                 .catch { e ->
                     // 请求失败，修改状态为Error
-                    response.dataState = DataState.STATE_ERROR
-                    response.errorReason = e.message
-                    stateLiveData.postValue(response)
-                    stateObserver?.onCatch(response, e)
+                    e.errorHandle(e, customErrorHandle = { errorReason ->
+                        val errorMsg = errorReason.handleException(errorReason)
+                        Log.e("onCatch", "errorMsg=$errorMsg")
+                        response.dataState = DataState.STATE_ERROR
+                        response.errorReason = errorMsg
+                        stateLiveData.postValue(response)
+                        listener.errorAction?.invoke(errorMsg)
+                    })
+
                 }
                 .onCompletion {
-                    // 请求结束
-//                    response.dataState = DataState.STATE_COMPLETED
-//                    stateLiveData.postValue(response)
-                    stateObserver?.onCompletion()
+                    // 请求结束，修改状态为Completed
+                    response.dataState = DataState.STATE_COMPLETED
+                    stateLiveData.postValue(response)
+                    listener.completeAction?.invoke()
                 }
+                .flowOn(Dispatchers.Main)
                 .collect {
                     response = it
                     if (!response.isSuccessful) {
-                        LogUtils.e(TAG, "request successfully but response error from server,baseResponse class=${response.toString()}")
+                        // 服务器返回失败，修改状态为Error
+                        LogUtils.e(TAG, "request successfully but response error from server,baseResponse class=$response")
                         response.dataState = DataState.STATE_FAILED
                         response.errorReason = response.msg
-                    } else if (fetchData && (response.data == null
-                                || (response.data is List<*> && (response.data as List<*>).size == 0))
+                        listener.errorAction?.invoke(if (TextUtils.isEmpty(response.errorReason)) "请求失败" else response.errorReason!! )
+                    } else if (response.data == null
+                        || (response.data is List<*> && (response.data as List<*>).isEmpty())
                     ) {
                         // 数据为空，修改状态为Empty
-                        response.dataState = DataState.STATE_EMPTY
+                        if (fetchData) {
+                            response.dataState = DataState.STATE_EMPTY
+                            listener.emptyAction?.invoke()
+                        }
                     } else {
+                        // 请求成功切数据正确，修改状态为Success
                         response.dataState = DataState.STATE_SUCCESS
+                        listener.successAction?.invoke(response.data!!)
                     }
+                    stateLiveData.value = response
                     stateLiveData.postValue(response)
-                    stateObserver?.onSuccess(response)
                 }
         }
         return stateLiveData
+    }
 
+    class StateListener<T> {
+
+        internal var startAction: (() -> Unit)? = null
+        internal var successAction: ((T) -> Unit)? = null
+        internal var errorAction: ((String) -> Unit)? = null
+        internal var emptyAction: (() -> Unit)? = null
+        internal var completeAction: (() -> Unit)? = null
+
+        fun onStart(action: (() -> Unit)?) {
+            startAction = action
+        }
+
+        fun onSuccess(action: ((T) -> Unit)?) {
+            successAction = action
+        }
+
+        fun onError(action: ((String) -> Unit)?) {
+            errorAction = action
+        }
+
+        fun onEmpty(action: (() -> Unit)?) {
+            emptyAction = action
+        }
+
+        fun onCompletion(action: (() -> Unit)?) {
+            completeAction = action
+        }
     }
 
 }

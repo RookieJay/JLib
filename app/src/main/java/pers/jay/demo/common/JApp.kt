@@ -1,7 +1,8 @@
-package pers.jay.demo
+package pers.jay.demo.common
 
 import android.content.Context
 import com.kingja.loadsir.core.LoadSir
+import pers.jay.demo.BuildConfig
 import pers.jay.demo.loadsir.EmptyCallback
 import pers.jay.demo.loadsir.ErrorCallback
 import pers.jay.demo.loadsir.LoadingCallback

@@ -19,7 +19,7 @@ import pers.jay.library.network.BaseResponse
  * 主要结合LoadSir，根据BaseResp里面的State分别加载不同的UI，如Loading，Error
  * 注意：需要重写相应[Callback]实现自定义状态视图。
  */
-abstract class BaseStateLiveDataObserver<T>(view: View?) : Observer<BaseResponse<T>>,
+abstract class BaseStateLiveDataObserver<T>(statusView: View?) : Observer<BaseResponse<T>>,
     Callback.OnReloadListener {
 
     protected var mLoadService: LoadService<Any>? = null
@@ -30,8 +30,8 @@ abstract class BaseStateLiveDataObserver<T>(view: View?) : Observer<BaseResponse
 
     init {
         // 实例化view传空时，代表不走状态视图加载逻辑
-        if (view != null) {
-            mLoadService = LoadSir.getDefault().register(view, this,
+        statusView?.apply {
+            mLoadService = LoadSir.getDefault().register(this, this@BaseStateLiveDataObserver,
                 Convertor<BaseResponse<T>> { response ->
                     val callbackClazz: Class<out Callback>? = when (response?.dataState) {
                         //数据刚开始请求，loading
@@ -78,7 +78,7 @@ abstract class BaseStateLiveDataObserver<T>(view: View?) : Observer<BaseResponse
     override fun onChanged(response: BaseResponse<T>?) {
         response?.apply {
             val dataState = response.dataState
-            Log.d(TAG, "onChanged: $dataState")
+            Log.d(TAG, "onChanged dataState: $dataState")
             when (dataState) {
                 DataState.STATE_SUCCESS -> {
                     //请求成功，数据不为null
@@ -96,14 +96,17 @@ abstract class BaseStateLiveDataObserver<T>(view: View?) : Observer<BaseResponse
                     }
                     onError(reason!!)
                 }
+                DataState.STATE_COMPLETED -> {
+                    // 请求结束（无论成功/失败/异常）
+                    onCompletion()
+                }
                 else -> {
 
                 }
             }
+            // 加载不同状态界面，最终转化为实际ui操作
+            mLoadService?.showWithConvertor(response)
         }
-//        Log.d(TAG, "onChanged: mLoadService $mLoadService")
-        //加载不同状态界面
-        mLoadService?.showWithConvertor(response)
     }
 
     /**
@@ -124,6 +127,13 @@ abstract class BaseStateLiveDataObserver<T>(view: View?) : Observer<BaseResponse
      * 请求错误
      */
     open fun onError(msg: String) {
+
+    }
+
+    /**
+     * 请求完成
+     */
+    open fun onCompletion() {
 
     }
 

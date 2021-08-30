@@ -10,10 +10,10 @@ import pers.jay.library.network.coroutine.handleException
  * @Time 2021/5/27 16:42
  * @Description 通用状态变化的观察者，用于对Flow每个步骤进行统一处理，若想单独处理则继承此类重写对应方法
  */
-abstract class BaseStateObserver<T> {
+abstract class BaseFlowStateObserver<T> {
 
     companion object {
-        protected val TAG: String = BaseStateObserver::class.java.simpleName
+        protected val TAG: String = BaseFlowStateObserver::class.java.simpleName
     }
 
     /**

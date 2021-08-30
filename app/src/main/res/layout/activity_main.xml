@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+
     <TextView
         android:id="@+id/text"
         android:layout_width="wrap_content"
@@ -18,7 +19,7 @@
 
     <Button
         android:id="@+id/btRequest"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="请求示例"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,20 +27,20 @@
 
     <Button
         android:id="@+id/btInfo"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="DataBinding示例"
-        app:layout_constraintTop_toBottomOf="@+id/btRequest"
         android:textAllCaps="false"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/btRequest"
+        app:layout_constraintTop_toTopOf="@+id/btRequest" />
 
     <Button
         android:id="@+id/btCompose"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="compose示例"
-        app:layout_constraintTop_toBottomOf="@+id/btInfo"
         android:textAllCaps="false"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/btInfo"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

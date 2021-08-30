@@ -35,6 +35,7 @@ abstract class BaseVBActivity<VB : ViewBinding> : BaseActivity(), IViewBinding<V
         } else {
             initRootViewCommon()
         }
+        initLoadSir()
         initView(savedInstanceState)
         initData(savedInstanceState)
     }

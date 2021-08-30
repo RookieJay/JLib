@@ -1,10 +1,10 @@
 package pers.jay.demo
 
 import android.os.Bundle
-import android.view.View
-import com.blankj.utilcode.util.LogUtils
 import pers.jay.demo.databinding.ActivityMainBinding
 import pers.jay.demo.databinding.InfoActivity
+import pers.jay.demo.viewbinding.DemoActivity
+import pers.jay.demo.vm.DemoViewModel
 import pers.jay.library.base.ext.startActivity
 import pers.jay.library.base.viewbinding.BaseVBVMActivity
 
@@ -13,42 +13,21 @@ class MainActivity : BaseVBVMActivity<ActivityMainBinding, DemoViewModel>() {
     override fun initView(savedInstanceState: Bundle?) {
         mBinding.apply {
             btRequest.setOnClickListener {
-                requestDemo()
+                startActivity<DemoActivity> {
+                    putExtra("test", "test")
+                }
             }
             btInfo.setOnClickListener {
-                startActivity<InfoActivity>()
+                startActivity<InfoActivity> {
+
+                }
             }
             btCompose.setOnClickListener {
-
+                showMessage("暂未开放")
             }
         }
     }
 
-    private fun requestDemo() {
-        mViewModel.test().observe(this, object : TestStateObserver<List<Tab>>(mBinding.text) {
-            override fun onSuccess(data: List<Tab>) {
-                super.onSuccess(data)
-                LogUtils.d(TAG, data.toString())
-                mBinding.text.text =
-                    String.format("数据请求成功，tab数量【%s】,第一个是【%s】", data?.size, data?.get(0)?.name)
-            }
-
-            override fun onDataEmpty() {
-                super.onDataEmpty()
-                LogUtils.d(TAG, "onDataEmpty")
-            }
-
-            override fun onError(msg: String) {
-                super.onError(msg)
-                LogUtils.d(TAG, "onError, msg:$msg")
-            }
-
-            override fun onReload(v: View?) {
-                super.onReload(v)
-                LogUtils.d(TAG, "onReload")
-            }
-        })
-    }
 
     override fun initData(savedInstanceState: Bundle?) {
 
