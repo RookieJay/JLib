@@ -159,29 +159,33 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
             flow.onStart {
                 // 请求开始，修改状态为Loading
                 response.dataState = DataState.STATE_LOADING
-                stateLiveData.postValue(response)
+                stateLiveData.value = response
                 listener.startAction?.invoke()
             }
+                // catch 函数只是中间操作符,只能捕获它的上游的异常,不能捕获下游的异常，类似 collect 内的异常
+                // onCompletion在catch操作符后，则 catch 操作符捕获到异常后，不会影响到下游
                 .catch { e ->
+                    LogUtils.e(TAG, "catch, $e")
                     // 请求失败，修改状态为Error
                     e.errorHandle(e, customErrorHandle = { errorReason ->
                         val errorMsg = errorReason.handleException(errorReason)
                         Log.e("onCatch", "errorMsg=$errorMsg")
                         response.dataState = DataState.STATE_ERROR
                         response.errorReason = errorMsg
-                        stateLiveData.postValue(response)
+                        stateLiveData.value = response
                         listener.errorAction?.invoke(errorMsg)
                     })
-
                 }
-                .onCompletion {
+                .onCompletion { cause ->
+                    LogUtils.d(TAG, "onCompletion，$cause")
                     // 请求结束，修改状态为Completed
                     response.dataState = DataState.STATE_COMPLETED
-                    stateLiveData.postValue(response)
+                    stateLiveData.value = response
                     listener.completeAction?.invoke()
                 }
                 .flowOn(Dispatchers.Main)
                 .collect {
+                    LogUtils.d(TAG, "collect")
                     response = it
                     if (!response.isSuccessful) {
                         // 服务器返回失败，修改状态为Error
@@ -203,7 +207,6 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
                         listener.successAction?.invoke(response.data!!)
                     }
                     stateLiveData.value = response
-                    stateLiveData.postValue(response)
                 }
         }
         return stateLiveData
