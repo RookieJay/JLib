@@ -1,11 +1,12 @@
 package pers.jay.library.utils
 
 import android.os.Handler
+import android.os.Looper
 import com.blankj.utilcode.util.LogUtils
 
 class CountDownUtils(val total : Int) {
 
-    private var mHandler: Handler = Handler()
+    private var mHandler: Handler = Handler(Looper.getMainLooper())
     // 总时长，单位：秒
     private var mTotal = total
 

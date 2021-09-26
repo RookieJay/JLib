@@ -179,8 +179,8 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
                 .onCompletion { cause ->
                     LogUtils.d(TAG, "onCompletion，$cause")
                     // 请求结束，修改状态为Completed
-                    response.dataState = DataState.STATE_COMPLETED
-                    stateLiveData.value = response
+//                    response.dataState = DataState.STATE_COMPLETED
+//                    stateLiveData.value = response
                     listener.completeAction?.invoke()
                 }
                 .flowOn(Dispatchers.Main)

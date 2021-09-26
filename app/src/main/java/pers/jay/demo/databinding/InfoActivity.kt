@@ -1,9 +1,10 @@
 package pers.jay.demo.databinding
 
 import android.os.Bundle
+import android.view.View
 import com.blankj.utilcode.util.LogUtils
 import pers.jay.demo.R
-import pers.jay.demo.loadsir.ErrorCallback
+import pers.jay.demo.common.Const
 import pers.jay.library.base.databinding.BaseDBVMActivity
 
 /**
@@ -11,7 +12,7 @@ import pers.jay.library.base.databinding.BaseDBVMActivity
  */
 class InfoActivity : BaseDBVMActivity<ActivityInfoBinding, InfoViewModel>() {
 
-    override var enableLoadSir = true
+    override var enableLoadSir = false
 
     override fun initLayout(savedInstanceState: Bundle?): Int {
         return R.layout.activity_info
@@ -22,7 +23,11 @@ class InfoActivity : BaseDBVMActivity<ActivityInfoBinding, InfoViewModel>() {
     }
 
     override fun initData(savedInstanceState: Bundle?) {
-        mViewModel.loadData().observeState(this) {
+        loadData(mBinding.tvTabName)
+    }
+
+    private fun loadData(view: View) {
+        mViewModel.loadData().observeState(view, Const.DEFAULT_LOADSIR_CALLBACK, this) {
             onStart {
 
             }
@@ -34,8 +39,8 @@ class InfoActivity : BaseDBVMActivity<ActivityInfoBinding, InfoViewModel>() {
                 LogUtils.e(TAG, "error $it")
                 showError(it)
             }
-            onCompletion {
-                hideLoading()
+            onReload {
+                loadData(view)
             }
         }
     }
@@ -47,7 +52,7 @@ class InfoActivity : BaseDBVMActivity<ActivityInfoBinding, InfoViewModel>() {
 
     override fun showError(message: String?) {
         super.showError(message)
-        mLoadService?.showCallback(ErrorCallback::class.java)
+//        mLoadService?.showCallback(RetryCallback::class.java)
     }
 
     override fun hideLoading() {

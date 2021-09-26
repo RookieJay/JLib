@@ -7,22 +7,19 @@ import com.blankj.utilcode.util.LogUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import pers.jay.demo.common.Const
 import pers.jay.demo.databinding.ActivityDemoBinding
-import pers.jay.demo.loadsir.EmptyCallback
-import pers.jay.demo.loadsir.ErrorCallback
-import pers.jay.demo.loadsir.LoadingCallback
 import pers.jay.demo.vm.DemoViewModel
 import pers.jay.library.base.viewbinding.BaseVBVMActivity
-import pers.jay.library.loadsir.ViewStatusCallback
 
 class DemoActivity : BaseVBVMActivity<ActivityDemoBinding, DemoViewModel>() {
 
     override var enableLoadSir = false
 
-    val callback = ViewStatusCallback(LoadingCallback::class.java, EmptyCallback::class.java, ErrorCallback::class.java)
-
     override fun initView(savedInstanceState: Bundle?) {
-
+        mBinding.text1.setOnClickListener {
+            requestDemo(mBinding.text1)
+        }
     }
 
     override fun initData(savedInstanceState: Bundle?) {
@@ -37,16 +34,16 @@ class DemoActivity : BaseVBVMActivity<ActivityDemoBinding, DemoViewModel>() {
 
 
     private fun requestDemo(textView: TextView) {
-        mViewModel.test().observeState(textView, callback, this) {
+        mViewModel.test().observeState(textView, Const.DEFAULT_LOADSIR_CALLBACK, this) {
             onStart {
-                mLoadService?.showCallback(LoadingCallback::class.java)
+//                mLoadService?.showCallback(LoadingCallback::class.java)
             }
             onSuccess { tabs ->
                 LogUtils.d(TAG, tabs.toString())
                 textView.apply{
                     text = tabs.toString()
                 }
-                mLoadService?.showSuccess()
+//                mLoadService?.showSuccess()
             }
             onEmpty {
                 LogUtils.d(TAG, "onEmpty")
@@ -59,6 +56,7 @@ class DemoActivity : BaseVBVMActivity<ActivityDemoBinding, DemoViewModel>() {
             }
             onReload {
                 LogUtils.d(TAG, "onReload")
+                requestDemo(textView)
             }
         }
     }

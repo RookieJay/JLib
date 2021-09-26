@@ -59,7 +59,7 @@ abstract class BaseNetObserver<T> : ResourceObserver<T>() {
                 handleException(NetErrorReason.CONNECT_TIMEOUT)
             }
             is HttpException -> {
-                handleException(NetErrorReason.BAD_NETWORK)
+                handleException(NetErrorReason.CONNECT_ERROR)
             }
             is JsonParseException, is JSONException, is ParseException -> {
                 handleException(NetErrorReason.PARSE_ERROR)
