@@ -26,5 +26,5 @@ object ErrorMessageParser {
         }
     }
 
-    private fun getStringRes(@StringRes resId: Int) = BaseApplication.instance().getString(resId)
+    private fun getStringRes(@StringRes resId: Int) = BaseApplication.instance.getString(resId)
 }

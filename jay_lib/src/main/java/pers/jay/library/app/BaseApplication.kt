@@ -22,8 +22,7 @@ import pers.jay.library.network.IAppInfo
 abstract class BaseApplication: Application(), IAppInfo, Application.ActivityLifecycleCallbacks {
 
     companion object {
-        private lateinit var instance : BaseApplication
-        fun instance() = instance
+        lateinit var instance : BaseApplication
     }
 
     override fun attachBaseContext(base: Context?) {

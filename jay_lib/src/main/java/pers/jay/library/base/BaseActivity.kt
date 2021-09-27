@@ -38,7 +38,7 @@ abstract class BaseActivity : AppCompatActivity(), IActivity {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // 生命周期日志记录
-        if (BaseApplication.instance().isDebug()) {
+        if (BaseApplication.instance.isDebug()) {
             lifecycle.addObserver(LifecycleLogObserver(TAG))
         }
         mContext = this

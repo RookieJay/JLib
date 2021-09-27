@@ -32,7 +32,7 @@ abstract class BaseFragment : Fragment(), IFragment {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
-        if (BaseApplication.instance().isDebug()) {
+        if (BaseApplication.instance.isDebug()) {
             lifecycle.addObserver(LifecycleLogObserver(TAG))
         }
         // 这里监听生命周期,执行懒加载。

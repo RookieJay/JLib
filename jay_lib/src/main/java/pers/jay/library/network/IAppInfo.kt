@@ -12,5 +12,5 @@ interface IAppInfo {
 
     fun getAppContext(): Context
 
-    fun isDebug(): Boolean
+    fun isDebug(): Boolean = false
 }
