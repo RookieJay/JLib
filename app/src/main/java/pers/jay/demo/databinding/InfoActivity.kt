@@ -1,18 +1,22 @@
 package pers.jay.demo.databinding
 
 import android.os.Bundle
-import android.view.View
 import com.blankj.utilcode.util.LogUtils
 import pers.jay.demo.R
 import pers.jay.demo.common.Const
 import pers.jay.library.base.databinding.BaseDBVMActivity
+import pers.jay.library.loadsir.StatusCallback
 
 /**
  * databinding示例
  */
 class InfoActivity : BaseDBVMActivity<ActivityInfoBinding, InfoViewModel>() {
 
-    override var enableLoadSir = false
+    override var enableActivityLoadSir = true
+
+    override var mActivityStatusCallback: StatusCallback?
+        get() = Const.DEFAULT_ACTIVITY_STATUS_CALLBACK
+        set(value) {}
 
     override fun initLayout(savedInstanceState: Bundle?): Int {
         return R.layout.activity_info
@@ -23,24 +27,20 @@ class InfoActivity : BaseDBVMActivity<ActivityInfoBinding, InfoViewModel>() {
     }
 
     override fun initData(savedInstanceState: Bundle?) {
-        loadData(mBinding.tvTabName)
+        loadData()
     }
 
-    private fun loadData(view: View) {
-        mViewModel.loadData().observeState(view, Const.DEFAULT_LOADSIR_CALLBACK, this) {
+    private fun loadData() {
+        // 对activity进行视图回调处理,enableActivityLoadSir要覆写
+        mViewModel.loadData().observeOnActivity {
             onStart {
-
+                LogUtils.e(TAG, "onStart")
             }
             onSuccess { data ->
-                mLoadService?.showSuccess()
                 mBinding.tab = data[0]
             }
             onError {
                 LogUtils.e(TAG, "error $it")
-                showError(it)
-            }
-            onReload {
-                loadData(view)
             }
         }
     }

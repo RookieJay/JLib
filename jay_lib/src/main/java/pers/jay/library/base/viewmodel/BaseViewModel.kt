@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.LogUtils
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import pers.jay.library.base.StateListener
 import pers.jay.library.base.livedata.SingleLiveData
 import pers.jay.library.base.livedata.StateLiveData
 import pers.jay.library.base.repository.BaseRepository
@@ -184,8 +185,7 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
                     listener.completeAction?.invoke()
                 }
                 .flowOn(Dispatchers.Main)
-                .collect {
-                    LogUtils.d(TAG, "collect")
+                .collectLatest {
                     response = it
                     if (!response.isSuccessful) {
                         // 服务器返回失败，修改状态为Error
@@ -212,33 +212,33 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
         return stateLiveData
     }
 
-    class StateListener<T> {
-
-        internal var startAction: (() -> Unit)? = null
-        internal var successAction: ((T) -> Unit)? = null
-        internal var errorAction: ((String) -> Unit)? = null
-        internal var emptyAction: (() -> Unit)? = null
-        internal var completeAction: (() -> Unit)? = null
-
-        fun onStart(action: (() -> Unit)?) {
-            startAction = action
-        }
-
-        fun onSuccess(action: ((T) -> Unit)?) {
-            successAction = action
-        }
-
-        fun onError(action: ((String) -> Unit)?) {
-            errorAction = action
-        }
-
-        fun onEmpty(action: (() -> Unit)?) {
-            emptyAction = action
-        }
-
-        fun onCompletion(action: (() -> Unit)?) {
-            completeAction = action
-        }
-    }
+//    class StateListener<T> {
+//
+//        internal var startAction: (() -> Unit)? = null
+//        internal var successAction: ((T) -> Unit)? = null
+//        internal var errorAction: ((String) -> Unit)? = null
+//        internal var emptyAction: (() -> Unit)? = null
+//        internal var completeAction: (() -> Unit)? = null
+//
+//        fun onStart(action: (() -> Unit)?) {
+//            startAction = action
+//        }
+//
+//        fun onSuccess(action: ((T) -> Unit)?) {
+//            successAction = action
+//        }
+//
+//        fun onError(action: ((String) -> Unit)?) {
+//            errorAction = action
+//        }
+//
+//        fun onEmpty(action: (() -> Unit)?) {
+//            emptyAction = action
+//        }
+//
+//        fun onCompletion(action: (() -> Unit)?) {
+//            completeAction = action
+//        }
+//    }
 
 }

@@ -16,4 +16,5 @@ class DemoViewModel : BaseViewModel<DemoRepo>() {
             onCompletion {  }
         }
     }
+
 }

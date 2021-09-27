@@ -21,6 +21,11 @@ interface IView {
     fun hideLoading() {}
 
     /**
+     * 显示成功
+     */
+    fun showSuccess() {}
+
+    /**
      * 显示空视图
      */
     fun showEmpty() {}

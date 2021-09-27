@@ -9,12 +9,16 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pers.jay.demo.common.Const
 import pers.jay.demo.databinding.ActivityDemoBinding
+import pers.jay.demo.loadsir.RetryCallback
 import pers.jay.demo.vm.DemoViewModel
 import pers.jay.library.base.viewbinding.BaseVBVMActivity
+import pers.jay.library.loadsir.StatusCallback
 
 class DemoActivity : BaseVBVMActivity<ActivityDemoBinding, DemoViewModel>() {
 
-    override var enableLoadSir = false
+    override var enableActivityLoadSir = false
+
+    override var mActivityStatusCallback: StatusCallback? = Const.DEFAULT_ACTIVITY_STATUS_CALLBACK
 
     override fun initView(savedInstanceState: Bundle?) {
         mBinding.text1.setOnClickListener {
@@ -26,7 +30,7 @@ class DemoActivity : BaseVBVMActivity<ActivityDemoBinding, DemoViewModel>() {
         requestDemo(mBinding.text1)
 //        requestDemo(mBinding.text2)
         lifecycleScope.launch(Dispatchers.Main) {
-            delay(2000)
+            delay(1000)
             requestDemo(mBinding.text3)
         }
 
@@ -34,16 +38,17 @@ class DemoActivity : BaseVBVMActivity<ActivityDemoBinding, DemoViewModel>() {
 
 
     private fun requestDemo(textView: TextView) {
-        mViewModel.test().observeState(textView, Const.DEFAULT_LOADSIR_CALLBACK, this) {
+
+        // 单独对view视图处理，activity不应开启loadsir注册
+        mViewModel.test().observeState(textView, Const.DEFAULT_VIEW_STATUS_CALLBACK, this) {
             onStart {
-//                mLoadService?.showCallback(LoadingCallback::class.java)
+                LogUtils.d(TAG, "onStart")
             }
             onSuccess { tabs ->
                 LogUtils.d(TAG, tabs.toString())
-                textView.apply{
+                textView.apply {
                     text = tabs.toString()
                 }
-//                mLoadService?.showSuccess()
             }
             onEmpty {
                 LogUtils.d(TAG, "onEmpty")
@@ -54,11 +59,11 @@ class DemoActivity : BaseVBVMActivity<ActivityDemoBinding, DemoViewModel>() {
             onCompletion {
                 LogUtils.d(TAG, "onCompletion ${textView.id}")
             }
-            onReload {
-                LogUtils.d(TAG, "onReload")
-                requestDemo(textView)
-            }
         }
+    }
+
+    override fun showError(message: String?) {
+        mLoadService?.showCallback(RetryCallback::class.java)
     }
 
 }

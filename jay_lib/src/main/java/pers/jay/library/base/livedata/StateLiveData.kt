@@ -3,7 +3,7 @@ package pers.jay.library.base.livedata
 import android.view.View
 import androidx.lifecycle.LifecycleOwner
 import com.kingja.loadsir.callback.Callback
-import pers.jay.library.loadsir.ViewStatusCallback
+import pers.jay.library.loadsir.StatusCallback
 import pers.jay.library.network.BaseResponse
 
 /**
@@ -20,7 +20,7 @@ open class StateLiveData<T> : SingleLiveData<BaseResponse<T>>() {
 
     fun observeState(
         statusView: View? = null,
-        viewStatusCallback: ViewStatusCallback ?= null,
+        statusCallback: StatusCallback ?= null,
         owner: LifecycleOwner,
         listenerBuilder: StateListener.() -> Unit
     ) {
@@ -29,28 +29,28 @@ open class StateLiveData<T> : SingleLiveData<BaseResponse<T>>() {
 
             override fun getEmptyCallback(): Class<out Callback>? {
                 return statusView?.let {
-                    if (viewStatusCallback == null) {
+                    if (statusCallback == null) {
                         throw IllegalArgumentException("emptyCallback can not be null when setting statusView")
                     }
-                    viewStatusCallback.emptyCallback
+                    statusCallback.emptyCallback
                 }
             }
 
             override fun getErrorCallback(): Class<out Callback>? {
                 return statusView?.let {
-                    if (viewStatusCallback == null) {
+                    if (statusCallback == null) {
                         throw IllegalArgumentException("errorCallback can not be null when setting statusView")
                     }
-                    viewStatusCallback.errorCallback
+                    statusCallback.errorCallback
                 }
             }
 
             override fun getLoadingCallback(): Class<out Callback>? {
                 return statusView?.let {
-                    if (viewStatusCallback == null) {
+                    if (statusCallback == null) {
                         throw IllegalArgumentException("loadingCallback can not be null when setting statusView")
                     }
-                    viewStatusCallback.loadingCallback
+                    statusCallback.loadingCallback
                 }
             }
 
