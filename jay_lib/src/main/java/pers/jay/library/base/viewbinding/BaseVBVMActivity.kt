@@ -1,7 +1,6 @@
 package pers.jay.library.base.viewbinding
 
 import android.os.Bundle
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
 import pers.jay.library.base.repository.BaseRepository
@@ -25,18 +24,6 @@ abstract class BaseVBVMActivity<VB : ViewBinding, VM : BaseViewModel<out BaseRep
     override fun beforeInit(savedInstanceState: Bundle?) {
         super.beforeInit(savedInstanceState)
         initViewModelByReflect()
-        handleError()
-    }
-
-    /**
-     * 异常处理
-     */
-    private fun handleError() {
-        mViewModel.apply {
-            mCoroutineErrorData.observe(this@BaseVBVMActivity, Observer {
-                showError(it)
-            })
-        }
     }
 
     /**

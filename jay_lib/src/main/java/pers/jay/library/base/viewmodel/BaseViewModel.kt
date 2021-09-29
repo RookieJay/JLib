@@ -28,11 +28,6 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
     protected val TAG = javaClass::class.simpleName
 
     /**
-     * 协程异常处理
-     */
-    val mCoroutineErrorData: SingleLiveData<String> = SingleLiveData()
-
-    /**
      * Model实例
      */
     val mRepo: M by lazy {
@@ -51,7 +46,6 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
                 block()
             } catch (e: Exception) {
                 Log.e(TAG, "launchOnUI error:${e.message}")
-                mCoroutineErrorData.postValue(e.message)
                 cancel("launchOnUI exception occurred, msg:${e.message}")
             }
         }
@@ -63,7 +57,6 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
                 block()
             } catch (e: Exception) {
                 Log.e(TAG, "launchOnIO error:${e.message}")
-                mCoroutineErrorData.postValue(e.message)
                 cancel("launchOnIO exception occurred, msg:${e.message}")
             }
         }
@@ -211,34 +204,5 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
         }
         return stateLiveData
     }
-
-//    class StateListener<T> {
-//
-//        internal var startAction: (() -> Unit)? = null
-//        internal var successAction: ((T) -> Unit)? = null
-//        internal var errorAction: ((String) -> Unit)? = null
-//        internal var emptyAction: (() -> Unit)? = null
-//        internal var completeAction: (() -> Unit)? = null
-//
-//        fun onStart(action: (() -> Unit)?) {
-//            startAction = action
-//        }
-//
-//        fun onSuccess(action: ((T) -> Unit)?) {
-//            successAction = action
-//        }
-//
-//        fun onError(action: ((String) -> Unit)?) {
-//            errorAction = action
-//        }
-//
-//        fun onEmpty(action: (() -> Unit)?) {
-//            emptyAction = action
-//        }
-//
-//        fun onCompletion(action: (() -> Unit)?) {
-//            completeAction = action
-//        }
-//    }
 
 }
