@@ -43,4 +43,13 @@
         app:layout_constraintStart_toEndOf="@+id/btInfo"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <Button
+        android:id="@+id/btPaging"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Paging示例"
+        android:textAllCaps="false"
+        app:layout_constraintStart_toEndOf="@+id/btCompose"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -17,7 +17,7 @@ abstract class BaseRepository {
      * @param  requestBlock 请求方法体，返回值为T
      * @return [Flow]
      */
-    fun <T> createFlowRequest(requestBlock: suspend () -> T): Flow<T> {
+    open fun <T> createFlowRequest(requestBlock: suspend () -> T): Flow<T> {
         return flow<T> {
             val response = requestBlock.invoke()
             emit(response)

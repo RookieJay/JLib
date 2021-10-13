@@ -3,6 +3,7 @@ package pers.jay.demo
 import android.os.Bundle
 import pers.jay.demo.databinding.ActivityMainBinding
 import pers.jay.demo.databinding.InfoActivity
+import pers.jay.demo.paging.PagingActivity
 import pers.jay.demo.viewbinding.DemoActivity
 import pers.jay.demo.vm.DemoViewModel
 import pers.jay.library.base.ext.startActivity
@@ -24,6 +25,11 @@ class MainActivity : BaseVBVMActivity<ActivityMainBinding, DemoViewModel>() {
             }
             btCompose.setOnClickListener {
                 showMessage("暂未开放")
+            }
+            btPaging.setOnClickListener {
+                startActivity<PagingActivity> {
+
+                }
             }
         }
     }

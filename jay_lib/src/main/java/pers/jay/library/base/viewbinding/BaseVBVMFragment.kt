@@ -1,10 +1,8 @@
 package pers.jay.library.base.viewbinding
 
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
-import com.blankj.utilcode.util.LogUtils
 import pers.jay.library.base.repository.BaseRepository
 import pers.jay.library.base.viewmodel.BaseViewModel
 import java.lang.reflect.ParameterizedType
@@ -43,18 +41,6 @@ abstract class BaseVBVMFragment<VB : ViewBinding, VM : BaseViewModel<out BaseRep
     }
 
     /**
-     * 异常处理
-     */
-    private fun handleError() {
-        mViewModel.apply {
-            mCoroutineErrorData.observe(this@BaseVBVMFragment, Observer {
-                LogUtils.e("handleError:$it")
-                hideLoading()
-            })
-        }
-    }
-
-    /**
      * 当使用常规模式时，重写initViewModel()方法，且useReflect()返回false
      * 否则默认使用反射获取ViewModel
      */
@@ -65,7 +51,6 @@ abstract class BaseVBVMFragment<VB : ViewBinding, VM : BaseViewModel<out BaseRep
             } else {
                 initViewModel()
             }
-        handleError()
     }
 
     open fun useVMReflect(): Boolean {

@@ -45,9 +45,10 @@ ext {
             doraemonkitVersion          : "2.0.0",
             navigationVersion           : "2.3.0",
             lifecycleVersion            : "2.3.1",
-            pagingVersion               : "3.0.0-alpha02",
+            pagingVersion               : "3.0.1",
             moshiVersion                : "1.12.0",
-            composeVersion              : "1.0.0-rc02"
+            composeVersion              : "1.0.0-rc02",
+            roomVerion                  : "2.3.0"
     ]
 
     network = [
@@ -178,12 +179,13 @@ ext {
             "greenDao"                  : "org.greenrobot:greendao:${version["greenDaoVersion"]}",
 
             // room
-            "room-common"               : "androidx.room:room-common:latest.release",
-            "room-compiler"             : "androidx.room:room-compiler:latest.release",
-            "room-migration"            : "androidx.room:room-migration:latest.release",
-            "room-runtime"              : "androidx.room:room-runtime:latest.release",
-            "room-rxjava2"              : "androidx.room:room-rxjava2:latest.release",
-            "room-testing"              : "androidx.room:room-testing:latest.release",
+            "roomCommon"               : "androidx.room:room-common:${version["roomVerion"]}",
+            "roomCompiler"             : "androidx.room:room-compiler:${version["roomVerion"]}",
+            "roomMigration"            : "androidx.room:room-migration:${version["roomVerion"]}",
+            "roomRuntime"              : "androidx.room:room-runtime:${version["roomVerion"]}",
+            "roomRxjava2"              : "androidx.room:room-rxjava2:${version["roomVerion"]}",
+            "roomTesting"              : "androidx.room:room-testing:${version["roomVerion"]}",
+            "roomPaging"               : "androidx.room:room-paging:2.4.0-alpha05",
 
             // cache
             "rxcache2"                  : "com.github.VictorAlbertos.RxCache:runtime:1.8.3-2.x",

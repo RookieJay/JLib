@@ -113,5 +113,7 @@ dependencies {
     api jetPack.lifeCycleKtx
     api jetPack.lifecycleViewmodel
     api jetPack.lifeCycleLiveData
+    api jetpack.pagingRuntime
+    api jetpack.pagingCommon
 
 }
