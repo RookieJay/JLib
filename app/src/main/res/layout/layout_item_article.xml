@@ -6,13 +6,13 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="10dp"
+    android:layout_marginTop="10dp"
     android:background="@color/antiquewhite">
 
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
         android:textColor="#5194fd"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -21,7 +21,7 @@
     <TextView
         android:id="@+id/tvDesc"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:textColor="@color/gray"
         android:text="这是个内容内容内容内容内容内容内容内容这是个内容内容内容内容内容内容内容内容这是个内容内容内容内容内容内容内容内容这是个内容内容内容内容内容内容内容内容"/>

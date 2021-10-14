@@ -1,6 +1,7 @@
 package pers.jay.demo.paging
 
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.View
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
@@ -58,6 +59,10 @@ class PagingActivity : BaseVBVMActivity<ActivityPagingBinding, PagingViewModel>(
                     articleAdapter.submitData(pagingData)
                 }
         }
+    }
+
+    override fun dispatchKeyEvent(event: KeyEvent?): Boolean {
+        return super.dispatchKeyEvent(event)
     }
 
 }

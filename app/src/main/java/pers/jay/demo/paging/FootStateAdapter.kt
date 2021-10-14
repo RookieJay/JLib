@@ -18,7 +18,7 @@ class FootStateAdapter(val retry: () -> Unit): LoadStateAdapter<RetryViewHolder>
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, loadState: LoadState): RetryViewHolder {
-        val binding = LayoutRvRetryFooterBinding.inflate(LayoutInflater.from(parent.context))
+        val binding = LayoutRvRetryFooterBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         binding.btRetry.setOnClickListener {
             retry()
         }

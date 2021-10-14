@@ -38,6 +38,7 @@ class PagingModel : WanRepo() {
                 val nextKey = if (repoItems.isNotEmpty()) page + 1 else null
                 LoadResult.Page(repoItems, prevKey, nextKey)
             } catch (e: Exception) {
+                e.printStackTrace()
                 showMessage("load error ")
                 LoadResult.Error(e)
             }

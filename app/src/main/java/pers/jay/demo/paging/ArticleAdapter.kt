@@ -10,7 +10,7 @@ import pers.jay.demo.databinding.LayoutItemArticleBinding
 import pers.jay.library.base.ext.showMessage
 
 
-class ArticleAdapter: PagingDataAdapter<Article, ArticleAdapter.ArticleHolder>(diffCallback) {
+class ArticleAdapter : PagingDataAdapter<Article, ArticleAdapter.ArticleHolder>(diffCallback) {
 
     companion object {
         val diffCallback = object : DiffUtil.ItemCallback<Article>() {
@@ -33,19 +33,21 @@ class ArticleAdapter: PagingDataAdapter<Article, ArticleAdapter.ArticleHolder>(d
             }
         }
         holder.itemView.setOnClickListener {
-            article?.title?.let { it1 -> showMessage(it1+holder.itemView.layoutParams.width) }
+            article?.title?.let { it1 -> showMessage(it1 + holder.itemView.layoutParams.width) }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleHolder {
-        val binding = LayoutItemArticleBinding.inflate(LayoutInflater.from(parent.context))
+        val binding =
+            LayoutItemArticleBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ArticleHolder(binding)
     }
 
-    class ArticleHolder(rootView: LayoutItemArticleBinding) : RecyclerView.ViewHolder(rootView.root) {
+    class ArticleHolder(rootView: LayoutItemArticleBinding) :
+        RecyclerView.ViewHolder(rootView.root) {
 
         val binding = rootView
     }
-    
+
 
 }
