@@ -1,7 +1,6 @@
-package pers.jay.demo.vm
+package pers.jay.demo.viewbinding
 
-import pers.jay.demo.DemoRepo
-import pers.jay.demo.Tab
+import pers.jay.demo.data.Tab
 import pers.jay.library.base.livedata.StateLiveData
 import pers.jay.library.base.viewmodel.BaseViewModel
 

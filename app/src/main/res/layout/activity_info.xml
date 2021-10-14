@@ -5,10 +5,10 @@
     tools:context="pers.jay.demo.databinding.InfoActivity">
 
     <data>
-        <import type="pers.jay.demo.Tab"/>
+        <import type="pers.jay.demo.data.Tab"/>
         <variable
             name="tab"
-            type="Tab" />
+            type="pers.jay.demo.data.Tab" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

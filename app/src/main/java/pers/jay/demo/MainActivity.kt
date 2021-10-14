@@ -5,7 +5,7 @@ import pers.jay.demo.databinding.ActivityMainBinding
 import pers.jay.demo.databinding.InfoActivity
 import pers.jay.demo.paging.PagingActivity
 import pers.jay.demo.viewbinding.DemoActivity
-import pers.jay.demo.vm.DemoViewModel
+import pers.jay.demo.viewbinding.DemoViewModel
 import pers.jay.library.base.ext.startActivity
 import pers.jay.library.base.viewbinding.BaseVBVMActivity
 

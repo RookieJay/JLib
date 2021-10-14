@@ -10,7 +10,6 @@ import kotlinx.coroutines.launch
 import pers.jay.demo.common.Const
 import pers.jay.demo.databinding.ActivityDemoBinding
 import pers.jay.demo.loadsir.RetryCallback
-import pers.jay.demo.vm.DemoViewModel
 import pers.jay.library.base.viewbinding.BaseVBVMActivity
 import pers.jay.library.loadsir.StatusCallback
 

@@ -1,8 +1,4 @@
-package pers.jay.demo
-
-import android.os.Parcel
-import android.os.Parcelable
-import java.util.*
+package pers.jay.demo.data
 
 class Tab {
     /**

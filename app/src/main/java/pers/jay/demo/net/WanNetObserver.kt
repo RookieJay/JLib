@@ -1,6 +1,6 @@
 package pers.jay.demo.net
 
-import pers.jay.demo.EntityDemo
+import pers.jay.demo.data.EntityDemo
 import pers.jay.library.network.rxjava.BaseNetObserver
 
 class WanNetObserver: BaseNetObserver<EntityDemo>() {
