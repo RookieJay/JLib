@@ -1,8 +1,11 @@
 package pers.jay.demo.data
 
 import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import kotlinx.android.parcel.Parcelize
 
+@Entity
 @Parcelize
 data class Article(
     var apkLink: String? = null,
@@ -18,6 +21,7 @@ data class Article(
     var envelopePic: String? = null,
     var fresh: Boolean? = null,
     var host: String? = null,
+    @PrimaryKey
     var id: Int? = null,
     var link: String? = null,
     var niceDate: String? = null,

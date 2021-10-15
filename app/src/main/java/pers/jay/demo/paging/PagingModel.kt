@@ -29,11 +29,14 @@ class PagingModel : WanRepo() {
 
         override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Article> {
             return try {
-                val page = params.key ?: 1 // set page 1 as default
+                val page = params.key ?: 0 // set page 1 as default
                 val pageSize = params.loadSize
                 val repoResponse = wanService.homeArticles(page)
                 val articleInfo = repoResponse.data as ArticleInfo
                 val repoItems = articleInfo.datas as List<Article>
+                if (page == 0) {
+                    saveFirstPage(repoItems)
+                }
                 val prevKey = if (page > 1) page - 1 else null
                 val nextKey = if (repoItems.isNotEmpty()) page + 1 else null
                 LoadResult.Page(repoItems, prevKey, nextKey)
@@ -43,6 +46,10 @@ class PagingModel : WanRepo() {
                 LoadResult.Error(e)
             }
         }
+    }
+
+    private fun saveFirstPage(repoItems: List<Article>) {
+
     }
 
 }
