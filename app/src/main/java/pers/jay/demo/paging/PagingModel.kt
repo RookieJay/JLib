@@ -1,13 +1,17 @@
 package pers.jay.demo.paging
 
 import androidx.paging.*
+import com.blankj.utilcode.util.LogUtils
 import kotlinx.coroutines.flow.Flow
 import pers.jay.demo.WanRepo
 import pers.jay.demo.data.Article
 import pers.jay.demo.data.ArticleInfo
+import pers.jay.demo.room.DBManager
 import pers.jay.library.base.ext.showMessage
 
 class PagingModel : WanRepo() {
+
+    val articleDao = DBManager.getDB().articleDao()
 
     fun loadPagingData(): Flow<PagingData<Article>> {
         return Pager(
@@ -36,6 +40,8 @@ class PagingModel : WanRepo() {
                 val repoItems = articleInfo.datas as List<Article>
                 if (page == 0) {
                     saveFirstPage(repoItems)
+                    val dbData = getFirstPage()
+                    LogUtils.d(TAG, "dbData:${dbData.size}")
                 }
                 val prevKey = if (page > 1) page - 1 else null
                 val nextKey = if (repoItems.isNotEmpty()) page + 1 else null
@@ -48,8 +54,13 @@ class PagingModel : WanRepo() {
         }
     }
 
-    private fun saveFirstPage(repoItems: List<Article>) {
+    private suspend fun saveFirstPage(repoItems: List<Article>) {
+        val result = articleDao.insert(repoItems)
+        LogUtils.d(TAG, "saveFirstPage result ${result.toString()}")
+    }
 
+    private suspend fun getFirstPage(): List<Article> {
+        return articleDao.articles()
     }
 
 }

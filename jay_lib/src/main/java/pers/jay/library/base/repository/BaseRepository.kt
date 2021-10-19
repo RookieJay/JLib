@@ -12,6 +12,8 @@ import kotlinx.coroutines.flow.flowOn
  */
 abstract class BaseRepository {
 
+    val TAG = javaClass.simpleName
+
     /**
      * @desc   通过flow来处理请求，并返回一个Flow对象
      * @param  requestBlock 请求方法体，返回值为T

@@ -1,11 +1,12 @@
 package pers.jay.demo.data
 
 import android.os.Parcelable
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.*
+import com.blankj.utilcode.util.GsonUtils
 import kotlinx.android.parcel.Parcelize
 
 @Entity
+@TypeConverters(TagConverter::class)
 @Parcelize
 data class Article(
     var apkLink: String? = null,
@@ -36,6 +37,7 @@ data class Article(
     var shareUser: String? = null,
     var superChapterId: Int? = null,
     var superChapterName: String? = null,
+    @Ignore
     var tags: List<Tag>? = null,
     var title: String? = null,
     var type: Int? = null,
@@ -49,3 +51,20 @@ data class Tag(
     var name: String? = null,
     var url: String? = null
 ) : Parcelable
+
+class TagConverter {
+
+    private val gson by lazy {
+        GsonUtils.getGson()
+    }
+
+    @TypeConverter
+    fun string2Obj(json: String) : Tag {
+        return gson.fromJson(json, Tag::class.java)
+    }
+
+    @TypeConverter
+    fun obj2String(tag: Tag) : String {
+        return gson.toJson(tag)
+    }
+}

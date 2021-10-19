@@ -11,6 +11,15 @@ import pers.jay.library.app.BaseApplication
 
 class JApp: BaseApplication() {
 
+    companion object {
+        lateinit var instance: JApp
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        instance = this
+    }
+
     override fun lazyInit() {
         initLoadSir()
     }
@@ -32,4 +41,5 @@ class JApp: BaseApplication() {
             .setDefaultCallback(LoadingCallback::class.java)
             .commit()
     }
+
 }

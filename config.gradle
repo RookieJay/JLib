@@ -186,6 +186,7 @@ ext {
             "roomRxjava2"              : "androidx.room:room-rxjava2:${version["roomVerion"]}",
             "roomTesting"              : "androidx.room:room-testing:${version["roomVerion"]}",
             "roomPaging"               : "androidx.room:room-paging:2.4.0-alpha05",
+            "roomKtx"                  : "androidx.room:room-ktx:${version["roomVerion"]}",
 
             // cache
             "rxcache2"                  : "com.github.VictorAlbertos.RxCache:runtime:1.8.3-2.x",

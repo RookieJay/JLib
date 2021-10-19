@@ -1,14 +1,13 @@
 package pers.jay.demo.room
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import pers.jay.demo.data.Article
 
 @Dao
 interface ArticleDao {
 
-    @Insert
-    suspend fun insert(vararg articles: Article?): LongArray?
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(articles: List<Article>): LongArray?
 
     @Delete
     suspend fun delete(article: Article): Int
@@ -19,6 +18,6 @@ interface ArticleDao {
     @Query("select * from article t")
     fun articles(): List<Article>
 
-    @get:Query("select * from article t")
-    val articles: LiveData<List<Article>>
+//    @get:Query("select * from article t")
+//    val articles: LiveData<List<Article>>
 }

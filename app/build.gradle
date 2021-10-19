@@ -15,6 +15,21 @@ android {
         versionName "1.0"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        //指定room.schemaLocation生成的文件路径  处理Room 警告 Schema export Error
+        // java 配置
+//        javaCompileOptions {
+//            annotationProcessorOptions {
+//                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+//            }
+//        }
+
+        // kotlin 配置
+        kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas")
+            }
+        }
     }
 
     buildTypes {
@@ -68,5 +83,8 @@ dependencies {
 //    implementation jetpack.composeUITest
 
     implementation cache.roomRuntime
+    implementation cache.roomKtx
     kapt cache.roomCompiler
+
+
 }
