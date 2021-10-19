@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import pers.jay.demo.data.Article
 import pers.jay.library.utils.SingletonHolder
 
-@Database(entities = [Article::class], version = 1)
+@Database(entities = [Article::class], version = 1, exportSchema = false)
 abstract class AppDatabase() : RoomDatabase() {
 
     abstract fun articleDao(): ArticleDao
