@@ -54,7 +54,8 @@ class PagingActivity : BaseVBVMActivity<ActivityPagingBinding, PagingViewModel>(
             mViewModel.loadHomeArticles()
                 .catch {
                     LogUtils.e(TAG, it.message)
-                }.collect { pagingData: PagingData<Article> ->
+                }
+                .collect { pagingData: PagingData<Article> ->
                     LogUtils.d(TAG, "collect current thread: ${Thread.currentThread().name}")
                     articleAdapter.submitData(pagingData)
                 }

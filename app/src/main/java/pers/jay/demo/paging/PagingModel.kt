@@ -38,18 +38,24 @@ class PagingModel : WanRepo() {
                 val repoResponse = wanService.homeArticles(page)
                 val articleInfo = repoResponse.data as ArticleInfo
                 val repoItems = articleInfo.datas as List<Article>
+                val prevKey = if (page > 1) page - 1 else null
+                val nextKey = if (repoItems.isNotEmpty()) page + 1 else null
                 if (page == 0) {
                     saveFirstPage(repoItems)
                     val dbData = getFirstPage()
                     LogUtils.d(TAG, "dbData:${dbData.size}")
                 }
-                val prevKey = if (page > 1) page - 1 else null
-                val nextKey = if (repoItems.isNotEmpty()) page + 1 else null
                 LoadResult.Page(repoItems, prevKey, nextKey)
             } catch (e: Exception) {
                 e.printStackTrace()
                 showMessage("load error ")
-                LoadResult.Error(e)
+                val page = params.key ?: 0
+                if (page == 0) {
+                    val localData = articleDao.articles()
+                    LoadResult.Page(localData, null, 1)
+                } else {
+                    LoadResult.Error(e)
+                }
             }
         }
     }
