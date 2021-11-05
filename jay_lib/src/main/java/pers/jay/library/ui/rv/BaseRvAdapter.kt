@@ -2,27 +2,101 @@ package pers.jay.library.ui.rv
 
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.IntRange
 import androidx.recyclerview.widget.RecyclerView
 
-abstract class BaseRvAdapter : RecyclerView.Adapter<BaseRvAdapter.BaseViewHolder>() {
+abstract class BaseRvAdapter<T, VH: BaseRvAdapter.BaseViewHolder>() : RecyclerView.Adapter<VH>() {
 
+    private var mData = mutableListOf<T>()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
-
-        return BaseViewHolder(getItemView(parent, viewType))
+    open fun getItem(@IntRange(from = 0) position: Int): T {
+        return mData[position]
     }
 
-    override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
+    open fun getItemOrNull(@IntRange(from = 0) position: Int): T? {
+        return mData.getOrNull(position)
+    }
 
+    open fun getItemPosition(item: T?): Int {
+        return if (item != null && mData.isNotEmpty()) mData.indexOf(item) else -1
+    }
+
+    open fun setList(list: Collection<T>) {
+        if (list.isEmpty()) {
+            return
+        }
+        val originalSize = mData.size
+        mData.clear()
+        mData.addAll(list)
+        notifyItemRangeChanged(0, list.size)
+    }
+
+    open fun addList(list: Collection<T>) {
+        mData.addAll(list)
+        notifyItemRangeInserted(mData.size, list.size)
+    }
+
+    open fun addList(@IntRange(from = 0) position: Int, list: Collection<T>) {
+        mData.addAll(position, list)
+        notifyItemRangeInserted(mData.size, list.size)
+    }
+
+    open fun addItem(item: T) {
+        mData.add(item)
+        val originalSize = mData.size
+        notifyItemInserted(originalSize)
+    }
+
+    open fun addItem(@IntRange(from = 0) position: Int, data: T) {
+        mData.add(position, data)
+        notifyItemInserted(position)
+    }
+
+    open fun setItem(@IntRange(from = 0) position: Int, data: T) {
+        if (position > mData.size) {
+            return
+        }
+        mData[position] = data
+        notifyItemChanged(position)
+    }
+
+    open fun removeAt(@IntRange(from = 0) position: Int) {
+        mData.removeAt(position)
+        notifyItemRemoved(position)
+    }
+
+    open fun remove(data: T) {
+        val index = getItemPosition(data)
+        if (index == -1) {
+            return
+        }
+        removeAt(index)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
+        return BaseViewHolder(getItemView(parent, viewType)) as VH
+    }
+
+    override fun onBindViewHolder(holder: VH, position: Int) {
+        val item = getItem(position)
+        onBind(holder, item)
     }
 
     override fun getItemViewType(position: Int): Int {
         return super.getItemViewType(position)
     }
 
+    override fun getItemCount(): Int {
+        return mData.size
+    }
+
+    abstract fun onBind(holder: VH, item: T)
+
     abstract fun getItemView(parent: ViewGroup, viewType: Int): View
 
     open class BaseViewHolder(root: View) : RecyclerView.ViewHolder(root) {
+
+        val mContext = root.context
 
     }
 }
