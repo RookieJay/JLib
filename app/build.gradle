@@ -86,5 +86,6 @@ dependencies {
     implementation cache.roomKtx
     kapt cache.roomCompiler
 
+    implementation ui.brvah
 
 }
