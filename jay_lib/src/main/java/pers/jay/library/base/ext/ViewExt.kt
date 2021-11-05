@@ -2,6 +2,7 @@ package pers.jay.library.base.ext
 
 import android.content.Context
 import android.content.Intent
+import android.view.View
 import com.blankj.utilcode.util.ToastUtils
 
 /**
@@ -23,5 +24,22 @@ inline fun <reified T> Context.startActivity(putExtraBlock: Intent.() -> Unit) {
     Intent(this, T::class.java).apply {
         putExtraBlock.invoke(this)
         startActivity(this)
+    }
+}
+
+/**
+ * 防重复点击
+ * @param maxGap 最大间隔时间，单位：毫秒
+ * @param onClick 点击事件回调
+ */
+fun View.singleClick(maxGap: Long = 1500L, onClick: () -> Unit) {
+    var lastClick = 0L
+    setOnClickListener {
+        val gap = System.currentTimeMillis() - lastClick
+        if (gap <= maxGap) {
+            return@setOnClickListener
+        }
+        lastClick = System.currentTimeMillis()
+        onClick.invoke()
     }
 }
