@@ -6,6 +6,11 @@ import android.view.ViewGroup
 import androidx.annotation.IntRange
 import androidx.recyclerview.widget.RecyclerView
 
+/**
+ * @Author RookieJay
+ * @Time 2021/11/9 16:15
+ * @Description 通用RecyclerView适配器，封装了一些常规数据操作
+ */
 @Suppress("UNCHECKED_CAST")
 abstract class BaseRvAdapter<T, VH: BaseRvAdapter.BaseViewHolder>() : RecyclerView.Adapter<VH>() {
 

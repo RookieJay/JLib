@@ -53,13 +53,17 @@ abstract class BaseVBVMFragment<VB : ViewBinding, VM : BaseViewModel<out BaseRep
             }
     }
 
+    /**
+     * 是否使用反射方式初始化ViewModel
+     * 默认使用反射实现
+     */
     open fun useVMReflect(): Boolean {
         return true
     }
 
     /**
      * 重写此方法使用常规方式获取ViewModel，即使用 ViewModelProvider(this).get(Class<VM>)
-     * 默认也是反射实现
+     *
      */
     open fun initViewModel(): VM {
         return mViewModel

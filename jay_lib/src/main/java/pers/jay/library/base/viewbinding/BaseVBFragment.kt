@@ -5,9 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
-import com.blankj.utilcode.util.LogUtils
 import pers.jay.library.base.BaseFragment
-import java.lang.reflect.ParameterizedType
+import pers.jay.library.utils.ViewBindingUtils
 
 /**
  * 基于ViewBinding的Fragment基类
@@ -40,27 +39,12 @@ abstract class BaseVBFragment<VB : ViewBinding> : BaseFragment(), IViewBinding<V
 
     override fun initRootViewByReflect(container: ViewGroup?): VB {
         super.initRootViewByReflect(container)
-        return recursiveFindViewBinding(javaClass, container)
-    }
-
-    /**
-     * 应用场景：子类第一个泛型不是VB类型
-     * 递归查找当前fragment->父类的泛型参数,当前类没有泛型，则向上查找父类，直到找到为止
-     * todo 虽能实现但方法欠妥，考虑优化
-     */
-    private fun recursiveFindViewBinding(
-        fragmentClazz: Class<*>,
-        container: ViewGroup?
-    ): VB {
-        val type = fragmentClazz.genericSuperclass
-        return if (type is ParameterizedType) {
-            val aClass = type.actualTypeArguments[0] as Class<VB>
-            LogUtils.d("aClass: ${aClass.simpleName}")
-            createViewBindingByReflect(aClass, container)
-        } else {
-            val clazz = fragmentClazz.superclass as Class<*>
-            recursiveFindViewBinding(clazz, container)
+        val vbClass = ViewBindingUtils.getInstancedGenericClass(javaClass)
+        vbClass?.apply {
+            mBinding = createViewBindingByReflect(vbClass as Class<VB>, container)
+            return mBinding
         }
+        throw RuntimeException("can't find matched ViewBinding")
     }
 
     private fun createViewBindingByReflect(aClass: Class<VB>, container: ViewGroup?): VB {
@@ -80,7 +64,9 @@ abstract class BaseVBFragment<VB : ViewBinding> : BaseFragment(), IViewBinding<V
         initData(savedInstanceState)
     }
 
-    abstract fun beforeInit()
+    open fun beforeInit() {
+
+    }
 
     /**
      * 默认使用反射初始化布局

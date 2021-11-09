@@ -5,6 +5,9 @@ import java.lang.reflect.ParameterizedType
 
 object ViewBindingUtils {
 
+    /**
+     * 从给定类的泛型参数中找到ViewBinding类型
+     */
     fun getInstancedGenericClass(from: Class<*>): Class<*>? {
         try {
             val type = from.genericSuperclass

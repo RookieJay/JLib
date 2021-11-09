@@ -22,12 +22,7 @@ abstract class BaseFragment : Fragment(), IFragment {
     private var isDataLoaded // 数据是否已请求
             = false
 
-    companion object {
-
-        @JvmField
-        val TAG: String = BaseFragment::class.java.simpleName
-
-    }
+    protected val TAG: String = BaseFragment::class.java.simpleName
 
     override fun onAttach(context: Context) {
         super.onAttach(context)

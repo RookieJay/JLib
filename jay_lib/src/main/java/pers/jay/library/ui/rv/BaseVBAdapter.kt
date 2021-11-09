@@ -5,6 +5,11 @@ import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
 import pers.jay.library.utils.ViewBindingUtils
 
+/**
+ * @Author RookieJay
+ * @Time 2021/11/9 16:16
+ * @Description 基于ViewBinding的RecyclerView适配器
+ */
 @Suppress("UNCHECKED_CAST")
 abstract class BaseVBAdapter<T, VH: BaseRvAdapter.BaseViewHolder, VB : ViewBinding> : BaseRvAdapter<T, VH>() {
 

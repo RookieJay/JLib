@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModel
 import androidx.viewbinding.ViewBinding
 import pers.jay.library.base.BaseActivity
-import java.lang.reflect.ParameterizedType
+import pers.jay.library.utils.ViewBindingUtils
 
 /**
  * @Author RookieJay
@@ -44,15 +44,14 @@ abstract class BaseVBActivity<VB : ViewBinding> : BaseActivity(), IViewBinding<V
      *  反射，调用特定ViewBinding中的inflate方法填充视图
      */
     override fun initRootViewByReflect(container: ViewGroup?): VB? {
-        val type = javaClass.genericSuperclass
-        // ParameterizedType 参数化类型 声明类型中带有“<>”的都是参数化类型
-        if (type is ParameterizedType) {
-            val clazz = type.actualTypeArguments[0] as Class<VB>
-            val method = clazz.getMethod("inflate", LayoutInflater::class.java)
+        val vbClass = ViewBindingUtils.getInstancedGenericClass(javaClass)
+        vbClass?.apply {
+            val method = getMethod("inflate", LayoutInflater::class.java)
             mBinding = method.invoke(null, layoutInflater) as VB
             setContentView(mBinding.root)
+            return mBinding
         }
-        return mBinding
+        throw RuntimeException("can't find matched ViewBinding")
     }
 
     /**

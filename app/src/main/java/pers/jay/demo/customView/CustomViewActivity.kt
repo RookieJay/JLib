@@ -3,6 +3,7 @@ package pers.jay.demo.customView
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.blankj.utilcode.util.LogUtils
+import pers.jay.demo.data.Article
 import pers.jay.demo.databinding.ActivityCustomViewBinding
 import pers.jay.demo.databinding.ItemRvCustomViewBinding
 import pers.jay.library.base.ext.showToast
@@ -22,6 +23,17 @@ class CustomViewActivity : BaseVBActivity<ActivityCustomViewBinding>() {
             rv.layoutManager = LinearLayoutManager(this@CustomViewActivity)
             rv.adapter = mAdapter
         }
+
+        // for test
+        val fragment = CustomViewFragment<Article>().apply {
+            arguments = Bundle().apply {
+                putParcelable("testKey", Article(title = "testArticle"))
+            }
+        }
+        val fm = supportFragmentManager
+        val trans = fm.beginTransaction()
+        trans.add(fragment, "tag")
+        trans.commit()
     }
 
     override fun initData(savedInstanceState: Bundle?) {
