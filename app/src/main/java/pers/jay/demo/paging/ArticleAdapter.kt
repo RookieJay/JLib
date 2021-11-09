@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import pers.jay.demo.data.Article
 import pers.jay.demo.databinding.LayoutItemArticleBinding
-import pers.jay.library.base.ext.showMessage
+import pers.jay.library.base.ext.showToast
 
 
 class ArticleAdapter : PagingDataAdapter<Article, ArticleAdapter.ArticleHolder>(diffCallback) {
@@ -33,7 +33,7 @@ class ArticleAdapter : PagingDataAdapter<Article, ArticleAdapter.ArticleHolder>(
             }
         }
         holder.itemView.setOnClickListener {
-            article?.title?.let { it1 -> showMessage(it1 + holder.itemView.layoutParams.width) }
+            article?.title?.let { it1 -> showToast(it1 + holder.itemView.layoutParams.width) }
         }
     }
 

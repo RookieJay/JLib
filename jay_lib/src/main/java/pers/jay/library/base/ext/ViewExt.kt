@@ -8,11 +8,11 @@ import com.blankj.utilcode.util.ToastUtils
 /**
  * 一些扩展方法
  */
-fun showMessage(message: String) = ToastUtils.showShort(message)
+fun showToast(message: String) = ToastUtils.showShort(message)
 
-fun showMessage(format: String, args: Any?) = ToastUtils.showShort(format, args)
+fun showToast(format: String, args: Any?) = ToastUtils.showShort(format, args)
 
-fun showLongMessage(message: String) = ToastUtils.showLong(message)
+fun showLongToast(message: String) = ToastUtils.showLong(message)
 
 /**
  * inline（内联函数）： Kotlin编译器将内联函数的字节码插入到每一次调用方法的地方

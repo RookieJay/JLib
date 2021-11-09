@@ -1,10 +1,12 @@
 package pers.jay.library.ui.rv
 
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.IntRange
 import androidx.recyclerview.widget.RecyclerView
 
+@Suppress("UNCHECKED_CAST")
 abstract class BaseRvAdapter<T, VH: BaseRvAdapter.BaseViewHolder>() : RecyclerView.Adapter<VH>() {
 
     private var mData = mutableListOf<T>()
@@ -25,7 +27,6 @@ abstract class BaseRvAdapter<T, VH: BaseRvAdapter.BaseViewHolder>() : RecyclerVi
         if (list.isEmpty()) {
             return
         }
-        val originalSize = mData.size
         mData.clear()
         mData.addAll(list)
         notifyItemRangeChanged(0, list.size)
@@ -74,7 +75,8 @@ abstract class BaseRvAdapter<T, VH: BaseRvAdapter.BaseViewHolder>() : RecyclerVi
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
-        return BaseViewHolder(getItemView(parent, viewType)) as VH
+        val itemView = LayoutInflater.from(parent.context).inflate(getItemLayoutResId(), parent, false)
+        return BaseViewHolder(itemView) as VH
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
@@ -92,7 +94,7 @@ abstract class BaseRvAdapter<T, VH: BaseRvAdapter.BaseViewHolder>() : RecyclerVi
 
     abstract fun onBind(holder: VH, item: T)
 
-    abstract fun getItemView(parent: ViewGroup, viewType: Int): View
+    abstract fun getItemLayoutResId(): Int
 
     open class BaseViewHolder(root: View) : RecyclerView.ViewHolder(root) {
 

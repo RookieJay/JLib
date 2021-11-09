@@ -1,7 +1,7 @@
 package pers.jay.demo
 
 import android.os.Bundle
-import com.blankj.utilcode.util.LogUtils
+import pers.jay.demo.customView.CustomViewActivity
 import pers.jay.demo.databinding.ActivityMainBinding
 import pers.jay.demo.databinding.InfoActivity
 import pers.jay.demo.paging.PagingActivity
@@ -34,10 +34,9 @@ class MainActivity : BaseVBVMActivity<ActivityMainBinding, DemoViewModel>() {
                 }
             }
             btCustView.singleClick {
-                LogUtils.d(TAG, "btCustView singleClick")
-//                startActivity<CustomViewActivity> {
-//
-//                }
+                startActivity<CustomViewActivity> {
+
+                }
             }
         }
     }

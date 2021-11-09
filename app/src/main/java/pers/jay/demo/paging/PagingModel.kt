@@ -7,7 +7,7 @@ import pers.jay.demo.WanRepo
 import pers.jay.demo.data.Article
 import pers.jay.demo.data.ArticleInfo
 import pers.jay.demo.room.DBManager
-import pers.jay.library.base.ext.showMessage
+import pers.jay.library.base.ext.showToast
 
 class PagingModel : WanRepo() {
 
@@ -48,7 +48,7 @@ class PagingModel : WanRepo() {
                 LoadResult.Page(repoItems, prevKey, nextKey)
             } catch (e: Exception) {
                 e.printStackTrace()
-                showMessage("load error ")
+                showToast("load error ")
                 val page = params.key ?: 0
                 if (page == 0) {
                     val localData = articleDao.articles()
