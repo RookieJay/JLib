@@ -6,15 +6,24 @@ import android.view.ViewGroup
 import androidx.annotation.IntRange
 import androidx.recyclerview.widget.RecyclerView
 
+
 /**
  * @Author RookieJay
  * @Time 2021/11/9 16:15
  * @Description 通用RecyclerView适配器，封装了一些常规数据操作
  */
 @Suppress("UNCHECKED_CAST")
-abstract class BaseRvAdapter<T, VH: BaseRvAdapter.BaseViewHolder>() : RecyclerView.Adapter<VH>() {
+abstract class BaseRvAdapter<T, VH : BaseRvAdapter.BaseViewHolder>(
+    private val getItemLayoutResId: () -> Int = { 0 },
+    private val onBind: ((VH, T, Int) -> Unit)? = null
+) :
+    RecyclerView.Adapter<VH>() {
+
+    protected val TAG = javaClass.simpleName
 
     private var mData = mutableListOf<T>()
+
+    fun getData() = mData
 
     open fun getItem(@IntRange(from = 0) position: Int): T {
         return mData[position]
@@ -29,12 +38,11 @@ abstract class BaseRvAdapter<T, VH: BaseRvAdapter.BaseViewHolder>() : RecyclerVi
     }
 
     open fun setList(list: Collection<T>) {
-        if (list.isEmpty()) {
-            return
+        if (list.isNotEmpty()) {
+            mData.clear()
         }
-        mData.clear()
         mData.addAll(list)
-        notifyItemRangeChanged(0, list.size)
+        notifyItemInserted(0)
     }
 
     open fun addList(list: Collection<T>) {
@@ -79,14 +87,20 @@ abstract class BaseRvAdapter<T, VH: BaseRvAdapter.BaseViewHolder>() : RecyclerVi
         removeAt(index)
     }
 
+    open fun clear() {
+        mData.clear()
+        notifyItemRangeRemoved(0, mData.size)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
-        val itemView = LayoutInflater.from(parent.context).inflate(getItemLayoutResId(), parent, false)
+        val itemView =
+            LayoutInflater.from(parent.context).inflate(getItemLayoutResId(), parent, false)
         return BaseViewHolder(itemView) as VH
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         val item = getItem(position)
-        onBind(holder, item)
+        onBind?.invoke(holder, item, position)
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -96,10 +110,6 @@ abstract class BaseRvAdapter<T, VH: BaseRvAdapter.BaseViewHolder>() : RecyclerVi
     override fun getItemCount(): Int {
         return mData.size
     }
-
-    abstract fun onBind(holder: VH, item: T)
-
-    abstract fun getItemLayoutResId(): Int
 
     open class BaseViewHolder(root: View) : RecyclerView.ViewHolder(root) {
 

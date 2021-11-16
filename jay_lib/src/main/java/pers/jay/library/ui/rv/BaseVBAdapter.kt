@@ -3,7 +3,8 @@ package pers.jay.library.ui.rv
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
-import pers.jay.library.utils.ViewBindingUtils
+import com.blankj.utilcode.util.LogUtils
+import kotlin.reflect.KClass
 
 /**
  * @Author RookieJay
@@ -11,31 +12,36 @@ import pers.jay.library.utils.ViewBindingUtils
  * @Description 基于ViewBinding的RecyclerView适配器
  */
 @Suppress("UNCHECKED_CAST")
-abstract class BaseVBAdapter<T, VH: BaseRvAdapter.BaseViewHolder, VB : ViewBinding> : BaseRvAdapter<T, VH>() {
+open class BaseVBAdapter<T, VB : ViewBinding>(
+    private val vbClass: KClass<VB>,
+    private val onBind: (VB, T, Int) -> Unit
+) : BaseRvAdapter<T, BaseVBAdapter.BaseVBViewHolder<VB>>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
-        val vbClazz = ViewBindingUtils.getInstancedGenericClass(javaClass)
-        vbClazz?.apply {
-            val method = getMethod("inflate", LayoutInflater::class.java, ViewGroup::class.java, Boolean::class.java)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseVBViewHolder<VB> {
+        val start = System.currentTimeMillis()
+//        val vbClazz = ViewBindingUtils.getVBClass(javaClass)
+        val vbClazz = vbClass.java
+        vbClazz.apply {
+            // 调用ViewBinding实例的inflate方法
+            val method = getMethod(
+                "inflate",
+                LayoutInflater::class.java,
+                ViewGroup::class.java,
+                Boolean::class.java
+            )
             val layoutInflater = LayoutInflater.from(parent.context)
             val binding = method.invoke(null, layoutInflater, parent, false) as VB
-            return BaseVBViewHolder(binding) as VH
+            LogUtils.d(TAG, "onCreateViewHolder 耗时：${System.currentTimeMillis() - start}")
+            return BaseVBViewHolder(binding)
         }
-        throw RuntimeException("can't find matched ViewBinding")
     }
 
-    override fun getItemLayoutResId(): Int {
-        return 0
+    override fun onBindViewHolder(holder: BaseVBViewHolder<VB>, position: Int) {
+        val item = getItem(position)
+        onBind.invoke(holder.binding, item, position)
     }
 
-    override fun onBind(holder: VH, item: T) {
-        val vbHolder = holder as BaseVBViewHolder<VB>
-        onBind(vbHolder.binding, item)
-    }
-
-    abstract fun onBind(binding: VB, item: T)
-
-    open class BaseVBViewHolder<VB: ViewBinding>(val binding: VB) : BaseViewHolder(binding.root) {
+    open class BaseVBViewHolder<VB : ViewBinding>(val binding: VB) : BaseViewHolder(binding.root) {
 
     }
 

@@ -12,16 +12,22 @@ import pers.jay.library.ui.rv.BaseVBAdapter
 
 class CustomViewActivity : BaseVBActivity<ActivityCustomViewBinding>() {
 
-    companion object {
-        private val TAG = CustomViewActivity::class.java.name
-    }
-
-    val mAdapter = CustomViewAdapter()
+    val mAdapter =
+        BaseVBAdapter<String, ItemRvCustomViewBinding>(ItemRvCustomViewBinding::class) { binding, item, _ ->
+            LogUtils.d(TAG, "onBind, $item")
+            binding.apply {
+                button.text = item
+                button.setOnClickListener {
+                    showToast(item)
+                }
+            }
+        }
 
     override fun initView(savedInstanceState: Bundle?) {
         mBinding.apply {
             rv.layoutManager = LinearLayoutManager(this@CustomViewActivity)
             rv.adapter = mAdapter
+
         }
 
         // for test
@@ -40,23 +46,5 @@ class CustomViewActivity : BaseVBActivity<ActivityCustomViewBinding>() {
         mAdapter.setList(listOf("进度条", "刻度尺", "轮播图", "仪表盘", "贝塞尔水波纹"))
     }
 
-
-    class CustomViewAdapter : BaseVBAdapter<String, CustomViewHolder, ItemRvCustomViewBinding>() {
-
-        override fun onBind(binding: ItemRvCustomViewBinding, item: String) {
-            LogUtils.d(TAG, "onBind, $item")
-            binding.apply {
-                button.text = item
-                button.setOnClickListener {
-                    showToast(item)
-                }
-            }
-        }
-    }
-
-    class CustomViewHolder(binding: ItemRvCustomViewBinding) : BaseVBAdapter.BaseVBViewHolder<ItemRvCustomViewBinding>(binding) {
-
-    }
-
-
 }
+

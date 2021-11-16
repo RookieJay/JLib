@@ -7,7 +7,8 @@
     android:orientation="vertical"
     android:padding="10dp"
     android:layout_marginTop="10dp"
-    android:background="@color/antiquewhite">
+    android:focusable="true"
+    android:background="@drawable/selector_bg_article_item">
 
     <TextView
         android:id="@+id/tvTitle"

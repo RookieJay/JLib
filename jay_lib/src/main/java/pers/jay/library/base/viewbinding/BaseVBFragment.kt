@@ -39,7 +39,7 @@ abstract class BaseVBFragment<VB : ViewBinding> : BaseFragment(), IViewBinding<V
 
     override fun initRootViewByReflect(container: ViewGroup?): VB {
         super.initRootViewByReflect(container)
-        val vbClass = ViewBindingUtils.getInstancedGenericClass(javaClass)
+        val vbClass = ViewBindingUtils.getVBClass(javaClass)
         vbClass?.apply {
             mBinding = createViewBindingByReflect(vbClass as Class<VB>, container)
             return mBinding
