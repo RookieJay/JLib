@@ -67,6 +67,7 @@ dependencies {
     def network = rootProject.ext.network
     def jetpack = rootProject.ext.jetpack
     def ui = rootProject.ext.ui
+    def tools = rootProject.ext.tools
     kapt network.moshiCodeGen
     implementation common.activityKtx
     implementation common.appcompat
@@ -87,5 +88,7 @@ dependencies {
     kapt cache.roomCompiler
 
     implementation ui.brvah
+
+    debugImplementation tools.dbDebug
 
 }
