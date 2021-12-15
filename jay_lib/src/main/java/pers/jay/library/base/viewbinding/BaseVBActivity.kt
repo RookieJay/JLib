@@ -30,10 +30,10 @@ abstract class BaseVBActivity<VB : ViewBinding> : BaseActivity(), IViewBinding<V
     open fun beforeInit(savedInstanceState: Bundle?) {}
 
     private fun init(savedInstanceState: Bundle?) {
-        if (useVBReflect()) {
+        mBinding = if (useVBReflect()) {
             initRootViewByReflect()
         } else {
-            initRootViewCommon()
+            initRootViewCommon()!!
         }
         initLoadSir()
         initView(savedInstanceState)
@@ -43,11 +43,11 @@ abstract class BaseVBActivity<VB : ViewBinding> : BaseActivity(), IViewBinding<V
     /**
      *  反射，调用特定ViewBinding中的inflate方法填充视图
      */
-    override fun initRootViewByReflect(container: ViewGroup?): VB? {
+    override fun initRootViewByReflect(container: ViewGroup?): VB {
         val vbClass = ViewBindingUtils.getVBClass(javaClass)
         vbClass?.apply {
             val method = getMethod("inflate", LayoutInflater::class.java)
-            mBinding = method.invoke(null, layoutInflater) as VB
+            method.invoke(null, layoutInflater) as VB
             setContentView(mBinding.root)
             return mBinding
         }

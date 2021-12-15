@@ -13,12 +13,14 @@ import pers.jay.library.utils.ViewBindingUtils
  *
  * ViewBinding的创建方式可选：
  * ①使用反射获取(默认)，但前提是当前子类的泛型严格限制位置和类型，即第一个泛型参数必须是ViewBinding类型
- * ②常规方式获取，重写userReflect()方法返回false,并重写initViewBinding()方法自行创建ViewBinding并返回
+ * ②常规方式获取，重写useVBReflect()方法返回false,并重写initRootViewCommon()方法自行创建ViewBinding并返回
  */
 @Suppress("UNCHECKED_CAST")
 abstract class BaseVBFragment<VB : ViewBinding> : BaseFragment(), IViewBinding<VB> {
 
-    protected lateinit var mBinding: VB
+    private var _binding: VB? = null
+    protected val mBinding: VB
+        get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,21 +30,21 @@ abstract class BaseVBFragment<VB : ViewBinding> : BaseFragment(), IViewBinding<V
         return initRootView(container)
     }
 
-    private fun initRootView(container: ViewGroup?): View? {
-        if (useVBReflect()) {
+    private fun initRootView(container: ViewGroup?): View {
+        _binding = if (useVBReflect()) {
             initRootViewByReflect(container)
         } else {
             initRootViewCommon(container)
         }
-        return mBinding.root
+        return _binding!!.root
     }
 
     override fun initRootViewByReflect(container: ViewGroup?): VB {
         super.initRootViewByReflect(container)
         val vbClass = ViewBindingUtils.getVBClass(javaClass)
         vbClass?.apply {
-            mBinding = createViewBindingByReflect(vbClass as Class<VB>, container)
-            return mBinding
+            _binding = createViewBindingByReflect(vbClass as Class<VB>, container)
+            return _binding!!
         }
         throw RuntimeException("can't find matched ViewBinding")
     }
@@ -62,6 +64,15 @@ abstract class BaseVBFragment<VB : ViewBinding> : BaseFragment(), IViewBinding<V
         beforeInit()
         initView(savedInstanceState)
         initData(savedInstanceState)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        // 此处置空原因
+        // Activity 实例和 Activity 视图的生命周期是同步的，而 Fragment 实例和 Fragment 视图的生命周期并不是完全同步的，
+        // 因此需要在 Fragment 视图销毁时，手动回收绑定类对象，否则造成内存泄露。
+        // 例如：detach Fragment，或者 remove Fragment 并且事务进入返回栈，此时 Fragment  视图销毁但 Fragment 实例存在。
+        _binding = null
     }
 
     open fun beforeInit() {
