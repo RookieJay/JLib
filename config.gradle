@@ -133,7 +133,8 @@ ext {
     ]
     
     tools = [
-            "AndroidutilCode"           : "com.blankj:utilcode:1.29.0",
+            "AndroidutilCode"           : "com.blankj:utilcodex:1.31.1",
+            "AndroidutilCodeSupport"    : "com.blankj:utilcode:1.30.7",
             "androideventbus"           : "org.simple:androideventbus:1.0.5.1",
             "eventbus"                  : "org.greenrobot:eventbus:3.1.1",
             "otto"                      : "com.squareup:otto:1.3.8",
@@ -243,13 +244,6 @@ ext {
 
     common = [
             "appcompat"                 : "androidx.appcompat:appcompat:${version["appcompatVersion"]}",
-            //support
-            "appcompat-v7"              : "com.android.support:appcompat-v7:${version["androidSupportSdkVersion"]}",
-            "support-design"            : "com.android.support:design:${version["androidSupportSdkVersion"]}",
-            "support-v4"                : "com.android.support:support-v4:${version["androidSupportSdkVersion"]}",
-            "cardview-v7"               : "com.android.support:cardview-v7:${version["androidSupportSdkVersion"]}",
-            "annotations"               : "com.android.support:support-annotations:${version["androidSupportSdkVersion"]}",
-            "recyclerview-v7"           : "com.android.support:recyclerview-v7:${version["androidSupportSdkVersion"]}",
             "activityKtx"               : "androidx.activity:activity-ktx:1.3.0"
     ]
 
