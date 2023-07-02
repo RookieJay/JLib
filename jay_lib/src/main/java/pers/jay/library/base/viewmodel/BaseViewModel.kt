@@ -1,20 +1,18 @@
 package pers.jay.library.base.viewmodel
 
-import android.text.TextUtils
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.blankj.utilcode.util.LogUtils
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import pers.jay.library.base.StateListener
 import pers.jay.library.base.livedata.SingleLiveData
 import pers.jay.library.base.livedata.StateLiveData
+import pers.jay.library.base.livedata.setResultData
+import pers.jay.library.base.livedata.updateState
 import pers.jay.library.base.repository.BaseRepository
-import pers.jay.library.base.repository.DataState
 import pers.jay.library.network.BaseResponse
-import pers.jay.library.network.coroutine.errorHandle
-import pers.jay.library.network.coroutine.handleException
+import pers.jay.library.network.coroutine.getRequestError
 import java.lang.reflect.ParameterizedType
 
 /**
@@ -124,85 +122,131 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
         return StateLiveData()
     }
 
-    protected fun <T> requestWithFlow(
-        flow: Flow<BaseResponse<T>>,
-        listenerBuilder: StateListener<T>.() -> Unit
-    ): StateLiveData<T> {
-        return requestWithFlow(true, flow, listenerBuilder)
+    /**
+     * @desc   通过flow来处理请求，并返回一个Flow对象 todo  后续优化，可考虑直接从Retrofit返回一个Flow对象
+     * @param  requestBlock 请求方法体，返回值为T
+     * @return [Flow]
+     */
+    open fun <T> createFlowRequest(requestBlock: suspend () -> T): Flow<T> {
+        return flow {
+            val response = requestBlock.invoke()
+            emit(response)
+        }.flowOn(Dispatchers.IO)
     }
 
     /**
-     *  结合[BaseRepository.createFlowRequest],使用协程FLow进行通用请求，对每一个环节进行封装。
-     *  此方法既能将状态通过stateObserver回调到viewModel层，又能通过StateLiveData通知view层。
-     *
-     * @param  fetchData 是否需要获取数据，默认为true，若无需获取数据请传入false
-     * @param  flow Flow 冷的异步数据流，必须要observe才会发送
-     * @param  listenerBuilder 可空。通用数据变化的观察者，可对每个步骤进行统一处理，交由viewModel处理
-     *
-     * @return [StateLiveData] 含有数据状态的LiveData，封装了[BaseResponse]
+     * 发起请求，带有数据返回（自动对第一层数据做空校验并回调，非空数据在onResult回调）
      */
-    private fun <T> requestWithFlow(
-        fetchData: Boolean = true,
-        flow: Flow<BaseResponse<T>>,
-        listenerBuilder: StateListener<T>.() -> Unit
+    public fun <T> Flow<BaseResponse<T>>.requestData(
+        exStateLiveData: StateLiveData<T>? = null,
+        listenerBuilderBlock: StateListener<T>.() -> Unit
     ): StateLiveData<T> {
-        val stateLiveData = createStateLiveData<T>()
-        val listener = StateListener<T>().also(listenerBuilder)
-        launchOnUI {
-            var response = BaseResponse<T>()
-            flow.onStart {
-                // 请求开始，修改状态为Loading
-                response.dataState = DataState.STATE_LOADING
-                stateLiveData.value = response
-                listener.startAction?.invoke()
-            }
-                // catch 函数只是中间操作符,只能捕获它的上游的异常,不能捕获下游的异常，类似 collect 内的异常
-                // onCompletion在catch操作符后，则 catch 操作符捕获到异常后，不会影响到下游
-                .catch { e ->
-                    LogUtils.e(TAG, "catch, $e")
-                    // 请求失败，修改状态为Error
-                    e.errorHandle(e, customErrorHandle = { errorReason ->
-                        val errorMsg = errorReason.handleException(errorReason)
-                        Log.e("onCatch", "errorMsg=$errorMsg")
-                        response.dataState = DataState.STATE_ERROR
-                        response.errorReason = errorMsg
-                        stateLiveData.value = response
-                        listener.errorAction?.invoke(errorMsg)
-                    })
-                }
-                .onCompletion { cause ->
-                    LogUtils.d(TAG, "onCompletion，$cause")
-                    // 请求结束，修改状态为Completed
-//                    response.dataState = DataState.STATE_COMPLETED
-//                    stateLiveData.value = response
-                    listener.completeAction?.invoke()
-                }
-                .flowOn(Dispatchers.Main)
-                .collectLatest {
-                    response = it
-                    if (!response.isSuccessful) {
-                        // 服务器返回失败，修改状态为Error
-                        LogUtils.e(TAG, "request successfully but response error from server,baseResponse class=$response")
-                        response.dataState = DataState.STATE_FAILED
-                        response.errorReason = response.msg
-                        listener.errorAction?.invoke(if (TextUtils.isEmpty(response.errorReason)) "请求失败" else response.errorReason!! )
-                    } else if (response.data == null
-                        || (response.data is List<*> && (response.data as List<*>).isEmpty())
-                    ) {
-                        // 数据为空，修改状态为Empty
-                        if (fetchData) {
-                            response.dataState = DataState.STATE_EMPTY
-                            listener.emptyAction?.invoke()
-                        }
-                    } else {
-                        // 请求成功切数据正确，修改状态为Success
-                        response.dataState = DataState.STATE_SUCCESS
-                        listener.successAction?.invoke(response.data!!)
+        return requestWithState(true, exStateLiveData, listenerBuilderBlock)
+    }
+
+    /**
+     * 发起请求（不关心回调数据是否可空）
+     */
+    protected fun <T> Flow<BaseResponse<T>>.request(
+        exStateLiveData: StateLiveData<T>? = null,
+        listenerBuilderBlock: StateListener<T>.() -> Unit
+    ): StateLiveData<T> {
+        return requestWithState(false, exStateLiveData, listenerBuilderBlock)
+    }
+
+    /**
+     *  使用协程flow进行通用请求，对每一个环节进行封装。同时通知到viewModel和view层，按需处理各种状态(@see[BaseResponse.DataState])
+     *
+     *  eg.
+     *      flow<BaseResponse<String>> { }.requestWithState {
+     *           onStart {  }
+     *           onSuccess {  }
+     *           onError {  }
+     *           .....
+     *       }
+     *
+     * @param exStateLiveData 外部按需传入StateLiveData，可用于监听数据变化，避免重复创建对象。
+     * @param requireData 是否需要返回数据，回调onSuccess(T?)->onResult(T); 若不需要，则只回调onSuccess(T?)。默认为true。
+     *        请注意：若不传此参数或传入true，会默认自动添加判空逻辑，应确认需要的是非空数据，否则当返回null时，会回调onEmpty()。否则应该传入false。
+     * @param listenerBuilderBlock 可空。通用数据变化的观察者，可对每个步骤进行统一处理，交由viewModel处理
+     * @param T 最终要展示到ui的数据类型
+     *
+     * @return [StateLiveData] 含有数据状态的LiveData，回调数据状态到ui层。封装了[BaseResponse]
+     *
+     */
+    private fun <T> Flow<BaseResponse<T>>.requestWithState(
+        requireData: Boolean? = true,
+        exStateLiveData: StateLiveData<T>? = null,
+        listenerBuilderBlock: StateListener<T>.() -> Unit
+    ): StateLiveData<T> {
+        val stateLiveData = exStateLiveData ?: createStateLiveData()
+        var stateResponse = stateLiveData.value ?: BaseResponse()
+        stateResponse.dataState = BaseResponse.DataState.LOADING
+        val listener: StateListener<T> = StateListener<T>().apply(listenerBuilderBlock)
+        val requestFlow = this.onStart {
+            // 请求开始，修改状态为Loading
+            listener.startAction?.invoke()
+            stateLiveData.updateState(BaseResponse.DataState.LOADING)
+        }
+        viewModelScope.launch(Dispatchers.Main) {
+            // catch 函数只是中间操作符,只能捕获它的上游的异常,不能捕获下游的异常，类似 collect 内的异常
+            requestFlow.catch { e ->
+                Log.e(TAG, "flow catch: $e")
+                e.printStackTrace()
+                val errorMessage = e.getRequestError()
+                // 请求失败，修改状态为Error
+                listener.errorAction?.invoke(errorMessage)
+                stateResponse.errorReason = errorMessage
+                stateLiveData.updateState(BaseResponse.DataState.REQUEST_ERROR)
+            }.onCompletion { cause ->
+                Log.i(TAG, "onCompletion，$cause")
+                // 请求正常结束，修改状态为Completed
+                listener.completeAction?.invoke()
+                stateLiveData.updateState(BaseResponse.DataState.COMPLETED)
+            }.collectLatest {
+                // 请求返回
+                stateResponse = it
+                val data: T? = stateResponse.data
+                kotlin.runCatching {
+                    if (requireData == true && data == null) {
+                        //1、若需要获取数据，自动添加判空逻辑。流程不再向下执行。
+                        listener.emptyAction?.invoke()
+                        stateLiveData.updateState(BaseResponse.DataState.EMPTY)
+                        return@collectLatest
                     }
-                    stateLiveData.value = response
+                    // 2、检查是否有业务异常需要处理,若有，则取手动修改的BaseResponse状态，并返回，更新状态，以通知view层改变。流程不再向下执行。
+                    val handleBussError = stateLiveData.bussErrorHandle?.invoke(stateResponse)
+                    if (handleBussError == true) {
+                        listener.errorAction?.invoke(stateResponse.errorReason ?: BaseResponse.DataState.BUSS_ERROR.value())
+                        stateLiveData.updateState(stateResponse.dataState ?: BaseResponse.DataState.BUSS_ERROR)
+                        return@collectLatest
+                    }
+                    // 3、数据预处理逻辑，有则执行,并返回经过处理的数据。
+                    // 应用场景：viewModel在返回默认数据之前需要拦截原始响应做处理，如做数据处理、缓存等。
+                    val resultData: T? = stateLiveData.preDataHandle?.let {
+                        stateLiveData.preDataHandle?.invoke(stateResponse)
+                    } ?: data
+                    // 4、成功响应回调（数据可空）
+                    listener.successAction?.invoke(resultData)
+                    stateResponse.data = resultData
+                    stateLiveData.setResultData(resultData, BaseResponse.DataState.SUCCESS)
+                    // 5、非空数据回调
+                    if (requireData == true) {
+                        listener.resultAction?.invoke(resultData!!)
+                        stateResponse.data = resultData
+                        stateLiveData.setResultData(resultData, BaseResponse.DataState.DATA_RESULT)
+                    }
+                }.onFailure { e ->
+                    // 6、数据处理过程中发生的异常捕获处理，错误回调
+                    val errorMsg = "exception occurred in flow collect:[${e.message}]"
+                    Log.e(TAG, errorMsg)
+                    e.printStackTrace()
+                    listener.errorAction?.invoke(errorMsg)
+                    stateResponse.errorReason = errorMsg
+                    stateLiveData.updateState(BaseResponse.DataState.BUSS_ERROR)
                 }
+            }
         }
         return stateLiveData
     }
-
 }

@@ -19,8 +19,8 @@ import javax.net.ssl.SSLException
 
 const val TAG = "Net Error"
 
-fun Throwable.errorHandle(exception: Throwable, customErrorHandle: (errorReason: NetErrorReason) -> Unit) {
-    val errorReason = when (exception) {
+fun Throwable.getRequestError(): String {
+    val errorReason = when (this) {
         is ConnectException, is UnknownHostException, is NoRouteToHostException -> {
             NetErrorReason.CONNECT_ERROR
         }
@@ -37,7 +37,5 @@ fun Throwable.errorHandle(exception: Throwable, customErrorHandle: (errorReason:
             NetErrorReason.UNKNOWN_ERROR
         }
     }
-    customErrorHandle(errorReason)
+    return ErrorMessageParser.getErrorMessage(errorReason)
 }
-
-fun NetErrorReason.handleException(netErrorReason: NetErrorReason) = ErrorMessageParser.getErrorMessage(netErrorReason)

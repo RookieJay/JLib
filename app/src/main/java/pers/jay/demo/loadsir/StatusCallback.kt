@@ -1,4 +1,4 @@
-package pers.jay.library.loadsir
+package pers.jay.demo.loadsir
 
 import com.kingja.loadsir.callback.Callback
 

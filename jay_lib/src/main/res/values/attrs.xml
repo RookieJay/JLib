@@ -13,4 +13,31 @@
         </attr>
     </declare-styleable>
 
+    <declare-styleable name="JProgressBar">
+        <attr name="color" format="color"/>
+        <attr name="shape" format="enum">
+            <enum name="circle" value="1"/>
+            <enum name="line" value="2"/>
+            <!--渐隐线条状-->
+            <enum name="fade_line" value="3"/>
+        </attr>
+        <attr name="stroke" format="dimension"/>
+        <attr name="progress" format="float"/>
+    </declare-styleable>
+
+    <declare-styleable name="CountDownButton">
+        <attr name="duration" format="integer"/>
+        <!--开始状态文本，如：获取验证码-->
+        <attr name="normal_text" format="string"/>
+        <attr name="normal_text_color" format="color"/>
+        <attr name="normal_bg" format="reference|color"/>
+        <!--倒计时状态文本，如：重新获取(60)s-->
+        <attr name="timer_text" format="string"/>
+        <attr name="timer_text_color" format="color"/>
+        <attr name="timer_bg" format="reference|color"/>
+        <!--结束状态文本，如：重新获取-->
+        <attr name="end_text" format="string"/>
+        <attr name="end_text_color" format="color"/>
+        <attr name="end_bg" format="reference|color"/>
+    </declare-styleable>
 </resources>

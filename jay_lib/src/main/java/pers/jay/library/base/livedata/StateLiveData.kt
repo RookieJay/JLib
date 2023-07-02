@@ -1,9 +1,7 @@
 package pers.jay.library.base.livedata
 
-import android.view.View
 import androidx.lifecycle.LifecycleOwner
-import com.kingja.loadsir.callback.Callback
-import pers.jay.library.loadsir.StatusCallback
+import pers.jay.library.base.StateListener
 import pers.jay.library.network.BaseResponse
 
 /**
@@ -14,45 +12,23 @@ import pers.jay.library.network.BaseResponse
  */
 open class StateLiveData<T> : SingleLiveData<BaseResponse<T>>() {
 
-    fun observeState(owner: LifecycleOwner, listenerBuilder: StateListener.() -> Unit) {
-        observeState(null, null, owner, listenerBuilder)
-    }
+    /**
+     * 业务异常处理函数（在返回原始数据的一开始被调用），用于处理数据已返回，但返回数据有可能产生业务异常的场景。
+     */
+    var bussErrorHandle: ((BaseResponse<T>) -> Boolean)? = null
+
+    /**
+     * 数据预处理操作（在回调成功数据之前被调用），返回处理后的数据
+     */
+    var preDataHandle: ((BaseResponse<T>) -> T)? = null
+
 
     fun observeState(
-        statusView: View? = null,
-        statusCallback: StatusCallback ?= null,
         owner: LifecycleOwner,
-        listenerBuilder: StateListener.() -> Unit
+        listenerBuilder: StateListener<T>.() -> Unit
     ) {
-        val listener = StateListener().apply(listenerBuilder)
-        val observer = object : BaseStateLiveDataObserver<T>(statusView) {
-
-            override fun getEmptyCallback(): Class<out Callback>? {
-                return statusView?.let {
-                    if (statusCallback == null) {
-                        throw IllegalArgumentException("emptyCallback can not be null when setting statusView")
-                    }
-                    statusCallback.emptyCallback
-                }
-            }
-
-            override fun getErrorCallback(): Class<out Callback>? {
-                return statusView?.let {
-                    if (statusCallback == null) {
-                        throw IllegalArgumentException("errorCallback can not be null when setting statusView")
-                    }
-                    statusCallback.errorCallback
-                }
-            }
-
-            override fun getLoadingCallback(): Class<out Callback>? {
-                return statusView?.let {
-                    if (statusCallback == null) {
-                        throw IllegalArgumentException("loadingCallback can not be null when setting statusView")
-                    }
-                    statusCallback.loadingCallback
-                }
-            }
+        val listener = StateListener<T>().apply(listenerBuilder)
+        val observer = object : BaseStateLiveDataObserver<T>() {
 
             override fun onSuccess(data: T) {
                 listener.successAction?.invoke(data)
@@ -70,45 +46,36 @@ open class StateLiveData<T> : SingleLiveData<BaseResponse<T>>() {
                 listener.completeAction?.invoke()
             }
 
-            override fun onReload(v: View?) {
-                listener.reloadAction?.invoke(v)
-            }
         }
         super.observe(owner, observer)
     }
 
-    inner class StateListener {
+    /**
+     * 更新数据状态并post
+     */
+    fun updateState(dataState: BaseResponse.DataState) {
+        value = value
+    }
 
-        internal var startAction: (() -> Unit)? = null
-        internal var successAction: ((T) -> Unit)? = null
-        internal var errorAction: ((String) -> Unit)? = null
-        internal var emptyAction: (() -> Unit)? = null
-        internal var completeAction: (() -> Unit)? = null
-        internal var reloadAction: ((v: View?) -> Unit)? = null
+    fun <T> StateLiveData<T>.bussErrorHandle(bussErrorHandle: (BaseResponse<T>) -> Boolean): StateLiveData<T> {
+        this.bussErrorHandle = bussErrorHandle
+        return this
+    }
 
-        fun onStart(action: (() -> Unit)?) {
-            startAction = action
-        }
 
-        fun onSuccess(action: ((T) -> Unit)?) {
-            successAction = action
-        }
+    fun <T> StateLiveData<T>.preDataHandle(
+        dataHandle: ((BaseResponse<T>) -> T)
+    ): StateLiveData<T> {
+        this.preDataHandle = dataHandle
+        return this
+    }
 
-        fun onError(action: ((String) -> Unit)?) {
-            errorAction = action
-        }
+    fun <T> StateLiveData<T>.getResultData(): T? = value?.data
 
-        fun onEmpty(action: (() -> Unit)?) {
-            emptyAction = action
-        }
-
-        fun onCompletion(action: (() -> Unit)?) {
-            completeAction = action
-        }
-
-        fun onReload(action: ((View?) -> Unit)?) {
-            reloadAction = action
-        }
+    fun <T> StateLiveData<T>.setResultData(data:T?, dataState: BaseResponse.DataState) {
+        val stateResponseData = value
+        stateResponseData?.data = data
+        updateState(dataState)
     }
 
 }

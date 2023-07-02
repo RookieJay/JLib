@@ -7,17 +7,11 @@ import com.blankj.utilcode.util.LogUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import pers.jay.demo.common.Const
 import pers.jay.demo.databinding.ActivityDemoBinding
-import pers.jay.demo.loadsir.RetryCallback
 import pers.jay.library.base.viewbinding.BaseVBVMActivity
-import pers.jay.library.loadsir.StatusCallback
 
 class DemoActivity : BaseVBVMActivity<ActivityDemoBinding, DemoViewModel>() {
 
-    override var enableActivityLoadSir = false
-
-    override var mActivityStatusCallback: StatusCallback? = Const.DEFAULT_ACTIVITY_STATUS_CALLBACK
 
     override fun initView(savedInstanceState: Bundle?) {
         mBinding.text1.setOnClickListener {
@@ -37,13 +31,12 @@ class DemoActivity : BaseVBVMActivity<ActivityDemoBinding, DemoViewModel>() {
 
 
     private fun requestDemo(textView: TextView) {
-
-        // 单独对view视图处理，activity不应开启loadsir注册
-        mViewModel.test().observeState(textView, Const.DEFAULT_VIEW_STATUS_CALLBACK, this) {
+        LogUtils.i("requestDemo")
+        mViewModel.test().observeState(this) {
             onStart {
-                LogUtils.d(TAG, "onStart")
+                LogUtils.d(TAG, "onStart $textView")
             }
-            onSuccess { tabs ->
+            onResult { tabs ->
                 LogUtils.d(TAG, tabs.toString())
                 textView.apply {
                     text = tabs.toString()
@@ -62,7 +55,7 @@ class DemoActivity : BaseVBVMActivity<ActivityDemoBinding, DemoViewModel>() {
     }
 
     override fun showError(message: String?) {
-        mLoadService?.showCallback(RetryCallback::class.java)
+
     }
 
 }

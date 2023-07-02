@@ -7,18 +7,28 @@ package pers.jay.library.base
  */
 class StateListener<T> {
 
+    var createAction: (() -> Unit)? = null
     var startAction: (() -> Unit)? = null
-    var successAction: ((T) -> Unit)? = null
+    var successAction: ((T?) -> Unit)? = null
+    var resultAction: ((T) -> Unit)? = null
     var errorAction: ((String) -> Unit)? = null
     var emptyAction: (() -> Unit)? = null
     var completeAction: (() -> Unit)? = null
+
+    fun onCreate(action: (() -> Unit)?) {
+        createAction = action
+    }
 
     fun onStart(action: (() -> Unit)?) {
         startAction = action
     }
 
-    fun onSuccess(action: ((T) -> Unit)?) {
+    fun onSuccess(action: ((T?) -> Unit)?) {
         successAction = action
+    }
+
+    fun onResult(action: ((T) -> Unit)?) {
+        resultAction = action
     }
 
     fun onError(action: ((String) -> Unit)?) {

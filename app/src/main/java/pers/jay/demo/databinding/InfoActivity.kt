@@ -3,20 +3,14 @@ package pers.jay.demo.databinding
 import android.os.Bundle
 import com.blankj.utilcode.util.LogUtils
 import pers.jay.demo.R
-import pers.jay.demo.common.Const
 import pers.jay.library.base.databinding.BaseDBVMActivity
-import pers.jay.library.loadsir.StatusCallback
 
 /**
  * databinding示例
  */
+
 class InfoActivity : BaseDBVMActivity<ActivityInfoBinding, InfoViewModel>() {
 
-    override var enableActivityLoadSir = true
-
-    override var mActivityStatusCallback: StatusCallback?
-        get() = Const.DEFAULT_ACTIVITY_STATUS_CALLBACK
-        set(value) {}
 
     override fun initLayout(savedInstanceState: Bundle?): Int {
         return R.layout.activity_info
@@ -32,11 +26,11 @@ class InfoActivity : BaseDBVMActivity<ActivityInfoBinding, InfoViewModel>() {
 
     private fun loadData() {
         // 对activity进行视图回调处理,enableActivityLoadSir要覆写
-        mViewModel.loadData().observeOnActivity {
+        mViewModel.loadData().observeState(this) {
             onStart {
                 LogUtils.e(TAG, "onStart")
             }
-            onSuccess { data ->
+            onResult { data ->
                 mBinding.tab = data[0]
             }
             onError {

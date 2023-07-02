@@ -11,8 +11,13 @@ import pers.jay.library.app.BaseApplication
 
 class JApp: BaseApplication() {
 
+    val instance1 : JApp by lazy {
+        this
+    }
+
     companion object {
         lateinit var instance: JApp
+
     }
 
     override fun onCreate() {
@@ -21,7 +26,7 @@ class JApp: BaseApplication() {
     }
 
     override fun lazyInit() {
-        initLoadSir()
+
     }
 
     override fun getAppContext(): Context {

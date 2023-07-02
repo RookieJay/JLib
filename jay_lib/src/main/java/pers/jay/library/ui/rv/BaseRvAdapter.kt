@@ -11,13 +11,18 @@ import androidx.recyclerview.widget.RecyclerView
  * @Author RookieJay
  * @Time 2021/11/9 16:15
  * @Description 通用RecyclerView适配器，封装了一些常规数据操作
+ * todo
+ *  1.可扩展，不是一味在基类增加各种功能；
+ *  2.同时支持ViewBinding和DataBinding,使用扩展方式，无需单独子类实现
+ *  3.支持Paging3
+ *  4.考虑DSL写法，使外部调用更简单
+ *
  */
 @Suppress("UNCHECKED_CAST")
 abstract class BaseRvAdapter<T, VH : BaseRvAdapter.BaseViewHolder>(
-    private val getItemLayoutResId: () -> Int = { 0 },
+    private val getItemLayoutResId:  Int = 0 ,
     private val onBind: ((VH, T, Int) -> Unit)? = null
-) :
-    RecyclerView.Adapter<VH>() {
+) : RecyclerView.Adapter<VH>() {
 
     protected val TAG = javaClass.simpleName
 
@@ -55,10 +60,12 @@ abstract class BaseRvAdapter<T, VH : BaseRvAdapter.BaseViewHolder>(
         notifyItemRangeInserted(mData.size, list.size)
     }
 
-    open fun addItem(item: T) {
+    open fun addItem(item: T, notify: Boolean = true) {
         mData.add(item)
         val originalSize = mData.size
-        notifyItemInserted(originalSize)
+        if (notify) {
+            notifyItemInserted(originalSize)
+        }
     }
 
     open fun addItem(@IntRange(from = 0) position: Int, data: T) {
@@ -94,7 +101,7 @@ abstract class BaseRvAdapter<T, VH : BaseRvAdapter.BaseViewHolder>(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val itemView =
-            LayoutInflater.from(parent.context).inflate(getItemLayoutResId(), parent, false)
+            LayoutInflater.from(parent.context).inflate(getItemLayoutResId, parent, false)
         return BaseViewHolder(itemView) as VH
     }
 
@@ -113,7 +120,7 @@ abstract class BaseRvAdapter<T, VH : BaseRvAdapter.BaseViewHolder>(
 
     open class BaseViewHolder(root: View) : RecyclerView.ViewHolder(root) {
 
-        val mContext = root.context
 
     }
+
 }

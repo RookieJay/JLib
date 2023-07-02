@@ -1,8 +1,6 @@
 package pers.jay.demo.paging
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.KeyEvent
 import android.view.View
 import androidx.lifecycle.lifecycleScope
@@ -17,10 +15,13 @@ import kotlinx.coroutines.launch
 import pers.jay.demo.data.Article
 import pers.jay.demo.databinding.ActivityPagingBinding
 import pers.jay.demo.databinding.LayoutItemArticleBinding
+import pers.jay.library.base.ext.getParam
+import pers.jay.library.base.ext.gone
 import pers.jay.library.base.ext.showToast
 import pers.jay.library.base.viewbinding.BaseVBVMActivity
 import pers.jay.library.ui.rv.BaseVBAdapter
 import pers.jay.library.ui.rv.PagingWrapAdapter
+import kotlin.random.Random
 
 class PagingActivity : BaseVBVMActivity<ActivityPagingBinding, PagingViewModel>() {
 
@@ -28,7 +29,8 @@ class PagingActivity : BaseVBVMActivity<ActivityPagingBinding, PagingViewModel>(
         BaseVBAdapter<Article, LayoutItemArticleBinding>(LayoutItemArticleBinding::class) { binding, item, _ ->
             binding.apply {
                 item.apply {
-                    tvTitle.text = title
+                    val text = id.toString() + title
+                    tvTitle.text = text
                     tvDesc.text = niceDate
                 }
             }
@@ -46,7 +48,6 @@ class PagingActivity : BaseVBVMActivity<ActivityPagingBinding, PagingViewModel>(
 
     override fun initView(savedInstanceState: Bundle?) {
         mBinding.apply {
-
             recyclerView.layoutManager = LinearLayoutManager(this@PagingActivity)
             mAdapter.addLoadStateListener {
                 when (it.refresh) {
@@ -90,21 +91,69 @@ class PagingActivity : BaseVBVMActivity<ActivityPagingBinding, PagingViewModel>(
     override fun dispatchKeyEvent(event: KeyEvent?): Boolean {
         val keycode = event?.keyCode
         val action = event?.action
-        if (keycode == KeyEvent.KEYCODE_MENU && action == KeyEvent.ACTION_UP) {
-            scrollToTop()
+        if (action == KeyEvent.ACTION_UP) {
+            when (keycode) {
+                KeyEvent.KEYCODE_MENU -> {
+                    add()
+                }
+                KeyEvent.KEYCODE_F1 -> {
+                    delete()
+                }
+                KeyEvent.KEYCODE_F3 -> {
+                    update()
+                }
+            }
         }
         return super.dispatchKeyEvent(event)
     }
 
-    private fun scrollToTop() {
+    private fun scrollTo(position: Int) {
         mBinding.apply {
             recyclerView.scrollToPosition(0)
-            Handler(Looper.getMainLooper()).postDelayed(Runnable {
-                articleAdapter.removeAt(0)
-                mAdapter.notifyItemRemoved(0)
-                showMessage("删除第一个")
-            }, 3500)
         }
+    }
+
+    private fun add() {
+        val randomPosition = getRandomPos()
+        val newData = Article()
+        newData.title = "这是我新添加的数据"
+        newData.niceDate = "just now"
+        articleAdapter.addItem(randomPosition, newData)
+        LogUtils.d(TAG, "data size after add:${articleAdapter.getData()[randomPosition]}")
+        mAdapter.notifyItemInserted(randomPosition)
+        showMessage("add第一个")
+        scrollTo(randomPosition)
+    }
+
+    private fun getRandomPos(): Int {
+        val count = articleAdapter.getData().size
+        return Random.nextInt(0, count)
+    }
+
+    private fun delete() {
+        val randomPosition = getRandomPos()
+        LogUtils.d(TAG, "data size before remove:${articleAdapter.getData().size}")
+        articleAdapter.removeAt(randomPosition)
+        LogUtils.d(TAG, "data size after remove:${articleAdapter.getData().size}")
+        mAdapter.notifyItemRemoved(randomPosition)
+        showMessage("delete第一个")
+        scrollTo(randomPosition)
+    }
+
+    private fun update() {
+        val randomPosition = getRandomPos()
+        val data = articleAdapter.getData()[randomPosition]
+        data.title = "我修改了标题"
+        articleAdapter.setItem(randomPosition, data)
+        LogUtils.d(TAG, "data after update:${articleAdapter.getData()[0]}")
+        mAdapter.notifyItemChanged(randomPosition)
+        showMessage("update第一个")
+
+        scrollTo(randomPosition)
+    }
+
+    private fun query() {
+        scrollTo(0)
     }
 
 }

@@ -2,6 +2,7 @@ package pers.jay.library.base
 
 import android.content.Context
 import android.os.Bundle
+import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -22,7 +23,7 @@ abstract class BaseFragment : Fragment(), IFragment {
     private var isDataLoaded // 数据是否已请求
             = false
 
-    protected val TAG: String = BaseFragment::class.java.simpleName
+    protected val TAG: String = javaClass.simpleName
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -73,6 +74,11 @@ abstract class BaseFragment : Fragment(), IFragment {
                 subFragment.onBackPressed()
             }
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        // fragment点击穿透解决办法:从事件分发的角度来解决。
+        view.isClickable = true
     }
 
     override fun getContext() = mContext

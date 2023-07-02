@@ -35,7 +35,7 @@ abstract class BaseVBActivity<VB : ViewBinding> : BaseActivity(), IViewBinding<V
         } else {
             initRootViewCommon()!!
         }
-        initLoadSir()
+
         initView(savedInstanceState)
         initData(savedInstanceState)
     }
@@ -47,9 +47,9 @@ abstract class BaseVBActivity<VB : ViewBinding> : BaseActivity(), IViewBinding<V
         val vbClass = ViewBindingUtils.getVBClass(javaClass)
         vbClass?.apply {
             val method = getMethod("inflate", LayoutInflater::class.java)
-            method.invoke(null, layoutInflater) as VB
-            setContentView(mBinding.root)
-            return mBinding
+            val binding = method.invoke(null, layoutInflater) as VB
+            setContentView(binding.root)
+            return binding
         }
         throw RuntimeException("can't find matched ViewBinding")
     }

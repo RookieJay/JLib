@@ -1,24 +1,29 @@
 package pers.jay.demo.customView
 
 import android.os.Bundle
+import android.os.Parcelable
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.blankj.utilcode.util.FragmentUtils
 import com.blankj.utilcode.util.LogUtils
+import pers.jay.demo.R
 import pers.jay.demo.data.Article
 import pers.jay.demo.databinding.ActivityCustomViewBinding
 import pers.jay.demo.databinding.ItemRvCustomViewBinding
 import pers.jay.library.base.ext.showToast
+import pers.jay.library.base.ext.singleClick
 import pers.jay.library.base.viewbinding.BaseVBActivity
 import pers.jay.library.ui.rv.BaseVBAdapter
 
 class CustomViewActivity : BaseVBActivity<ActivityCustomViewBinding>() {
 
     val mAdapter =
-        BaseVBAdapter<String, ItemRvCustomViewBinding>(ItemRvCustomViewBinding::class) { binding, item, _ ->
+        BaseVBAdapter<CustomView, ItemRvCustomViewBinding>(ItemRvCustomViewBinding::class) { binding, item, _ ->
             LogUtils.d(TAG, "onBind, $item")
             binding.apply {
-                button.text = item
-                button.setOnClickListener {
-                    showToast(item)
+                button.text = item.cname
+                button.singleClick {
+                    showToast(item.cname)
+                    openChildPage(item)
                 }
             }
         }
@@ -27,23 +32,27 @@ class CustomViewActivity : BaseVBActivity<ActivityCustomViewBinding>() {
         mBinding.apply {
             rv.layoutManager = LinearLayoutManager(this@CustomViewActivity)
             rv.adapter = mAdapter
-
         }
-
-        // for test
-        val fragment = CustomViewFragment<Article>().apply {
-            arguments = Bundle().apply {
-                putParcelable("testKey", Article(title = "testArticle"))
-            }
-        }
-        val fm = supportFragmentManager
-        val trans = fm.beginTransaction()
-        trans.add(fragment, "tag")
-        trans.commit()
     }
 
     override fun initData(savedInstanceState: Bundle?) {
-        mAdapter.setList(listOf("进度条", "刻度尺", "轮播图", "仪表盘", "贝塞尔水波纹"))
+        mAdapter.setList(listOf(
+            CustomView.PROGRESS_BAR,
+            CustomView.SCALE_RULER,
+            CustomView.BANNER,
+            CustomView.DASHBOARD,
+            CustomView.BEZIER_RIPPLE,
+        ))
+    }
+
+    fun openChildPage(item: CustomView) {
+        LogUtils.d(TAG, "openChildPage")
+        val fragment = CustomViewFragment().apply {
+            arguments = Bundle().apply {
+                putParcelable(CustomViewFragment.VIEW_TYPE, item)
+            }
+        }
+        FragmentUtils.add(supportFragmentManager, fragment, R.id.flContainer, false, true)
     }
 
 }

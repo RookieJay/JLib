@@ -4,7 +4,7 @@ import pers.jay.demo.loadsir.EmptyCallback
 import pers.jay.demo.loadsir.ErrorCallback
 import pers.jay.demo.loadsir.LoadingCallback
 import pers.jay.demo.loadsir.RetryCallback
-import pers.jay.library.loadsir.StatusCallback
+import pers.jay.demo.loadsir.StatusCallback
 
 object Const {
 

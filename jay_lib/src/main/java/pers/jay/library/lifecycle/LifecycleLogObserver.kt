@@ -11,26 +11,26 @@ import androidx.lifecycle.LifecycleOwner
 class LifecycleLogObserver(private val TAG: String) : DefaultLifecycleObserver {
 
     override fun onCreate(owner: LifecycleOwner) {
-        Log.d(TAG, "onCreate")
+        Log.d(TAG, "-----onCreate-----")
     }
 
     override fun onStart(owner: LifecycleOwner) {
-        Log.d(TAG, "onStart")
+        Log.d(TAG, "-----onStart-----")
     }
 
     override fun onResume(owner: LifecycleOwner) {
-        Log.d(TAG, "onResume")
+        Log.d(TAG, "-----onResume-----")
     }
 
     override fun onPause(owner: LifecycleOwner) {
-        Log.d(TAG, "onPause")
+        Log.d(TAG, "-----onPause-----")
     }
 
     override fun onStop(owner: LifecycleOwner) {
-        Log.d(TAG, "onStop")
+        Log.d(TAG, "-----onStop-----")
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
-        Log.d(TAG, "onDestroy")
+        Log.d(TAG, "-----onDestroy-----")
     }
 }

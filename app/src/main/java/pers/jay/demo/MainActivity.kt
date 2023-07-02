@@ -1,12 +1,15 @@
 package pers.jay.demo
 
+import android.content.Intent
 import android.os.Bundle
+import com.blankj.utilcode.util.LogUtils
 import pers.jay.demo.customView.CustomViewActivity
 import pers.jay.demo.databinding.ActivityMainBinding
 import pers.jay.demo.databinding.InfoActivity
 import pers.jay.demo.paging.PagingActivity
 import pers.jay.demo.viewbinding.DemoActivity
 import pers.jay.demo.viewbinding.DemoViewModel
+import pers.jay.library.base.ext.gone
 import pers.jay.library.base.ext.singleClick
 import pers.jay.library.base.ext.startActivity
 import pers.jay.library.base.viewbinding.BaseVBVMActivity
@@ -16,8 +19,9 @@ class MainActivity : BaseVBVMActivity<ActivityMainBinding, DemoViewModel>() {
     override fun initView(savedInstanceState: Bundle?) {
         mBinding.apply {
             btRequest.setOnClickListener {
-                startActivity<DemoActivity> {
-                    putExtra("test", "test")
+                startActivity<DemoActivity>("id" to 1001, "name" to "test") {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    LogUtils.d(TAG, "启动DemoActivity")
                 }
             }
             btInfo.setOnClickListener {

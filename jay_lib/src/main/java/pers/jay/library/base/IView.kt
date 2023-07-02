@@ -50,5 +50,5 @@ interface IView {
     /**
      * 杀死自己
      */
-    fun killSelf() {}
+    fun exit() {}
 }

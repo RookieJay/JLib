@@ -51,7 +51,7 @@ abstract class NetworkManager {
         val builder = Retrofit.Builder()
             .baseUrl(baseUrl)
         if (useGsonConverter()) {
-            builder.addConverterFactory(GsonConverterFactory.create())
+            builder.addConverterFactory(CustomGsonConverterFactory.create())
         }
         if (useScalarsConverter()) {
             // to convert strings and both primitives and their boxed types to {@code text/plain} bodies.

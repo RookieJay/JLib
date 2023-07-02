@@ -3,7 +3,7 @@ package pers.jay.library.ui.rv
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
-import com.blankj.utilcode.util.LogUtils
+import com.telecom.cloudbox.launcher.utils.TimeTracer
 import kotlin.reflect.KClass
 
 /**
@@ -18,7 +18,7 @@ open class BaseVBAdapter<T, VB : ViewBinding>(
 ) : BaseRvAdapter<T, BaseVBAdapter.BaseVBViewHolder<VB>>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseVBViewHolder<VB> {
-        val start = System.currentTimeMillis()
+        TimeTracer.start("onCreateViewHolder")
 //        val vbClazz = ViewBindingUtils.getVBClass(javaClass)
         val vbClazz = vbClass.java
         vbClazz.apply {
@@ -31,7 +31,7 @@ open class BaseVBAdapter<T, VB : ViewBinding>(
             )
             val layoutInflater = LayoutInflater.from(parent.context)
             val binding = method.invoke(null, layoutInflater, parent, false) as VB
-            LogUtils.d(TAG, "onCreateViewHolder 耗时：${System.currentTimeMillis() - start}")
+            TimeTracer.end("onCreateViewHolder")
             return BaseVBViewHolder(binding)
         }
     }
