@@ -8,8 +8,6 @@ import kotlinx.coroutines.flow.*
 import pers.jay.library.base.StateListener
 import pers.jay.library.base.livedata.SingleLiveData
 import pers.jay.library.base.livedata.StateLiveData
-import pers.jay.library.base.livedata.setResultData
-import pers.jay.library.base.livedata.updateState
 import pers.jay.library.base.repository.BaseRepository
 import pers.jay.library.network.BaseResponse
 import pers.jay.library.network.coroutine.getRequestError
@@ -229,12 +227,12 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
                     // 4、成功响应回调（数据可空）
                     listener.successAction?.invoke(resultData)
                     stateResponse.data = resultData
-                    stateLiveData.setResultData(resultData, BaseResponse.DataState.SUCCESS)
+                    stateLiveData.updateState(stateResponse.dataState ?: BaseResponse.DataState.SUCCESS)
                     // 5、非空数据回调
                     if (requireData == true) {
                         listener.resultAction?.invoke(resultData!!)
                         stateResponse.data = resultData
-                        stateLiveData.setResultData(resultData, BaseResponse.DataState.DATA_RESULT)
+                        stateLiveData.updateState(stateResponse.dataState ?: BaseResponse.DataState.DATA_RESULT)
                     }
                 }.onFailure { e ->
                     // 6、数据处理过程中发生的异常捕获处理，错误回调
