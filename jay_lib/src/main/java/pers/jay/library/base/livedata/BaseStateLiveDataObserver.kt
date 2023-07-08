@@ -25,14 +25,18 @@ abstract class BaseStateLiveDataObserver<T>() : Observer<BaseResponse<T>> {
      * @return Unit
      */
     override fun onChanged(response: BaseResponse<T>?) {
-        Log.d(TAG, "onChanged response=$response")
+        Log.d(TAG, "onChanged response=${response.hashCode()}, $response")
         response?.apply {
             val dataState = response.dataState
             Log.d(TAG, "onChanged dataState: $dataState")
             when (dataState) {
                 DataState.SUCCESS -> {
+                    //请求成功，数据可能为null
+                    onSuccess(response.data)
+                }
+                DataState.DATA_RESULT -> {
                     //请求成功，数据不为null
-                    onSuccess(response.data!!)
+                    onResult(response.data!!)
                 }
                 DataState.EMPTY -> {
                     //数据为空
@@ -51,16 +55,22 @@ abstract class BaseStateLiveDataObserver<T>() : Observer<BaseResponse<T>> {
                     onCompletion()
                 }
                 else -> {
-
                 }
             }
         }
     }
 
     /**
+     * 请求成功且数据可能为空
+     */
+    open fun onSuccess(data: T?) {
+
+    }
+
+    /**
      * 请求成功且数据不为空
      */
-    open fun onSuccess(data: T) {
+    open fun onResult(data: T) {
 
     }
 

@@ -24,6 +24,27 @@ open class BaseResponse<T> {
         return "${BaseResponse::class.java.simpleName}(code=$code, msg=$msg, data=${data}, dataState=$dataState, errorReason=$errorReason)"
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is BaseResponse<*>) return false
+        if (code != other.code) return false
+        if (msg != other.msg) return false
+        if (data != other.data) return false
+        if (dataState != other.dataState) return false
+        if (errorReason != other.errorReason) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = code
+        result = 31 * result + (msg?.hashCode() ?: 0)
+        result = 31 * result + (data?.hashCode() ?: 0)
+        result = 31 * result + (dataState?.hashCode() ?: 0)
+        result = 31 * result + (errorReason?.hashCode() ?: 0)
+        return result
+    }
+
     /**
      * @Author RookieJay
      * @Time 2021/5/27 13:39

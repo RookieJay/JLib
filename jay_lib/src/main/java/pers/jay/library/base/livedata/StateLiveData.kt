@@ -1,6 +1,8 @@
 package pers.jay.library.base.livedata
 
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MutableLiveData
 import pers.jay.library.base.StateListener
 import pers.jay.library.network.BaseResponse
 
@@ -10,7 +12,7 @@ import pers.jay.library.network.BaseResponse
  * @Description 含有数据状态的LiveData。
  * 封装了[BaseResponse], 以及封装[observeState]方法，使用Kotlin DSL 消除回调，使代码更具统一性。
  */
-open class StateLiveData<T> : SingleLiveData<BaseResponse<T>>() {
+open class StateLiveData<T> : MutableLiveData<BaseResponse<T>>() {
 
     /**
      * 业务异常处理函数（在返回原始数据的一开始被调用），用于处理数据已返回，但返回数据有可能产生业务异常的场景。
@@ -30,8 +32,12 @@ open class StateLiveData<T> : SingleLiveData<BaseResponse<T>>() {
         val listener = StateListener<T>().apply(listenerBuilder)
         val observer = object : BaseStateLiveDataObserver<T>() {
 
-            override fun onSuccess(data: T) {
+            override fun onSuccess(data: T?) {
                 listener.successAction?.invoke(data)
+            }
+
+            override fun onResult(data: T) {
+                listener.resultAction?.invoke(data)
             }
 
             override fun onDataEmpty() {
@@ -53,8 +59,8 @@ open class StateLiveData<T> : SingleLiveData<BaseResponse<T>>() {
     /**
      * 更新数据状态并post
      */
-    fun updateState(dataState: BaseResponse.DataState) {
-        value = value
+    fun updateState(response: BaseResponse<T>) {
+        value = response
     }
 
     fun <T> StateLiveData<T>.bussErrorHandle(bussErrorHandle: (BaseResponse<T>) -> Boolean): StateLiveData<T> {
@@ -68,14 +74,6 @@ open class StateLiveData<T> : SingleLiveData<BaseResponse<T>>() {
     ): StateLiveData<T> {
         this.preDataHandle = dataHandle
         return this
-    }
-
-    fun <T> StateLiveData<T>.getResultData(): T? = value?.data
-
-    fun <T> StateLiveData<T>.setResultData(data:T?, dataState: BaseResponse.DataState) {
-        val stateResponseData = value
-        stateResponseData?.data = data
-        updateState(dataState)
     }
 
 }

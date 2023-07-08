@@ -102,18 +102,6 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
     }
 
     /**
-     * 创建一个简单的事件并发送数据
-     * @param requestBlock 请求函数体，最后一行表示返回数据，直接通过LiveData发送
-     */
-    open fun <T> createStateLiveEvent(requestBlock: suspend CoroutineScope.(StateLiveData<T>) -> BaseResponse<T>): StateLiveData<T> {
-        val stateLiveData = createStateLiveData<T>()
-        launchOnIO {
-            stateLiveData.postValue(requestBlock(stateLiveData))
-        }
-        return stateLiveData
-    }
-
-    /**
      * 创建一个新的StateLiveData
      */
     protected fun <T> createStateLiveData(): StateLiveData<T> {
@@ -184,7 +172,8 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
         val requestFlow = this.onStart {
             // 请求开始，修改状态为Loading
             listener.startAction?.invoke()
-            stateLiveData.updateState(BaseResponse.DataState.LOADING)
+            stateResponse.dataState = BaseResponse.DataState.LOADING
+            stateLiveData.updateState(stateResponse)
         }
         viewModelScope.launch(Dispatchers.Main) {
             // catch 函数只是中间操作符,只能捕获它的上游的异常,不能捕获下游的异常，类似 collect 内的异常
@@ -195,12 +184,14 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
                 // 请求失败，修改状态为Error
                 listener.errorAction?.invoke(errorMessage)
                 stateResponse.errorReason = errorMessage
-                stateLiveData.updateState(BaseResponse.DataState.REQUEST_ERROR)
+                stateResponse.dataState = BaseResponse.DataState.REQUEST_ERROR
+                stateLiveData.updateState(stateResponse)
             }.onCompletion { cause ->
                 Log.i(TAG, "onCompletion，$cause")
                 // 请求正常结束，修改状态为Completed
                 listener.completeAction?.invoke()
-                stateLiveData.updateState(BaseResponse.DataState.COMPLETED)
+                stateResponse.dataState = BaseResponse.DataState.COMPLETED
+                stateLiveData.updateState(stateResponse)
             }.collectLatest {
                 // 请求返回
                 stateResponse = it
@@ -209,14 +200,16 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
                     if (requireData == true && data == null) {
                         //1、若需要获取数据，自动添加判空逻辑。流程不再向下执行。
                         listener.emptyAction?.invoke()
-                        stateLiveData.updateState(BaseResponse.DataState.EMPTY)
+                        stateResponse.dataState = BaseResponse.DataState.EMPTY
+                        stateLiveData.updateState(stateResponse)
                         return@collectLatest
                     }
                     // 2、检查是否有业务异常需要处理,若有，则取手动修改的BaseResponse状态，并返回，更新状态，以通知view层改变。流程不再向下执行。
                     val handleBussError = stateLiveData.bussErrorHandle?.invoke(stateResponse)
                     if (handleBussError == true) {
+                        stateResponse.dataState = BaseResponse.DataState.BUSS_ERROR
                         listener.errorAction?.invoke(stateResponse.errorReason ?: BaseResponse.DataState.BUSS_ERROR.value())
-                        stateLiveData.updateState(stateResponse.dataState ?: BaseResponse.DataState.BUSS_ERROR)
+                        stateLiveData.updateState(stateResponse)
                         return@collectLatest
                     }
                     // 3、数据预处理逻辑，有则执行,并返回经过处理的数据。
@@ -227,12 +220,15 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
                     // 4、成功响应回调（数据可空）
                     listener.successAction?.invoke(resultData)
                     stateResponse.data = resultData
-                    stateLiveData.updateState(stateResponse.dataState ?: BaseResponse.DataState.SUCCESS)
+                    stateResponse.dataState = BaseResponse.DataState.SUCCESS
+                    stateLiveData.updateState(stateResponse)
+
                     // 5、非空数据回调
                     if (requireData == true) {
                         listener.resultAction?.invoke(resultData!!)
                         stateResponse.data = resultData
-                        stateLiveData.updateState(stateResponse.dataState ?: BaseResponse.DataState.DATA_RESULT)
+                        stateResponse.dataState = BaseResponse.DataState.DATA_RESULT
+                        stateLiveData.updateState(stateResponse)
                     }
                 }.onFailure { e ->
                     // 6、数据处理过程中发生的异常捕获处理，错误回调
@@ -241,7 +237,8 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
                     e.printStackTrace()
                     listener.errorAction?.invoke(errorMsg)
                     stateResponse.errorReason = errorMsg
-                    stateLiveData.updateState(BaseResponse.DataState.BUSS_ERROR)
+                    stateResponse.dataState = BaseResponse.DataState.BUSS_ERROR
+                    stateLiveData.updateState(stateResponse)
                 }
             }
         }
