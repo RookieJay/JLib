@@ -8,7 +8,6 @@ android {
     buildToolsVersion rootProject.ext.android.buildToolsVersion
 
     defaultConfig {
-        multiDexEnabled true
         minSdkVersion rootProject.ext.android.minSdkVersion
         targetSdkVersion rootProject.ext.android.targetSdkVersion
         versionCode rootProject.ext.android.versionCode
@@ -61,7 +60,7 @@ dependencies {
 
     def test = rootProject.ext.test
     def tools = rootProject.ext.tools
-    def imageLoad = rootProject.ext.imageLoad
+
     def common = rootProject.ext.common
     def jetPack = rootProject.ext.jetpack
     def kotlin = rootProject.ext.kotlin
@@ -83,14 +82,10 @@ dependencies {
     // ui
     api ui.recyclerviewX
     api ui.constraintlayoutx
-    api ui.loadSir
 
     // utils
     api tools.AndroidutilCode
-    api tools.androideventbus
     api tools.rxjava2
-    api tools.rxandroid2
-    api tools.multidex
 
     // network
     api network.retrofit
@@ -99,13 +94,7 @@ dependencies {
     api network.okhttp3
     api network.loggingInterceptor
     api network.loggingInterceptorCustom
-    api network.moshi
-    api network.moshiKotlin
-    api network.retrofitConverterMoshi
-    kapt network.moshiCodeGen
 
-    // image-load
-    api imageLoad.glide
 
     // jetpack
     api jetPack.lifecycleExt
@@ -113,7 +102,5 @@ dependencies {
     api jetPack.lifeCycleKtx
     api jetPack.lifecycleViewmodel
     api jetPack.lifeCycleLiveData
-    api jetpack.pagingRuntime
-    api jetpack.pagingCommon
 
 }

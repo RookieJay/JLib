@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.os.Bundle
-import androidx.multidex.MultiDex
 import com.blankj.utilcode.util.LogUtils
 import pers.jay.library.network.IAppInfo
 
@@ -27,7 +26,6 @@ abstract class BaseApplication: Application(), IAppInfo, Application.ActivityLif
 
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
-        MultiDex.install(this)
     }
 
     override fun onCreate() {

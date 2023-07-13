@@ -61,16 +61,30 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation project(':jay_lib')
-    implementation 'com.google.android.material:material:1.3.0'
     def common = rootProject.ext.common
     def network = rootProject.ext.network
     def jetpack = rootProject.ext.jetpack
     def ui = rootProject.ext.ui
     def tools = rootProject.ext.tools
-    kapt network.moshiCodeGen
+    def imageLoad = rootProject.ext.imageLoad
     implementation common.activityKtx
     implementation common.appcompat
     implementation ui.constraintlayoutx
+    implementation ui.loadSir
+
+    // image-load
+    implementation imageLoad.glide
+
+    // network
+    implementation network.moshi
+    implementation network.moshiKotlin
+    implementation network.retrofitConverterMoshi
+    kapt network.moshiCodeGen
+
+    // paging 
+    implementation jetpack.pagingRuntime
+    implementation jetpack.pagingCommon
+    implementation jetpack.pagingKtx
 //    implementation jetpack.composeUI
 //    implementation jetpack.composeUITool
 //    implementation jetpack.composeFoundation

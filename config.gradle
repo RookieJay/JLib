@@ -7,9 +7,9 @@ ext {
 
     android = [
             applicationId    : "pers.jay.library",
-            compileSdkVersion: 30,
+            compileSdkVersion: 32,
             minSdkVersion    : 19,
-            targetSdkVersion : 30,
+            targetSdkVersion : 32,
             buildToolsVersion: "29.0.3",
             versionCode      : 1,
             versionName      : "1.0.0",
@@ -39,13 +39,14 @@ ext {
             buglySdkVersion             : "latest.release", // 指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.2.0
             dbflowVersion               : "4.2.4",
             greenDaoVersion             : "3.2.2",
-            kotlin_version              : "1.4.0",
+            kotlin_version              : "1.5.20",
+            ktxCoreVersion               : "1.3.0",
             bannerVersion               : "2.1.0",
             koinVersion                 : "2.1.5",
             doraemonkitVersion          : "2.0.0",
             navigationVersion           : "2.3.0",
             lifecycleVersion            : "2.3.1",
-            pagingVersion               : "3.0.1",
+            pagingVersion               : "3.1.1",
             moshiVersion                : "1.12.0",
             composeVersion              : "1.0.0-rc02",
             roomVerion                  : "2.3.0"
@@ -239,11 +240,11 @@ ext {
 
     common = [
             "appcompat"                 : "androidx.appcompat:appcompat:${version["appcompatVersion"]}",
-            "activityKtx"               : "androidx.activity:activity-ktx:1.3.0"
+            "activityKtx"               : "androidx.activity:activity-ktx:${version["ktxCoreVersion"]}"
     ]
 
     kotlin = [
-            "ktx"                       : "androidx.core:core-ktx:1.3.0",
+            "ktx"                       : "androidx.core:core-ktx:${version["ktxCoreVersion"]}",
             "stdlib"                    : "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${version["kotlin_version"]}",
             "coroutines_android"        : "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0"
     ]
@@ -253,6 +254,7 @@ ext {
             //paging
             pagingCommon                : "androidx.paging:paging-common:${version.pagingVersion}",
             pagingRuntime               : "androidx.paging:paging-runtime:${version.pagingVersion}",
+            pagingKtx                   : "androidx.paging:paging-common-ktx:${version.pagingVersion}",
 
             // Koin AndroidX Scope feature
             koinScop                    : "org.koin:koin-androidx-scope:${version.koinVersion}",
@@ -283,6 +285,7 @@ ext {
             // Foundation (Border, Background, Box, Image, Scroll, shapes, animations, etc.)
             composeFoundation           : "androidx.compose.foundation:foundation:${version.composeVersion}",
             // Material Design
+            material                    :"com.google.android.material:material:1.9.0",
             composeMaterial             : "androidx.compose.material:material:${version.composeVersion}",
             // Material design icons
             composeMDIconsCore          : "androidx.compose.material:material-icons-core:${version.composeVersion}",

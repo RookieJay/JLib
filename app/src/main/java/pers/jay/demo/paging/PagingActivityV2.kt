@@ -18,9 +18,9 @@ import kotlinx.coroutines.launch
 import pers.jay.demo.R
 import pers.jay.demo.data.Article
 import pers.jay.demo.databinding.ActivityPagingBinding
+import pers.jay.demo.paging.base.BasePagingAdapter
 import pers.jay.library.base.ext.getView
 import pers.jay.library.base.viewbinding.BaseVBVMActivity
-import pers.jay.library.ui.rv.BasePagingAdapter
 import pers.jay.library.ui.rv.BaseRvAdapter
 
 class PagingActivityV2 : BaseVBVMActivity<ActivityPagingBinding, PagingViewModel>() {

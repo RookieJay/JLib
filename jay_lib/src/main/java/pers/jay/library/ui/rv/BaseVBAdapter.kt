@@ -3,7 +3,7 @@ package pers.jay.library.ui.rv
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
-import com.telecom.cloudbox.launcher.utils.TimeTracer
+import pers.jay.library.utils.debug.TimeTracer
 import kotlin.reflect.KClass
 
 /**

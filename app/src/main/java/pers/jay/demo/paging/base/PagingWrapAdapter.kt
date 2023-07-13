@@ -1,16 +1,16 @@
-package pers.jay.library.ui.rv
+package pers.jay.demo.paging.base
 
 import android.view.ViewGroup
 import androidx.annotation.IntRange
 import androidx.lifecycle.Lifecycle
 import androidx.paging.*
-import androidx.paging.LoadType.REFRESH
 import androidx.recyclerview.widget.AdapterListUpdateCallback
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import pers.jay.library.ui.rv.DefaultDifferCallback
 
 /**
  * 装饰模式，实现在不修改原有基类的基础上，支持Paging

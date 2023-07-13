@@ -1,34 +1,6 @@
 package pers.jay.library.ui.rv
 
-import androidx.paging.LoadState
-import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.blankj.utilcode.util.LogUtils
-
-fun <T : Any, VH : BaseRvAdapter.BaseViewHolder> PagingDataAdapter<T, VH>.test(
-    onNotLoading: (() -> Unit)? = null,
-    onLoading: (() -> Unit)? = null,
-    onError: ((LoadState.Error) -> Unit)? = null
-) {
-    addLoadStateListener {
-        when (it.refresh) {
-            is LoadState.NotLoading -> {
-                onNotLoading?.invoke()
-            }
-            is LoadState.Loading -> {
-                onLoading?.invoke()
-            }
-            is LoadState.Error -> {
-                val state = it.refresh as LoadState.Error
-                LogUtils.d(
-                    "PagingDataAdapter[${this.hashCode()}]",
-                    "addLoadStateListener Error: ${state.error.message}"
-                )
-                onError?.invoke(state)
-            }
-        }
-    }
-}
 
 object RecyclerViewUtils {
 
@@ -48,14 +20,5 @@ object RecyclerViewUtils {
     ) {
         init(layoutManager, adapter)
     }
-
-    fun <T : Any, VH : BaseRvAdapter.BaseViewHolder> RecyclerView.initPagingAdapter(
-        layoutManager: RecyclerView.LayoutManager,
-        adapter: PagingDataAdapter<T, VH>,
-    ) {
-        init(layoutManager, adapter)
-    }
-
-
 
 }

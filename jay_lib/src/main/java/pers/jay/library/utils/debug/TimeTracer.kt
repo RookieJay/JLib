@@ -1,4 +1,4 @@
-package com.telecom.cloudbox.launcher.utils
+package pers.jay.library.utils.debug
 
 import android.util.Log
 

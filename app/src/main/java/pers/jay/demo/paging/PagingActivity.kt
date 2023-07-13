@@ -15,12 +15,10 @@ import kotlinx.coroutines.launch
 import pers.jay.demo.data.Article
 import pers.jay.demo.databinding.ActivityPagingBinding
 import pers.jay.demo.databinding.LayoutItemArticleBinding
-import pers.jay.library.base.ext.getParam
-import pers.jay.library.base.ext.gone
 import pers.jay.library.base.ext.showToast
 import pers.jay.library.base.viewbinding.BaseVBVMActivity
 import pers.jay.library.ui.rv.BaseVBAdapter
-import pers.jay.library.ui.rv.PagingWrapAdapter
+import pers.jay.demo.paging.base.PagingWrapAdapter
 import kotlin.random.Random
 
 class PagingActivity : BaseVBVMActivity<ActivityPagingBinding, PagingViewModel>() {

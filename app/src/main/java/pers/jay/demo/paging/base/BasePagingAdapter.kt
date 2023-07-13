@@ -1,4 +1,4 @@
-package pers.jay.library.ui.rv
+package pers.jay.demo.paging.base
 
 import androidx.lifecycle.Lifecycle
 import androidx.paging.*
@@ -7,6 +7,8 @@ import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.DiffUtil
 import com.blankj.utilcode.util.LogUtils
 import kotlinx.coroutines.Dispatchers
+import pers.jay.library.ui.rv.BaseRvAdapter
+import pers.jay.library.ui.rv.DefaultDifferCallback
 
 /**
  * fixme differ.getItem返回空不知如何处理
