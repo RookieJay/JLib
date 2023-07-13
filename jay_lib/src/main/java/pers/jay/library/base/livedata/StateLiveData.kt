@@ -32,6 +32,10 @@ open class StateLiveData<T> : MutableLiveData<BaseResponse<T>>() {
         val listener = StateListener<T>().apply(listenerBuilder)
         val observer = object : BaseStateLiveDataObserver<T>() {
 
+            override fun onRequest() {
+                listener.startAction?.invoke()
+            }
+
             override fun onSuccess(data: T?) {
                 listener.successAction?.invoke(data)
             }

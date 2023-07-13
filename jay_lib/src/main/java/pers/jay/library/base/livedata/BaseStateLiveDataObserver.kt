@@ -30,6 +30,10 @@ abstract class BaseStateLiveDataObserver<T>() : Observer<BaseResponse<T>> {
             val dataState = response.dataState
             Log.d(TAG, "onChanged dataState: $dataState")
             when (dataState) {
+                DataState.LOADING -> {
+                    //请求中
+                    onRequest()
+                }
                 DataState.SUCCESS -> {
                     //请求成功，数据可能为null
                     onSuccess(response.data)
@@ -58,6 +62,13 @@ abstract class BaseStateLiveDataObserver<T>() : Observer<BaseResponse<T>> {
                 }
             }
         }
+    }
+
+    /**
+     * 请求中
+     */
+    open fun onRequest() {
+
     }
 
     /**
