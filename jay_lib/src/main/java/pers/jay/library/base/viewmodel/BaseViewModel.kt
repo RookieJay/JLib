@@ -204,9 +204,10 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
                         stateLiveData.updateState(stateResponse)
                         return@collectLatest
                     }
-                    // 2、检查是否有业务异常需要处理,若有，则取手动修改的BaseResponse状态，并返回，更新状态，以通知view层改变。流程不再向下执行。
+                    // 2、检查返回是否有业务异常需要处理,若有，则取手动修改的BaseResponse状态，并返回，更新状态，以通知view层改变。流程不再向下执行。
+                    val isSuccessful = stateResponse.isSuccessful()
                     val handleBussError = stateLiveData.bussErrorHandle?.invoke(stateResponse)
-                    if (handleBussError == true) {
+                    if (!isSuccessful || handleBussError == true) {
                         stateResponse.dataState = BaseResponse.DataState.BUSS_ERROR
                         listener.errorAction?.invoke(stateResponse.errorReason ?: BaseResponse.DataState.BUSS_ERROR.value())
                         stateLiveData.updateState(stateResponse)

@@ -1,6 +1,7 @@
 package pers.jay.demo.databinding
 
 import pers.jay.demo.data.Tab
+import pers.jay.demo.net.WanResponse
 import pers.jay.library.base.livedata.StateLiveData
 import pers.jay.library.base.viewmodel.BaseViewModel
 

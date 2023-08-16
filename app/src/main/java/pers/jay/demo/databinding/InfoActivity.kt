@@ -30,8 +30,8 @@ class InfoActivity : BaseDBVMActivity<ActivityInfoBinding, InfoViewModel>() {
             onStart {
                 LogUtils.e(TAG, "onStart")
             }
-            onResult { data ->
-                mBinding.tab = data[0]
+            onResult { it ->
+                mBinding.tab = it[0]
             }
             onError {
                 LogUtils.e(TAG, "error $it")

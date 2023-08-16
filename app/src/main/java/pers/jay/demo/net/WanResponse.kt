@@ -23,12 +23,6 @@ class WanResponse<T> : BaseResponse<T>() {
     @Json(name = "data")
     override var data: T? = null
 
-    override val isSuccessful: Boolean
-        get() = code == 0
-
-    override fun toString(): String {
-        return "BaseResponse(code=$code, data=${data}, msg=$msg, dataState=$dataState, errorReason=$errorReason)"
-    }
-
+    override fun isSuccessful() = code == 10
 
 }
