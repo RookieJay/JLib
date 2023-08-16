@@ -16,13 +16,8 @@ open class BaseResponse<T> {
     // 错误原因
     var errorReason: String? = null
 
-    // 是否请求成功，根据业务自己重写get方法
-    open val isSuccessful: Boolean
-        get() = code == 0
-
-    override fun toString(): String {
-        return "${BaseResponse::class.java.simpleName}(code=$code, msg=$msg, data=${data}, dataState=$dataState, errorReason=$errorReason)"
-    }
+    // 响应数据是否正确，根据业务自行重写
+    open fun isSuccessful() = code == 0
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -43,6 +38,10 @@ open class BaseResponse<T> {
         result = 31 * result + (dataState?.hashCode() ?: 0)
         result = 31 * result + (errorReason?.hashCode() ?: 0)
         return result
+    }
+
+    override fun toString(): String {
+        return "${this::class.simpleName}(code=$code, msg=$msg, data=$data, dataState=$dataState, errorReason=$errorReason)"
     }
 
     /**
