@@ -3,6 +3,7 @@ package pers.jay.demo.databinding
 import android.os.Bundle
 import com.blankj.utilcode.util.LogUtils
 import pers.jay.demo.R
+import pers.jay.demo.data.Tab
 import pers.jay.library.base.databinding.BaseDBVMActivity
 
 /**
@@ -12,7 +13,7 @@ import pers.jay.library.base.databinding.BaseDBVMActivity
 class InfoActivity : BaseDBVMActivity<ActivityInfoBinding, InfoViewModel>() {
 
 
-    override fun initLayout(savedInstanceState: Bundle?): Int {
+    override fun initLayout(): Int {
         return R.layout.activity_info
     }
 
@@ -34,6 +35,9 @@ class InfoActivity : BaseDBVMActivity<ActivityInfoBinding, InfoViewModel>() {
                 mBinding.tab = it[0]
             }
             onError {
+                val errorTab = Tab()
+                errorTab.name = it
+                mBinding.tab = errorTab
                 LogUtils.e(TAG, "error $it")
             }
         }

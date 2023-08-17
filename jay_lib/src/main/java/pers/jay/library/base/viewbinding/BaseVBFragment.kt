@@ -22,15 +22,7 @@ abstract class BaseVBFragment<VB : ViewBinding> : BaseFragment(), IViewBinding<V
     protected val mBinding: VB
         get() = _binding!!
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return initRootView(container)
-    }
-
-    private fun initRootView(container: ViewGroup?): View {
+    override fun initRootView(inflater: LayoutInflater, container: ViewGroup?): View {
         _binding = if (useVBReflect()) {
             initRootViewByReflect(container)
         } else {
@@ -59,13 +51,6 @@ abstract class BaseVBFragment<VB : ViewBinding> : BaseFragment(), IViewBinding<V
         return method.invoke(null, layoutInflater, container, false) as VB
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        beforeInit()
-        initView(savedInstanceState)
-        initData(savedInstanceState)
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         // 此处置空原因
@@ -75,14 +60,7 @@ abstract class BaseVBFragment<VB : ViewBinding> : BaseFragment(), IViewBinding<V
         _binding = null
     }
 
-    open fun beforeInit() {
 
-    }
-
-    /**
-     * 默认使用反射初始化布局
-     * 若想使用常规方式请重写此方法并返回false
-     */
     override fun useVBReflect(): Boolean {
         return true
     }

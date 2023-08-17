@@ -2,6 +2,7 @@ package pers.jay.library.base.viewbinding
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModel
 import androidx.viewbinding.ViewBinding
@@ -21,23 +22,13 @@ abstract class BaseVBActivity<VB : ViewBinding> : BaseActivity(), IViewBinding<V
      */
     protected lateinit var mBinding: VB
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        beforeInit(savedInstanceState)
-        init(savedInstanceState)
-    }
-
-    open fun beforeInit(savedInstanceState: Bundle?) {}
-
-    private fun init(savedInstanceState: Bundle?) {
+    override fun getContentView(): View {
         mBinding = if (useVBReflect()) {
             initRootViewByReflect()
         } else {
             initRootViewCommon()!!
         }
-
-        initView(savedInstanceState)
-        initData(savedInstanceState)
+        return mBinding.root
     }
 
     /**

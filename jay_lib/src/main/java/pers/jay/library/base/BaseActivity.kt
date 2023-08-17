@@ -28,8 +28,16 @@ abstract class BaseActivity : AppCompatActivity(), IActivity {
             lifecycle.addObserver(LifecycleLogObserver(TAG))
         }
         mContext = this
-        initParams(intent)
+        beforeInit(savedInstanceState)
+        setContentView(getContentView())
+        initView(savedInstanceState)
+        initData(savedInstanceState)
     }
+
+    open fun beforeInit(savedInstanceState: Bundle?) {}
+
+    abstract fun getContentView(): View
+
 
     /**
      * 对当前Activity关联的可见fragment做返回键响应

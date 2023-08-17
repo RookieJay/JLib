@@ -1,5 +1,6 @@
 package pers.jay.library.base.databinding
 
+import android.os.Bundle
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -13,7 +14,7 @@ abstract class BaseDBVMActivity<DB : ViewDataBinding, VM : ViewModel>: BaseDBAct
 
     protected lateinit var mViewModel : VM
 
-    override fun beforeInit() {
+    override fun beforeInit(savedInstanceState: Bundle?) {
         initViewModelByReflect()
     }
 

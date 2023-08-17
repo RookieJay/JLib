@@ -1,6 +1,9 @@
 package pers.jay.library.base.databinding
 
+import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -14,7 +17,11 @@ abstract class BaseDBVMFragment<DB : ViewDataBinding, VM : ViewModel> : BaseDBFr
 
     protected lateinit var mViewModel: VM
 
-    override fun beforeInit() {
+    override fun beforeInit(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ) {
         initViewModelByReflect()
     }
 

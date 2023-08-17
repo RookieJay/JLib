@@ -1,5 +1,8 @@
 package pers.jay.library.base.viewbinding
 
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
@@ -44,7 +47,11 @@ abstract class BaseVBVMFragment<VB : ViewBinding, VM : BaseViewModel<out BaseRep
      * 当使用常规模式时，重写initViewModel()方法，且useReflect()返回false
      * 否则默认使用反射获取ViewModel
      */
-    override fun beforeInit() {
+    override fun beforeInit(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ) {
         mViewModel =
             if (useVMReflect()) {
                 initViewModelByReflect()
