@@ -125,7 +125,8 @@ ext {
             "fragmentX"                 : "androidx.fragment:fragment:latest.release",
             "percentlayoutX"            : "androidx.percentlayout:percentlayout:latest.release",
             "swipeRecyclerview"         : "com.yanzhenjie.recyclerview:x:1.3.2",
-            "loadSir"                   : "com.kingja.loadsir:loadsir:1.3.8"
+            "loadSir"                   : "com.kingja.loadsir:loadsir:1.3.8",
+            "binding"                   : "com.hi-dhl:binding:1.1.5"
     ]
 
     animation = [
