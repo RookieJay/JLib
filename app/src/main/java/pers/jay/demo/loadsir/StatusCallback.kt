@@ -11,5 +11,5 @@ data class StatusCallback(
     var loadingCallback: Class<out Callback>,
     var emptyCallback: Class<out Callback>,
     var errorCallback: Class<out Callback>,
-    var retryCallback: Class<out Callback>,
+    var retryCallback: Class<out Callback>
 )

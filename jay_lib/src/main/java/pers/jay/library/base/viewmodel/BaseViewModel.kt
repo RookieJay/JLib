@@ -188,10 +188,8 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
                 stateLiveData.updateState(stateResponse)
             }.onCompletion { cause ->
                 Log.i(TAG, "onCompletion，$cause")
-                // 请求正常结束，修改状态为Completed
+                // 请求正常结束，回调完成
                 listener.completeAction?.invoke()
-                stateResponse.dataState = BaseResponse.DataState.COMPLETED
-                stateLiveData.updateState(stateResponse)
             }.collectLatest {
                 // 请求返回
                 stateResponse = it

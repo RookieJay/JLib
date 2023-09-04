@@ -55,7 +55,7 @@ open class BaseResponse<T> {
         LOADING("加载中"), // 加载中
         SUCCESS("成功"), // 成功
         DATA_RESULT("返回数据"), // 返回数据
-        COMPLETED("完成"), // 完成
+//        COMPLETED("完成"), // 完成
         EMPTY("数据为空"), // 数据为null
         BUSS_ERROR("业务异常"), // 接口请求成功但是服务器返回error
         REQUEST_ERROR("请求失败"), // 请求失败

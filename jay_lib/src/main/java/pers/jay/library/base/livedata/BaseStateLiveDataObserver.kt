@@ -54,10 +54,6 @@ abstract class BaseStateLiveDataObserver<T>() : Observer<BaseResponse<T>> {
                     }
                     onError(reason!!)
                 }
-                DataState.COMPLETED -> {
-                    // 请求结束（无论成功/失败/异常）
-                    onCompletion()
-                }
                 else -> {
                 }
             }

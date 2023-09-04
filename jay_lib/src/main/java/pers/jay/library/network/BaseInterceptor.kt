@@ -5,7 +5,7 @@ import okhttp3.Request
 import okhttp3.Response
 
 /**
- * OkHttp的基类拦截器，根据需求重写方法确定是否拦截
+ * OkHttp的基类拦截器
  */
 open class BaseInterceptor : Interceptor {
 
