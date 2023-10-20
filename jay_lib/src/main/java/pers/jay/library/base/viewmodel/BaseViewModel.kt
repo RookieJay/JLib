@@ -223,12 +223,10 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
                     stateLiveData.updateState(stateResponse)
 
                     // 5、非空数据回调
-                    if (requireData == true) {
-                        listener.resultAction?.invoke(resultData!!)
-                        stateResponse.data = resultData
-                        stateResponse.dataState = BaseResponse.DataState.DATA_RESULT
-                        stateLiveData.updateState(stateResponse)
-                    }
+                    listener.resultAction?.invoke(resultData!!)
+                    stateResponse.data = resultData
+                    stateResponse.dataState = BaseResponse.DataState.DATA_RESULT
+                    stateLiveData.updateState(stateResponse)
                 }.onFailure { e ->
                     // 6、数据处理过程中发生的异常捕获处理，错误回调
                     val errorMsg = "exception occurred in flow collect:[${e.message}]"
