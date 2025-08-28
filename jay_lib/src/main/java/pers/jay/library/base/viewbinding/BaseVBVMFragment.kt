@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
+import pers.jay.library.base.ext.getViewModel
 import pers.jay.library.base.repository.BaseRepository
 import pers.jay.library.base.viewmodel.BaseViewModel
 import java.lang.reflect.ParameterizedType
@@ -35,7 +35,7 @@ abstract class BaseVBVMFragment<VB : ViewBinding, VM : BaseViewModel<out BaseRep
         val type = fragmentClazz.genericSuperclass
         return if (type is ParameterizedType) {
             val clazz = type.actualTypeArguments[1] as Class<VM>
-            mViewModel = ViewModelProvider(this).get(clazz)
+            mViewModel = getViewModel(clazz)
             return mViewModel
         } else {
             val clazz = fragmentClazz.superclass as Class<*>

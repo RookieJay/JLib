@@ -1,8 +1,8 @@
 package pers.jay.library.base.viewbinding
 
 import android.os.Bundle
-import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
+import pers.jay.library.base.ext.getViewModel
 import pers.jay.library.base.repository.BaseRepository
 import pers.jay.library.base.viewmodel.BaseViewModel
 import java.lang.reflect.ParameterizedType
@@ -33,7 +33,7 @@ abstract class BaseVBVMActivity<VB : ViewBinding, VM : BaseViewModel<out BaseRep
         val type = javaClass.genericSuperclass
         if (type is ParameterizedType) {
             val clazz = type.actualTypeArguments[1] as Class<VM>
-            mViewModel = ViewModelProvider(this).get(clazz)
+            mViewModel = getViewModel(clazz)
         }
     }
 

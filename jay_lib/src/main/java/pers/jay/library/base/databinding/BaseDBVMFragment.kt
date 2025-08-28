@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import pers.jay.library.base.ext.getViewModel
 import java.lang.reflect.ParameterizedType
 
 /**
@@ -33,7 +33,7 @@ abstract class BaseDBVMFragment<DB : ViewDataBinding, VM : ViewModel> : BaseDBFr
         val type = javaClass.genericSuperclass
         if (type is ParameterizedType) {
             val clazz = type.actualTypeArguments[1] as Class<VM>
-            mViewModel = ViewModelProvider(this).get(clazz)
+            mViewModel = getViewModel(clazz)
         }
     }
 
