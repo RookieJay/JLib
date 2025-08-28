@@ -26,7 +26,7 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
     /**
      * Model实例
      */
-    val mRepo: M by lazy {
+    protected val mRepo: M by lazy {
         initModelByReflect()
     }
 
