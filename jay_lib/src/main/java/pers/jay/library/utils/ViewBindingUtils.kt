@@ -13,7 +13,7 @@ object ViewBindingUtils {
      * 从给定类的泛型参数中找到ViewBinding类型
      */
     fun getVBClass(from: Class<*>): Class<*>? {
-        LogUtils.d(TAG, "getInstancedGenericClass:${from.simpleName}")
+//        LogUtils.d(TAG, "getInstancedGenericClass:${from.simpleName}")
         try {
             // 返回当前对象所表示的类的超类，且包含该超类的泛型，如BActivity<BViewModel>
             val type = from.genericSuperclass
@@ -22,9 +22,9 @@ object ViewBindingUtils {
                 // 获取该类所有泛型类型组成的数组
                 val types = type.actualTypeArguments
                 for (temp in types) {
-                    LogUtils.d(TAG, "temp in types:${temp}")
+//                    LogUtils.d(TAG, "temp in types:${temp}")
                     if (temp is Class<*>) {
-                        LogUtils.d(TAG, "temp:${temp.simpleName}")
+//                        LogUtils.d(TAG, "temp:${temp.simpleName}")
                         if (ViewBinding::class.java.isAssignableFrom(temp)) {
                             return temp
                         }
@@ -48,9 +48,9 @@ object ViewBindingUtils {
 
     inline fun <reified T: Any> getInstancedGenericKClass(from : KClass<T>) {
         val TAG = "getInstancedGenericKClass"
-        LogUtils.d(TAG, " from: ${from.simpleName}")
+//        LogUtils.d(TAG, " from: ${from.simpleName}")
         val typeParameters = from.typeParameters
-        LogUtils.d(TAG, "typeParameters: $typeParameters")
+//        LogUtils.d(TAG, "typeParameters: $typeParameters")
         for (typeParameter in typeParameters) {
 
         }
