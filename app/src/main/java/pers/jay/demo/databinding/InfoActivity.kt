@@ -4,13 +4,13 @@ import android.os.Bundle
 import com.blankj.utilcode.util.LogUtils
 import pers.jay.demo.R
 import pers.jay.demo.data.Tab
-import pers.jay.library.base.databinding.BaseDBVMActivity
+import pers.jay.library.base.BaseVMActivity
 
 /**
  * databinding示例
  */
 
-class InfoActivity : BaseDBVMActivity<ActivityInfoBinding, InfoViewModel>() {
+class InfoActivity : BaseVMActivity<ActivityInfoBinding, InfoViewModel>() {
 
 
     override fun getLayoutId(): Int {

@@ -1,20 +1,18 @@
 package pers.jay.demo.customView
 
 import android.os.Bundle
-import android.os.Parcelable
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.blankj.utilcode.util.FragmentUtils
 import com.blankj.utilcode.util.LogUtils
 import pers.jay.demo.R
-import pers.jay.demo.data.Article
 import pers.jay.demo.databinding.ActivityCustomViewBinding
 import pers.jay.demo.databinding.ItemRvCustomViewBinding
+import pers.jay.library.base.BaseBindingActivity
 import pers.jay.library.base.ext.showToast
 import pers.jay.library.base.ext.singleClick
-import pers.jay.library.base.viewbinding.BaseVBActivity
 import pers.jay.library.ui.rv.BaseVBAdapter
 
-class CustomViewActivity : BaseVBActivity<ActivityCustomViewBinding>() {
+class CustomViewActivity : BaseBindingActivity<ActivityCustomViewBinding>() {
 
     val mAdapter =
         BaseVBAdapter<CustomView, ItemRvCustomViewBinding>(ItemRvCustomViewBinding::class) { binding, item, _ ->
