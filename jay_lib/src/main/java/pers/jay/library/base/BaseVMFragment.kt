@@ -1,4 +1,4 @@
-package pers.jay.library.base.viewbinding
+package pers.jay.library.base
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,10 +15,9 @@ import java.lang.reflect.ParameterizedType
  * @Time 2021/5/21 18:42
  * @Description 基于[ViewBinding]和[ViewModel]的Fragment基类
  */
-@Deprecated("@see [BaseVMFragment]")
 @Suppress("UNCHECKED_CAST")
-abstract class BaseVBVMFragment<VB : ViewBinding, VM : BaseViewModel<out BaseRepository>> :
-    BaseVBFragment<VB>() {
+abstract class BaseVMFragment<VB : ViewBinding, VM : BaseViewModel<out BaseRepository>> :
+    BaseBindingFragment<VB>() {
 
     protected lateinit var mViewModel: VM
 

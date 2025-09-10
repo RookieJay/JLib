@@ -9,6 +9,7 @@ import pers.jay.library.base.BaseActivity
 /**
  * 基于DataBinding的基类Activity
  */
+@Deprecated("@see [BaseBindingActivity]")
 abstract class BaseDBActivity<DB : ViewDataBinding> : BaseActivity() {
 
     protected lateinit var mBinding : DB

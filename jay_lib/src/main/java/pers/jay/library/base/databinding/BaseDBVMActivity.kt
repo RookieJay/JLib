@@ -3,6 +3,7 @@ package pers.jay.library.base.databinding
 import android.os.Bundle
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModel
+import pers.jay.library.base.BaseBindingActivity
 import pers.jay.library.base.ext.getViewModel
 import java.lang.reflect.ParameterizedType
 
@@ -10,7 +11,8 @@ import java.lang.reflect.ParameterizedType
  * 基于DataBinding和ViewModel的基类Activity
  */
 @Suppress("UNCHECKED_CAST")
-abstract class BaseDBVMActivity<DB : ViewDataBinding, VM : ViewModel>: BaseDBActivity<DB>() {
+@Deprecated("@see [BaseVMActivity]")
+abstract class BaseDBVMActivity<DB : ViewDataBinding, VM : ViewModel>: BaseBindingActivity<DB>() {
 
     protected lateinit var mViewModel : VM
 

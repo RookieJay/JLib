@@ -5,12 +5,12 @@ import android.os.Bundle
 import com.blankj.utilcode.util.LogUtils
 import pers.jay.demo.R
 import pers.jay.demo.databinding.FragmentCustomViewBinding
+import pers.jay.library.base.BaseBindingFragment
 import pers.jay.library.base.ext.singleClick
-import pers.jay.library.base.viewbinding.BaseVBFragment
 import pers.jay.library.ui.widget.CountDownButton
 import pers.jay.library.ui.widget.JProgressBar
 
-class CustomViewFragment : BaseVBFragment<FragmentCustomViewBinding>() {
+class CustomViewFragment : BaseBindingFragment<FragmentCustomViewBinding>() {
 
     companion object {
         const val VIEW_TYPE = "view_type"

@@ -1,12 +1,11 @@
 package pers.jay.library.base.viewbinding
 
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
 import pers.jay.library.base.BaseFragment
-import pers.jay.library.utils.ViewBindingUtils
+import pers.jay.library.utils.BindingUtils
 
 /**
  * 基于ViewBinding的Fragment基类
@@ -15,6 +14,7 @@ import pers.jay.library.utils.ViewBindingUtils
  * ①使用反射获取(默认)，但前提是当前子类的泛型严格限制位置和类型，即第一个泛型参数必须是ViewBinding类型
  * ②常规方式获取，重写useVBReflect()方法返回false,并重写initRootViewCommon()方法自行创建ViewBinding并返回
  */
+@Deprecated("@see [BaseBindingFragment]")
 @Suppress("UNCHECKED_CAST")
 abstract class BaseVBFragment<VB : ViewBinding> : BaseFragment(), IViewBinding<VB> {
 
@@ -33,7 +33,7 @@ abstract class BaseVBFragment<VB : ViewBinding> : BaseFragment(), IViewBinding<V
 
     override fun initRootViewByReflect(container: ViewGroup?): VB {
         super.initRootViewByReflect(container)
-        val vbClass = ViewBindingUtils.getVBClass(javaClass)
+        val vbClass = BindingUtils.getBindingClass(javaClass)
         vbClass?.apply {
             _binding = createViewBindingByReflect(vbClass as Class<VB>, container)
             return _binding!!

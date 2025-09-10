@@ -3,6 +3,7 @@ package pers.jay.library.base
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import com.blankj.utilcode.util.LogUtils
 import pers.jay.library.app.BaseApplication
@@ -29,9 +30,22 @@ abstract class BaseActivity : AppCompatActivity(), IActivity {
         }
         mContext = this
         beforeInit(savedInstanceState)
-        setContentView(getContentView())
+        initContentView()
         initView(savedInstanceState)
         initData(savedInstanceState)
+    }
+
+    private fun initContentView() {
+        kotlin.runCatching {
+            getLayoutParams()?.let {
+                setContentView(getContentView(), it)
+            } ?: run {
+                setContentView(getContentView())
+            }
+        }.onFailure {
+            LogUtils.e(TAG, "setContentView error:", it)
+            setContentView(getLayoutId())
+        }
     }
 
     open fun beforeInit(savedInstanceState: Bundle?) {}
@@ -55,6 +69,14 @@ abstract class BaseActivity : AppCompatActivity(), IActivity {
 
     override fun onReload(view: View) {
         LogUtils.i(TAG, "onReload, view:", view.hashCode())
+    }
+
+    protected open fun getLayoutId(): Int {
+        return 0
+    }
+
+    protected open fun getLayoutParams(): ViewGroup.LayoutParams? {
+        return null
     }
 
 }

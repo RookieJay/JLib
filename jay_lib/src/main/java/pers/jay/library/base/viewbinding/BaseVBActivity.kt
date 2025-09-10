@@ -1,19 +1,19 @@
 package pers.jay.library.base.viewbinding
 
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModel
 import androidx.viewbinding.ViewBinding
 import pers.jay.library.base.BaseActivity
-import pers.jay.library.utils.ViewBindingUtils
+import pers.jay.library.utils.BindingUtils
 
 /**
  * @Author RookieJay
  * @Time 2021/5/21 18:42
  * @Description 基于[ViewBinding]和[ViewModel]的Activity基类
  */
+@Deprecated("@see [BaseBindingActivity]")
 @Suppress("UNCHECKED_CAST")
 abstract class BaseVBActivity<VB : ViewBinding> : BaseActivity(), IViewBinding<VB> {
 
@@ -35,7 +35,7 @@ abstract class BaseVBActivity<VB : ViewBinding> : BaseActivity(), IViewBinding<V
      *  反射，调用特定ViewBinding中的inflate方法填充视图
      */
     override fun initRootViewByReflect(container: ViewGroup?): VB {
-        val vbClass = ViewBindingUtils.getVBClass(javaClass)
+        val vbClass = BindingUtils.getBindingClass(javaClass)
         vbClass?.apply {
             val method = getMethod("inflate", LayoutInflater::class.java)
             val binding = method.invoke(null, layoutInflater) as VB

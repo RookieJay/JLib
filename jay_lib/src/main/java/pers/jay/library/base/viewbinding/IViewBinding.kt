@@ -8,6 +8,7 @@ import androidx.viewbinding.ViewBinding
  * @Time 2021/5/21 17:00
  * @Description 使用ViewBinding页面的顶层接口
  */
+@Deprecated("@see [BaseBindingActivity]&[BaseBindingFragment]")
 interface IViewBinding<VB : ViewBinding> {
 
     /**

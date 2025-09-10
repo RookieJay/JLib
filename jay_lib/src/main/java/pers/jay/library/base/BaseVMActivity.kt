@@ -1,4 +1,4 @@
-package pers.jay.library.base.viewbinding
+package pers.jay.library.base
 
 import android.os.Bundle
 import androidx.viewbinding.ViewBinding
@@ -12,14 +12,15 @@ import java.lang.reflect.ParameterizedType
  * @Time 2021/5/21 17:53
  * @Description 基于ViewBinding和ViewModel的基类Activity
  */
-@Deprecated("@see [BaseVMActivity]")
 @Suppress("UNCHECKED_CAST")
-abstract class BaseVBVMActivity<VB : ViewBinding, VM : BaseViewModel<out BaseRepository>> :
-    BaseVBActivity<VB>() {
+abstract class BaseVMActivity<VB : ViewBinding, VM : BaseViewModel<out BaseRepository>> :
+    BaseBindingActivity<VB>() {
 
-    private var _viewModel : VM? = null
-    protected val mViewModel: VM
-        get() = _viewModel!!
+    /**
+     * 当前页面viewModel实例
+     */
+    protected var _viewModel: VM? = null
+    protected val mViewModel: VM get() = _viewModel!!
 
     override fun beforeInit(savedInstanceState: Bundle?) {
         super.beforeInit(savedInstanceState)

@@ -13,6 +13,7 @@ import java.lang.reflect.ParameterizedType
  * 基于DataBinding和ViewModel的Fragment基类
  */
 @Suppress("UNCHECKED_CAST")
+@Deprecated("@see [BaseVMFragment]")
 abstract class BaseDBVMFragment<DB : ViewDataBinding, VM : ViewModel> : BaseDBFragment<DB>() {
 
     protected lateinit var mViewModel: VM

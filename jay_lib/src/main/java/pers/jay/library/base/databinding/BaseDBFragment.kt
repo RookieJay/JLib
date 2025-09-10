@@ -12,6 +12,7 @@ import pers.jay.library.base.BaseFragment
 /**
  * 基于DataBinding的Fragment基类
  */
+@Deprecated("@see [BaseBindingFragment]")
 abstract class BaseDBFragment<DB : ViewDataBinding> : BaseFragment() {
 
     protected lateinit var mBinding : DB

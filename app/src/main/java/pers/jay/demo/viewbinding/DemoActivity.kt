@@ -5,10 +5,10 @@ import android.widget.TextView
 import com.blankj.utilcode.util.LogUtils
 import pers.jay.demo.databinding.ActivityDemoBinding
 import pers.jay.demo.net.Daily
-import pers.jay.library.base.viewbinding.BaseVBVMActivity
+import pers.jay.library.base.BaseVMActivity
 
-class DemoActivity : BaseVBVMActivity<ActivityDemoBinding, DemoViewModel>() {
 
+class DemoActivity : BaseVMActivity<ActivityDemoBinding, DemoViewModel>() {
 
     override fun initView(savedInstanceState: Bundle?) {
         mBinding.text1.setOnClickListener {

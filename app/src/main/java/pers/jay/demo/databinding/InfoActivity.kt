@@ -13,7 +13,7 @@ import pers.jay.library.base.databinding.BaseDBVMActivity
 class InfoActivity : BaseDBVMActivity<ActivityInfoBinding, InfoViewModel>() {
 
 
-    override fun initLayout(): Int {
+    override fun getLayoutId(): Int {
         return R.layout.activity_info
     }
 
