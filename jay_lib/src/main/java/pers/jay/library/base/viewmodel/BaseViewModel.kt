@@ -3,8 +3,20 @@ package pers.jay.library.base.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import pers.jay.library.base.StateListener
 import pers.jay.library.base.livedata.SingleLiveData
 import pers.jay.library.base.livedata.StateLiveData
@@ -190,6 +202,8 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
                 Log.i(TAG, "onCompletion，$cause")
                 // 请求正常结束，回调完成
                 listener.completeAction?.invoke()
+                stateResponse.dataState = BaseResponse.DataState.COMPLETED
+                stateLiveData.updateState(stateResponse)
             }.collectLatest {
                 // 请求返回
                 stateResponse = it
