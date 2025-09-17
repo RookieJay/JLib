@@ -209,14 +209,7 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
                 stateResponse = it
                 val data: T? = stateResponse.data
                 kotlin.runCatching {
-                    if (requireData == true && data == null) {
-                        //1、若需要获取数据，自动添加判空逻辑。流程不再向下执行。
-                        listener.emptyAction?.invoke()
-                        stateResponse.dataState = BaseResponse.DataState.EMPTY
-                        stateLiveData.updateState(stateResponse)
-                        return@collectLatest
-                    }
-                    // 2、检查返回是否有业务异常需要处理,若有，则取手动修改的BaseResponse状态，并返回，更新状态，以通知view层改变。流程不再向下执行。
+                    // 1、 先判断业务是否成功（简单根据状态码定义的成功或没有重写handleBussError返回的异常情况）
                     val isSuccessful = stateResponse.isSuccessful()
                     val handleBussError = stateLiveData.bussErrorHandle?.invoke(stateResponse)
                     if (!isSuccessful || handleBussError == true) {
@@ -225,6 +218,14 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
                         stateLiveData.updateState(stateResponse)
                         return@collectLatest
                     }
+                    //2、若需要获取数据，自动添加判空逻辑。流程不再向下执行。
+                    if (requireData == true && data == null) {
+                        listener.emptyAction?.invoke()
+                        stateResponse.dataState = BaseResponse.DataState.EMPTY
+                        stateLiveData.updateState(stateResponse)
+                        return@collectLatest
+                    }
+
                     // 3、数据预处理逻辑，有则执行,并返回经过处理的数据。
                     // 应用场景：viewModel在返回默认数据之前需要拦截原始响应做处理，如做数据处理、缓存等。
                     val resultData: T? = stateLiveData.preDataHandle?.let {
