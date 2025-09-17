@@ -16,7 +16,7 @@ abstract class BaseFlowStateObserver<T> {
     }
 
     /**
-     * @desc    在调用 flow 请求数据之前，做一些准备工作，例如显示正在加载数据的进度条
+     * 在调用 flow 请求数据之前，做一些准备工作，例如显示正在加载数据的进度条
      * @param   response [BaseResponse]
      * @return  Unit
      */
@@ -25,7 +25,7 @@ abstract class BaseFlowStateObserver<T> {
     }
 
     /**
-     * @desc   请求成功且数据正确，成功返回数据，根据数据返回相应状态
+     * 请求成功且数据正确，成功返回数据，根据数据返回相应状态
      * @return Unit
      */
     open fun onSuccess(response: BaseResponse<T>) {
@@ -33,7 +33,7 @@ abstract class BaseFlowStateObserver<T> {
     }
 
     /**
-     * @desc    捕获上游出现的异常
+     * 捕获上游出现的异常
      * @param   e 异常
      * @return  Unit
      */
@@ -45,7 +45,7 @@ abstract class BaseFlowStateObserver<T> {
     }
 
     /**
-     * @desc   错误信息回调
+     * 错误信息回调
      * @param  msg 错误信息
      * @return Unit
      */
@@ -54,7 +54,7 @@ abstract class BaseFlowStateObserver<T> {
     }
 
     /**
-     * @desc   请求完成
+     * 请求完成
      * @param
      * @return Unit
      */

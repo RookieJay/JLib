@@ -4,9 +4,8 @@ import android.text.TextUtils
 import com.ihsanbal.logging.LoggingInterceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
-import java.util.*
+import java.util.Objects
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 
@@ -62,7 +61,7 @@ abstract class NetworkManager {
     }
 
     /**
-     * @desc   获取apiService，使用缓存获取单例
+     * 获取apiService，使用缓存获取单例
      * @param  apiClass 具体apiService的泛型类型
      * @return 由Retrofit生成的service实例
      */
@@ -79,35 +78,35 @@ abstract class NetworkManager {
     }
 
     /**
-     * @desc   获取baseUrl
+     * 获取baseUrl
      * @return 设置到retrofit的baseUrl
      */
     abstract fun getBaseUrl(): String
 
     /**
-     * @desc 是否需要打印网络日志，默认为true
+     * 是否需要打印网络日志，默认为true
      */
     open fun needPrintNetworkLog() = true
 
     /**
-     * @desc 是否使用Gson转换器，默认为true
+     * 是否使用Gson转换器，默认为true
      */
     open fun useGsonConverter() = true
 
     /**
-     * @desc 是否使用Scalars转换器，默认为true
+     * 是否使用Scalars转换器，默认为true
      */
     open fun useScalarsConverter() = true
 
     /**
-     * @desc   应用OkHttpClient配置，下层实现，可对现有okHttpClient进行定制，如添加拦截器xxInterceptor
+     * 应用OkHttpClient配置，下层实现，可对现有okHttpClient进行定制，如添加拦截器xxInterceptor
      * @param  builder OkHttp构建器
      * @return Unit
      */
     open fun applyOkHttpClientConfig(builder: OkHttpClient.Builder) {}
 
     /**
-     * @desc   应用Retrofit配置，下层实现，可对现有Retrofit进行定制，如添加转换器xxConverter
+     * 应用Retrofit配置，下层实现，可对现有Retrofit进行定制，如添加转换器xxConverter
      * @param  builder Retrofit构建器
      * @return Unit
      */

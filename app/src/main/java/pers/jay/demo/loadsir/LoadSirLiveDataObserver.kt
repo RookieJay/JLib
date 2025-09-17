@@ -71,7 +71,7 @@ abstract class LoadSirLiveDataObserver<T>(statusView: View?) : Observer<BaseResp
     }
 
     /**
-     * @desc   LiveData数据发生改变时回调，只解析view层需要单独处理的，统一处理的(loading)等则不解析
+     * LiveData数据发生改变时回调，只解析view层需要单独处理的，统一处理的(loading)等则不解析
      * @param  response 返回的新数据
      * @return Unit
      */
@@ -135,7 +135,7 @@ abstract class LoadSirLiveDataObserver<T>(statusView: View?) : Observer<BaseResp
     }
 
     /**
-     * @desc   点击重试时回调
+     * 点击重试时回调
      * @param  v 点击的view
      * @return Unit
      */

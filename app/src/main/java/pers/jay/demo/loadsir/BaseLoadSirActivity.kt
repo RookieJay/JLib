@@ -96,7 +96,7 @@ abstract class BaseLoadSirActivity : BaseActivity() {
         autoObserve(showLoading, this, mActivityStatusCallback!!, listenerBuilder)
     }
     /**
-     * @desc 发起请求并根据结果自动观察，完成相应视图切换
+     * 发起请求并根据结果自动观察，完成相应视图切换
      * @param  statusView 为空时，执行activity的loadSir逻辑，否则交由[StateLiveData]对view进行处理
      * @return
      */

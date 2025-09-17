@@ -121,7 +121,7 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
     }
 
     /**
-     * @desc   通过flow来处理请求，并返回一个Flow对象 todo  后续优化，可考虑直接从Retrofit返回一个Flow对象
+     * 通过flow来处理请求，并返回一个Flow对象 todo  后续优化，可考虑直接从Retrofit返回一个Flow对象
      * @param  requestBlock 请求方法体，返回值为T
      * @return [Flow]
      */

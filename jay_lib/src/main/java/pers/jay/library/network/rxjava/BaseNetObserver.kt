@@ -21,7 +21,7 @@ import javax.net.ssl.SSLException
 abstract class BaseNetObserver<T> : ResourceObserver<T>() {
 
     /**
-     * @desc 事件开始
+     * 事件开始
      */
     override fun onStart() {
         super.onStart()
@@ -40,7 +40,7 @@ abstract class BaseNetObserver<T> : ResourceObserver<T>() {
     }
 
     /**
-     * @desc   子类对服务端抛出的异常进行处理，默认不处理
+     * 子类对服务端抛出的异常进行处理，默认不处理
      * @param  t 返回数据
      * @return 是否处理服务端异常
      */
@@ -74,19 +74,19 @@ abstract class BaseNetObserver<T> : ResourceObserver<T>() {
     private fun handleException(netErrorReason: NetErrorReason) = ErrorMessageParser.getErrorMessage(netErrorReason)
 
     /**
-     * @desc 事件结束
+     * 事件结束
      */
     override fun onComplete() {}
 
     /**
-     * @desc   请求成功回调
+     * 请求成功回调
      * @param  t 响应并解析成功的数据
      * @return Unit
      */
     abstract fun onSuccess(t: T)
 
     /**
-     * @desc   请求异常回调
+     * 请求异常回调
      * @param  errorMsg 错误信息
      * @return Unit
      */
