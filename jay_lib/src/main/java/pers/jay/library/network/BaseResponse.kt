@@ -12,9 +12,11 @@ open class BaseResponse<T> {
     open var msg: String? = null
     open var data: T? = null
 
-    // 数据状态
+    // 数据状态，不参与序列化
+    @Transient
     var dataState: DataState? = DataState.CREATE
-    // 错误原因
+    // 错误原因，不参与序列化
+    @Transient
     var error: Throwable? = null
 
     // 响应数据是否正确，根据业务自行重写
@@ -52,7 +54,7 @@ open class BaseResponse<T> {
     }
 
     override fun toString(): String {
-        return "${this::class.simpleName}(code=$code, msg=$msg, data=$data, dataState=$dataState, errorReason=$error)"
+        return "${this::class.simpleName}(code=$code, msg=$msg, data=$data, dataState=$dataState, error=$error)"
     }
 
     /**

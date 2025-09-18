@@ -2,7 +2,7 @@ package pers.jay.library.base.viewmodel
 
 import android.util.Log
 import pers.jay.library.network.BaseResponse
-import pers.jay.library.network.coroutine.getRequestError
+import pers.jay.library.network.coroutine.getRequestErrorMsg
 
 /**
  * @Author RookieJay
@@ -39,7 +39,7 @@ abstract class BaseFlowStateObserver<T> {
      */
     open fun onCatch(response: BaseResponse<T>, e: Throwable) {
         e.printStackTrace()
-        val errorMsg = e.getRequestError()
+        val errorMsg = e.getRequestErrorMsg()
         Log.e("onCatch", "errorMsg=$errorMsg")
         onError(errorMsg)
     }

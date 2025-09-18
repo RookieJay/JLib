@@ -16,7 +16,7 @@ object ErrorMessageParser {
     private val TAG = ErrorMessageParser::class.java.simpleName
 
     fun getErrorMessage(reason: NetErrorReason) : String {
-        Log.e(TAG, "handleException, $reason")
+        Log.e(TAG, "getErrorMessage, $reason")
         return when (reason) {
             NetErrorReason.BAD_NETWORK -> getStringRes(R.string.NET_ERROR_MSG_BAD_NETWORK)
             NetErrorReason.PARSE_ERROR -> getStringRes(R.string.NET_ERROR_MSG_PARSE_ERROR)

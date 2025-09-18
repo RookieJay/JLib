@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.Observer
 import pers.jay.library.network.BaseResponse
 import pers.jay.library.network.BaseResponse.DataState
+import pers.jay.library.network.coroutine.getRequestErrorMsg
 
 /**
  * @Author RookieJay
@@ -46,13 +47,14 @@ abstract class BaseStateLiveDataObserver<T>() : Observer<BaseResponse<T>> {
                     onDataEmpty()
                 }
                 DataState.REQUEST_ERROR -> {
-                    //请求错误
+                    // 请求错误
                     val error = response.error ?: Exception("request error")
                     onError(error)
-                    onErrorWithMessage(error.message.toString())
+                    // 给出友好提示，原message可从onError获取
+                    onErrorWithMessage(error.getRequestErrorMsg())
                 }
                 DataState.BUSS_ERROR -> {
-                    //请求错误
+                    // 业务异常
                     val error = response.error ?: Exception("buss error")
                     onError(error)
                     onErrorWithMessage(error.message.toString())

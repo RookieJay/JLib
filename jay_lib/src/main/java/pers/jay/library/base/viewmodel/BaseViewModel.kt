@@ -22,7 +22,7 @@ import pers.jay.library.base.livedata.SingleLiveData
 import pers.jay.library.base.livedata.StateLiveData
 import pers.jay.library.base.repository.BaseRepository
 import pers.jay.library.network.BaseResponse
-import pers.jay.library.network.coroutine.getRequestError
+import pers.jay.library.network.coroutine.getRequestErrorMsg
 import pers.jay.library.network.errorhandle.BussException
 import java.lang.reflect.ParameterizedType
 
@@ -192,6 +192,7 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
         viewModelScope.launch(Dispatchers.Main) {
             // catch 函数只是中间操作符,只能捕获它的上游的异常,不能捕获下游的异常，类似 collect 内的异常
             requestFlow.catch { e ->
+                LogUtils.e(TAG, "requestFlow catch: $e")
                 handleException(e, stateLiveData, listener)
             }.onCompletion { cause ->
                 LogUtils.i(TAG, "onCompletion，$cause")
@@ -230,7 +231,7 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
             val preHandledData = stateLiveData.preDataHandle?.invoke(response)
             if (requireData && stateLiveData.preDataHandle != null && preHandledData == null) {
                 // 需要数据返回且实现了预处理数据逻辑，但返回空的情况
-                throw BussException(message = "requireData but preDataHandle return null")
+                throw BussException(code = BussException.APP, message = "requireData but preDataHandle return null")
             }
             val resultData = preHandledData ?: data
             // 4、成功响应回调（数据可空）
@@ -247,6 +248,7 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
                 stateLiveData.setResponse(response)
             }
         }.onFailure { e ->
+            LogUtils.e(TAG, "handleResponse onFailure:$e")
             // 6、数据处理过程中发生的异常捕获处理，错误回调
             val errorMsg = "exception occurred when handleResponse:[${e.message}]"
             LogUtils.e(TAG, errorMsg)
@@ -256,61 +258,60 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
     }
 
     /**
-     * 处理异常情况
+     * 处理异常情况,包含请求异常和业务异常
      */
     private fun <T> handleException(
         e: Throwable,
         stateLiveData: StateLiveData<T>,
         listener: StateListener<T>
     ) {
-        LogUtils.e(TAG, "Flow error: $e")
+        LogUtils.e(TAG, "handleException:$e")
         e.printStackTrace()
         val stateResponse = stateLiveData.value ?: BaseResponse<T>()
-        when (e) {
+        // 统一处理错误状态和消息
+        val (errorState, errorMessage) = when (e) {
             is BussException -> {
-                // 业务异常
-                val defBussErrorMsg = BaseResponse.DataState.BUSS_ERROR.value()
-                val bussError = stateLiveData.bussErrorHandle?.invoke(stateResponse)
-                if (bussError != null) {
-                    val errorMsg = stateResponse.msg
-                    listener.errorAction?.invoke(e)
-                    listener.errorActionWithMessage?.invoke(if (errorMsg.isNullOrEmpty()) defBussErrorMsg else errorMsg)
-                    stateResponse.apply {
-                        dataState = BaseResponse.DataState.BUSS_ERROR
-                        error = e
-                    }
-                    stateLiveData.setResponse(stateResponse)
-                }
+                // 服务端定义业务异常和应用端自定义业务异常
+                val state = BaseResponse.DataState.BUSS_ERROR
+                state to (e.message?.takeIf { it.isNotEmpty() } ?: state.value())
             }
             else -> {
-                // 请求/处理数据异常
-                val errorMessage = e.getRequestError()
-                listener.errorAction?.invoke(e)
-                listener.errorActionWithMessage?.invoke(errorMessage)
-                stateResponse.apply {
-                    error = e
-                    dataState = BaseResponse.DataState.REQUEST_ERROR
-                }
-                stateLiveData.setResponse(stateResponse)
+                // 请求异常
+                val state = BaseResponse.DataState.REQUEST_ERROR
+                state to e.getRequestErrorMsg() // 使用统一异常处理获取友好提示
             }
-         }
+        }
+        // 统一执行错误回调
+        listener.errorAction?.invoke(e)
+        listener.errorActionWithMessage?.invoke(errorMessage)
 
+        // 更新状态并通知
+        stateResponse.apply {
+            dataState = errorState
+            error = e
+        }
+        stateLiveData.setResponse(stateResponse)
     }
 
 
+    /**
+     * 检查业务异常
+     */
     private fun <T> checkBussError(
         stateResponse: BaseResponse<T>,
         stateLiveData: StateLiveData<T>
     ): Boolean {
         val isSuccessful = stateResponse.isSuccessful()
         if (!isSuccessful) {
-            LogUtils.e(TAG, "business failed: ${stateResponse.msg}")
+            // 通用业务异常（一般是服务端定义异常场景），返回服务端错误信息
+            LogUtils.e(TAG, "server business failed: ${stateResponse.msg}")
             val errorMsg = stateResponse.msg
-            throw BussException(message = errorMsg)
+            throw BussException(code = BussException.SERVER, message = errorMsg)
         }
         val bussException = stateLiveData.bussErrorHandle?.invoke(stateResponse)
         if (bussException != null) {
-            LogUtils.e(TAG, "custom business failed: ${bussException.message}")
+            // 应用端自定义业务异常，返回自定义错误信息
+            LogUtils.e(TAG, "app business failed: ${bussException.message}")
             throw bussException
         }
         return false

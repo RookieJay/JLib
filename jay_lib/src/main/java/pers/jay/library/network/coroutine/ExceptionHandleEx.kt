@@ -19,8 +19,8 @@ import javax.net.ssl.SSLException
 
 const val TAG = "Net Error"
 
-fun Throwable.getRequestError(): String {
-    val errorReason = when (this) {
+fun Throwable.getRequestErrorMsg(): String {
+    val errorReason : NetErrorReason = when (this) {
         is ConnectException, is UnknownHostException, is NoRouteToHostException -> {
             NetErrorReason.CONNECT_ERROR
         }
@@ -33,8 +33,15 @@ fun Throwable.getRequestError(): String {
         is JsonParseException, is JSONException, is ParseException -> {
             NetErrorReason.PARSE_ERROR
         }
+        is IllegalArgumentException -> {
+            if (this.message?.contains("Unable to create converter for") == true) {
+                NetErrorReason.PARSE_ERROR
+            } else {
+                NetErrorReason.UNKNOWN_ERROR
+            }
+        }
         else -> {
-            return "$this"
+            NetErrorReason.UNKNOWN_ERROR
         }
     }
     return ErrorMessageParser.getErrorMessage(errorReason)
