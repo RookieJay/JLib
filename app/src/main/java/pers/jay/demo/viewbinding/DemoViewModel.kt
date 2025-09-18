@@ -3,8 +3,6 @@ package pers.jay.demo.viewbinding
 import com.blankj.utilcode.util.LogUtils
 import pers.jay.demo.data.Tab
 import pers.jay.demo.net.Daily
-import pers.jay.demo.net.HWeatherResponse
-import pers.jay.demo.net.WanResponse
 import pers.jay.library.base.livedata.StateLiveData
 import pers.jay.library.base.viewmodel.BaseViewModel
 
@@ -17,7 +15,7 @@ class DemoViewModel : BaseViewModel<DemoRepo>() {
             }
             onResult { LogUtils.i(TAG, "onResult") }
             onEmpty { LogUtils.i(TAG, "onEmpty") }
-            onError { LogUtils.i(TAG, "onError") }
+            onErrorWithMessage { LogUtils.i(TAG, "onErrorWithMessage") }
             onCompletion { LogUtils.i(TAG, "onCompletion") }
         }
     }
@@ -30,7 +28,8 @@ class DemoViewModel : BaseViewModel<DemoRepo>() {
             }
             onResult { LogUtils.i(TAG, "onResult") }
             onEmpty { LogUtils.i(TAG, "onEmpty") }
-            onError { LogUtils.i(TAG, "onError") }
+            onErrorWithMessage { LogUtils.i(TAG, "onErrorWithMessage") }
+            onError { LogUtils.i(TAG, "onError $it") }
             onCompletion { LogUtils.i(TAG, "onCompletion") }
         }
     }

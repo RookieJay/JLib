@@ -1,9 +1,9 @@
 package pers.jay.demo.databinding
 
 import pers.jay.demo.data.Tab
-import pers.jay.demo.net.WanResponse
 import pers.jay.library.base.livedata.StateLiveData
 import pers.jay.library.base.viewmodel.BaseViewModel
+import pers.jay.library.network.errorhandle.BussException
 
 class InfoViewModel : BaseViewModel<InfoModel>() {
 
@@ -22,8 +22,15 @@ class InfoViewModel : BaseViewModel<InfoModel>() {
             onEmpty {
 
             }
-            onError {
+            onErrorWithMessage {
 
+            }
+        }.apply {
+            this.bussErrorHandle { response ->
+                if (response.code == 0) {
+                    return@bussErrorHandle BussException(message = "fe")
+                }
+                return@bussErrorHandle null
             }
         }
     }

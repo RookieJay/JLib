@@ -1,8 +1,8 @@
 package pers.jay.library.base.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.blankj.utilcode.util.LogUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -23,6 +23,7 @@ import pers.jay.library.base.livedata.StateLiveData
 import pers.jay.library.base.repository.BaseRepository
 import pers.jay.library.network.BaseResponse
 import pers.jay.library.network.coroutine.getRequestError
+import pers.jay.library.network.errorhandle.BussException
 import java.lang.reflect.ParameterizedType
 
 /**
@@ -53,7 +54,7 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
             try {
                 block()
             } catch (e: Exception) {
-                Log.e(TAG, "launchOnUI error:${e.message}")
+                LogUtils.e(TAG, "launchOnUI error:${e.message}")
                 cancel("launchOnUI exception occurred, msg:${e.message}")
             }
         }
@@ -64,7 +65,7 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
             try {
                 block()
             } catch (e: Exception) {
-                Log.e(TAG, "launchOnIO error:${e.message}")
+                LogUtils.e(TAG, "launchOnIO error:${e.message}")
                 cancel("launchOnIO exception occurred, msg:${e.message}")
             }
         }
@@ -173,87 +174,145 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
      *
      */
     private fun <T> Flow<BaseResponse<T>>.requestWithState(
-        requireData: Boolean? = true,
+        requireData: Boolean = true,
         exStateLiveData: StateLiveData<T>? = null,
         listenerBuilderBlock: StateListener<T>.() -> Unit
     ): StateLiveData<T> {
         val stateLiveData = exStateLiveData ?: createStateLiveData()
-        var stateResponse = stateLiveData.value ?: BaseResponse()
-        stateResponse.dataState = BaseResponse.DataState.LOADING
+        val stateResponse = stateLiveData.value ?: BaseResponse()
         val listener: StateListener<T> = StateListener<T>().apply(listenerBuilderBlock)
         val requestFlow = this.onStart {
             // 请求开始，修改状态为Loading
+            val newState = BaseResponse<T>().apply {
+                dataState = BaseResponse.DataState.LOADING
+            }
+            stateLiveData.setResponse(newState)
             listener.startAction?.invoke()
-            stateResponse.dataState = BaseResponse.DataState.LOADING
-            stateLiveData.updateState(stateResponse)
         }
         viewModelScope.launch(Dispatchers.Main) {
             // catch 函数只是中间操作符,只能捕获它的上游的异常,不能捕获下游的异常，类似 collect 内的异常
             requestFlow.catch { e ->
-                Log.e(TAG, "flow catch: $e")
-                e.printStackTrace()
-                val errorMessage = e.getRequestError()
-                // 请求失败，修改状态为Error
-                listener.errorAction?.invoke(errorMessage)
-                stateResponse.errorReason = errorMessage
-                stateResponse.dataState = BaseResponse.DataState.REQUEST_ERROR
-                stateLiveData.updateState(stateResponse)
+                handleException(e, stateLiveData, listener)
             }.onCompletion { cause ->
-                Log.i(TAG, "onCompletion，$cause")
+                LogUtils.i(TAG, "onCompletion，$cause")
                 // 请求正常结束，回调完成
                 listener.completeAction?.invoke()
                 stateResponse.dataState = BaseResponse.DataState.COMPLETED
-                stateLiveData.updateState(stateResponse)
+                stateLiveData.setResponse(stateResponse)
             }.collectLatest {
-                // 请求返回
-                stateResponse = it
-                val data: T? = stateResponse.data
-                kotlin.runCatching {
-                    // 1、 先判断业务是否成功（简单根据状态码定义的成功或没有重写handleBussError返回的异常情况）
-                    val isSuccessful = stateResponse.isSuccessful()
-                    val handleBussError = stateLiveData.bussErrorHandle?.invoke(stateResponse)
-                    if (!isSuccessful || handleBussError == true) {
-                        stateResponse.dataState = BaseResponse.DataState.BUSS_ERROR
-                        listener.errorAction?.invoke(stateResponse.errorReason ?: BaseResponse.DataState.BUSS_ERROR.value())
-                        stateLiveData.updateState(stateResponse)
-                        return@collectLatest
-                    }
-                    //2、若需要获取数据，自动添加判空逻辑。流程不再向下执行。
-                    if (requireData == true && data == null) {
-                        listener.emptyAction?.invoke()
-                        stateResponse.dataState = BaseResponse.DataState.EMPTY
-                        stateLiveData.updateState(stateResponse)
-                        return@collectLatest
-                    }
-
-                    // 3、数据预处理逻辑，有则执行,并返回经过处理的数据。
-                    // 应用场景：viewModel在返回默认数据之前需要拦截原始响应做处理，如做数据处理、缓存等。
-                    val resultData: T? = stateLiveData.preDataHandle?.let {
-                        stateLiveData.preDataHandle?.invoke(stateResponse)
-                    } ?: data
-                    // 4、成功响应回调（数据可空）
-                    listener.successAction?.invoke(resultData)
-                    stateResponse.data = resultData
-                    stateResponse.dataState = BaseResponse.DataState.SUCCESS
-                    stateLiveData.updateState(stateResponse)
-
-                    // 5、非空数据回调
-                    listener.resultAction?.invoke(resultData!!)
-                    stateResponse.data = resultData
-                    stateResponse.dataState = BaseResponse.DataState.DATA_RESULT
-                    stateLiveData.updateState(stateResponse)
-                }.onFailure { e ->
-                    // 6、数据处理过程中发生的异常捕获处理，错误回调
-                    val errorMsg = "exception occurred in flow collect:[${e.message}]"
-                    Log.e(TAG, errorMsg)
-                    e.printStackTrace()
-                    listener.errorAction?.invoke(errorMsg)
-                    stateResponse.errorReason = errorMsg
-                    stateResponse.dataState = BaseResponse.DataState.BUSS_ERROR
-                    stateLiveData.updateState(stateResponse)
-                }
+                // 处理响应数据
+                handleResponse(it, listener, stateLiveData, requireData)
             }
         }
         return stateLiveData
+    }
+
+    private fun <T> handleResponse(
+        response: BaseResponse<T>,
+        listener: StateListener<T>,
+        stateLiveData: StateLiveData<T>,
+        requireData: Boolean
+    ) {
+        // 请求返回
+        val data: T? = response.data
+        kotlin.runCatching {
+            // 1、 先判断业务是否成功（简单根据状态码定义的成功或没有重写handleBussError返回的异常情况）
+            checkBussError<T>(response, stateLiveData)
+            //2、若需要获取数据，自动添加判空逻辑。流程不再向下执行。
+            if (requireData && data == null) {
+                listener.emptyAction?.invoke()
+                response.dataState = BaseResponse.DataState.EMPTY
+                stateLiveData.setResponse(response)
+                return
+            }
+            // 3、数据预处理逻辑，有则执行,并返回经过处理的数据。
+            // 应用场景：viewModel在返回默认数据之前需要拦截原始响应做处理，如做数据处理、缓存等。
+            val preHandledData = stateLiveData.preDataHandle?.invoke(response)
+            if (requireData && stateLiveData.preDataHandle != null && preHandledData == null) {
+                // 需要数据返回且实现了预处理数据逻辑，但返回空的情况
+                throw BussException(message = "requireData but preDataHandle return null")
+            }
+            val resultData = preHandledData ?: data
+            // 4、成功响应回调（数据可空）
+            listener.successAction?.invoke(resultData)
+            response.data = resultData
+            response.dataState = BaseResponse.DataState.SUCCESS
+            stateLiveData.setResponse(response)
+
+            // 5、非空数据回调
+            if (requireData) {
+                listener.resultAction?.invoke(resultData!!)
+                response.data = resultData
+                response.dataState = BaseResponse.DataState.DATA_RESULT
+                stateLiveData.setResponse(response)
+            }
+        }.onFailure { e ->
+            // 6、数据处理过程中发生的异常捕获处理，错误回调
+            val errorMsg = "exception occurred when handleResponse:[${e.message}]"
+            LogUtils.e(TAG, errorMsg)
+            e.printStackTrace()
+            handleException(e, stateLiveData, listener)
+        }
+    }
+
+    /**
+     * 处理异常情况
+     */
+    private fun <T> handleException(
+        e: Throwable,
+        stateLiveData: StateLiveData<T>,
+        listener: StateListener<T>
+    ) {
+        LogUtils.e(TAG, "Flow error: $e")
+        e.printStackTrace()
+        val stateResponse = stateLiveData.value ?: BaseResponse<T>()
+        when (e) {
+            is BussException -> {
+                // 业务异常
+                val defBussErrorMsg = BaseResponse.DataState.BUSS_ERROR.value()
+                val bussError = stateLiveData.bussErrorHandle?.invoke(stateResponse)
+                if (bussError != null) {
+                    val errorMsg = stateResponse.msg
+                    listener.errorAction?.invoke(e)
+                    listener.errorActionWithMessage?.invoke(if (errorMsg.isNullOrEmpty()) defBussErrorMsg else errorMsg)
+                    stateResponse.apply {
+                        dataState = BaseResponse.DataState.BUSS_ERROR
+                        error = e
+                    }
+                    stateLiveData.setResponse(stateResponse)
+                }
+            }
+            else -> {
+                // 请求/处理数据异常
+                val errorMessage = e.getRequestError()
+                listener.errorAction?.invoke(e)
+                listener.errorActionWithMessage?.invoke(errorMessage)
+                stateResponse.apply {
+                    error = e
+                    dataState = BaseResponse.DataState.REQUEST_ERROR
+                }
+                stateLiveData.setResponse(stateResponse)
+            }
+         }
+
+    }
+
+
+    private fun <T> checkBussError(
+        stateResponse: BaseResponse<T>,
+        stateLiveData: StateLiveData<T>
+    ): Boolean {
+        val isSuccessful = stateResponse.isSuccessful()
+        if (!isSuccessful) {
+            LogUtils.e(TAG, "business failed: ${stateResponse.msg}")
+            val errorMsg = stateResponse.msg
+            throw BussException(message = errorMsg)
+        }
+        val bussException = stateLiveData.bussErrorHandle?.invoke(stateResponse)
+        if (bussException != null) {
+            LogUtils.e(TAG, "custom business failed: ${bussException.message}")
+            throw bussException
+        }
+        return false
     }
 }

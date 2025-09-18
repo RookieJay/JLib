@@ -4,6 +4,7 @@ package pers.jay.library.network
  * @Author RookieJay
  * @Time 2021/5/27 13:37
  * @Description 统一返回数据封装实体, 按需对各open属性进行重写
+ * 注意：若使用Gson,返回字段若存在相同值，不要使用@SerializedName进行重复进行，否则会出现数据转换异常IllegalArgumentException，提示“ declares multiple JSON fields named xxx”
  */
 open class BaseResponse<T> {
 
@@ -14,7 +15,7 @@ open class BaseResponse<T> {
     // 数据状态
     var dataState: DataState? = DataState.CREATE
     // 错误原因
-    var errorReason: String? = null
+    var error: Throwable? = null
 
     // 响应数据是否正确，根据业务自行重写
     open fun isSuccessful() = code == 0
@@ -26,7 +27,7 @@ open class BaseResponse<T> {
         if (msg != other.msg) return false
         if (data != other.data) return false
         if (dataState != other.dataState) return false
-        if (errorReason != other.errorReason) return false
+        if (error != other.error) return false
 
         return true
     }
@@ -36,12 +37,22 @@ open class BaseResponse<T> {
         result = 31 * result + (msg?.hashCode() ?: 0)
         result = 31 * result + (data?.hashCode() ?: 0)
         result = 31 * result + (dataState?.hashCode() ?: 0)
-        result = 31 * result + (errorReason?.hashCode() ?: 0)
+        result = 31 * result + (error?.hashCode() ?: 0)
         return result
     }
 
+    fun <T> copy(response: BaseResponse<T>): BaseResponse<T> {
+        return BaseResponse<T>().apply {
+            code = response.code
+            msg = response.msg
+            data = response.data
+            dataState = response.dataState
+            error = response.error
+        }
+    }
+
     override fun toString(): String {
-        return "${this::class.simpleName}(code=$code, msg=$msg, data=$data, dataState=$dataState, errorReason=$errorReason)"
+        return "${this::class.simpleName}(code=$code, msg=$msg, data=$data, dataState=$dataState, errorReason=$error)"
     }
 
     /**

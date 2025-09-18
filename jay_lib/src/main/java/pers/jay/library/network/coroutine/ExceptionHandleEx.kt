@@ -34,7 +34,7 @@ fun Throwable.getRequestError(): String {
             NetErrorReason.PARSE_ERROR
         }
         else -> {
-            NetErrorReason.UNKNOWN_ERROR
+            return "$this"
         }
     }
     return ErrorMessageParser.getErrorMessage(errorReason)

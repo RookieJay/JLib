@@ -1,6 +1,5 @@
 package pers.jay.library.base.livedata
 
-import android.text.TextUtils
 import android.util.Log
 import androidx.lifecycle.Observer
 import pers.jay.library.network.BaseResponse
@@ -46,13 +45,17 @@ abstract class BaseStateLiveDataObserver<T>() : Observer<BaseResponse<T>> {
                     //数据为空
                     onDataEmpty()
                 }
-                DataState.REQUEST_ERROR, DataState.BUSS_ERROR -> {
+                DataState.REQUEST_ERROR -> {
                     //请求错误
-                    var reason = response.errorReason
-                    if (TextUtils.isEmpty(reason)) {
-                        reason = dataState.value()
-                    }
-                    onError(reason!!)
+                    val error = response.error ?: Exception("request error")
+                    onError(error)
+                    onErrorWithMessage(error.message.toString())
+                }
+                DataState.BUSS_ERROR -> {
+                    //请求错误
+                    val error = response.error ?: Exception("buss error")
+                    onError(error)
+                    onErrorWithMessage(error.message.toString())
                 }
                 DataState.COMPLETED -> {
                     // 请求结束（无论成功/失败/异常）
@@ -95,7 +98,11 @@ abstract class BaseStateLiveDataObserver<T>() : Observer<BaseResponse<T>> {
     /**
      * 请求错误
      */
-    open fun onError(msg: String) {
+    open fun onErrorWithMessage(msg: String) {
+
+    }
+
+    open fun onError(throwable: Throwable) {
 
     }
 

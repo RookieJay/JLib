@@ -11,7 +11,8 @@ class StateListener<T> {
     var startAction: (() -> Unit)? = null
     var successAction: ((T?) -> Unit)? = null
     var resultAction: ((T) -> Unit)? = null
-    var errorAction: ((String) -> Unit)? = null
+    var errorAction: ((Throwable) -> Unit)? = null
+    var errorActionWithMessage: ((String) -> Unit)? = null
     var emptyAction: (() -> Unit)? = null
     var completeAction: (() -> Unit)? = null
 
@@ -31,8 +32,12 @@ class StateListener<T> {
         resultAction = action
     }
 
-    fun onError(action: ((String) -> Unit)?) {
+    fun onError(action: ((Throwable) -> Unit)?) {
         errorAction = action
+    }
+
+    fun onErrorWithMessage(action: ((String) -> Unit)?) {
+        errorActionWithMessage = action
     }
 
     fun onEmpty(action: (() -> Unit)?) {

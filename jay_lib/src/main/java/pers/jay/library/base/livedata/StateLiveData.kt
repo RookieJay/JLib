@@ -1,10 +1,10 @@
 package pers.jay.library.base.livedata
 
-import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import pers.jay.library.base.StateListener
 import pers.jay.library.network.BaseResponse
+import pers.jay.library.network.errorhandle.BussException
 
 /**
  * @Author RookieJay
@@ -17,7 +17,7 @@ open class StateLiveData<T> : MutableLiveData<BaseResponse<T>>() {
     /**
      * 业务异常处理函数（在返回原始数据的一开始被调用），用于处理数据已返回，但返回数据有可能产生业务异常的场景。
      */
-    var bussErrorHandle: ((BaseResponse<T>) -> Boolean)? = null
+    var bussErrorHandle: ((BaseResponse<T>) -> BussException?)? = null
 
     /**
      * 数据预处理操作（在回调成功数据之前被调用），返回处理后的数据
@@ -48,8 +48,12 @@ open class StateLiveData<T> : MutableLiveData<BaseResponse<T>>() {
                 listener.emptyAction?.invoke()
             }
 
-            override fun onError(msg: String) {
-                listener.errorAction?.invoke(msg)
+            override fun onError(throwable: Throwable) {
+                listener.errorAction?.invoke(throwable)
+            }
+
+            override fun onErrorWithMessage(msg: String) {
+                listener.errorActionWithMessage?.invoke(msg)
             }
 
             override fun onCompletion() {
@@ -63,11 +67,11 @@ open class StateLiveData<T> : MutableLiveData<BaseResponse<T>>() {
     /**
      * 更新数据状态并post
      */
-    fun updateState(response: BaseResponse<T>) {
+    fun setResponse(response: BaseResponse<T>) {
         value = response
     }
 
-    fun <T> StateLiveData<T>.bussErrorHandle(bussErrorHandle: (BaseResponse<T>) -> Boolean): StateLiveData<T> {
+    fun <T> StateLiveData<T>.bussErrorHandle(bussErrorHandle: (BaseResponse<T>) -> BussException?): StateLiveData<T> {
         this.bussErrorHandle = bussErrorHandle
         return this
     }

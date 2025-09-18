@@ -1,6 +1,5 @@
 package pers.jay.demo.loadsir
 
-import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import androidx.lifecycle.Observer
@@ -88,16 +87,20 @@ abstract class LoadSirLiveDataObserver<T>(statusView: View?) : Observer<BaseResp
                     //数据为空
                     onDataEmpty()
                 }
-                DataState.REQUEST_ERROR, DataState.BUSS_ERROR -> {
+                DataState.REQUEST_ERROR -> {
                     //请求错误
-                    var reason = response.errorReason
-                    if (TextUtils.isEmpty(reason)) {
-                        reason = dataState.value()
-                    }
-                    onError(reason!!)
+                    val error = response.error ?: Exception("request error")
+                    onError(error)
+                    onErrorWithMessage(error.message.toString())
+                }
+                DataState.BUSS_ERROR -> {
+                    //请求错误
+                    val error = response.error ?: Exception("buss error")
+                    onError(error)
+                    onErrorWithMessage(error.message.toString())
                 }
                 else -> {
-                    onError("Unknown DataState: $dataState")
+                    onErrorWithMessage("Unknown DataState: $dataState")
 
                 }
             }
@@ -123,7 +126,11 @@ abstract class LoadSirLiveDataObserver<T>(statusView: View?) : Observer<BaseResp
     /**
      * 请求错误
      */
-    open fun onError(msg: String) {
+    open fun onErrorWithMessage(msg: String) {
+
+    }
+
+    open fun onError(throwable: Throwable) {
 
     }
 

@@ -39,8 +39,8 @@ class DemoActivity : BaseVMActivity<ActivityDemoBinding, DemoViewModel>() {
                 LogUtils.d(TAG, "onEmpty")
                 updateText(textView, "onEmpty")
             }
-            onError { msg ->
-                LogUtils.d(TAG, "onError, msg:$msg")
+            onErrorWithMessage { msg ->
+                LogUtils.d(TAG, "onErrorWithMessage, msg:$msg")
                 updateText(textView, "onError, msg:$msg")
             }
             onCompletion {
@@ -64,9 +64,12 @@ class DemoActivity : BaseVMActivity<ActivityDemoBinding, DemoViewModel>() {
                 LogUtils.d(TAG, "onEmpty")
                 updateText(textView, "onEmpty")
             }
-            onError { msg ->
-                LogUtils.d(TAG, "onError, msg:$msg")
+            onErrorWithMessage { msg ->
+                LogUtils.d(TAG, "onErrorWithMessage, msg:$msg")
                 updateText(textView, "onError, msg:$msg")
+            }
+            onError { exception->
+                LogUtils.d(TAG, "onError $exception")
             }
             onCompletion {
                 LogUtils.d(TAG, "onCompletion ${textView.id}")

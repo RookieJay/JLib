@@ -123,10 +123,10 @@ abstract class BaseLoadSirActivity : BaseActivity() {
                 showEmpty()
                 stateListener.emptyAction?.invoke()
             }
-            onError { msg ->
+            onErrorWithMessage { msg ->
                 LogUtils.d(TAG, "onError, msg:$msg")
                 showError(msg)
-                stateListener.errorAction?.invoke(msg)
+                stateListener.errorActionWithMessage?.invoke(msg)
             }
             onCompletion {
                 LogUtils.d(TAG, "onCompletion")
