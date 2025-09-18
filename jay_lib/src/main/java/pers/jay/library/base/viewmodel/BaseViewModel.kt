@@ -282,8 +282,7 @@ abstract class BaseViewModel<M : BaseRepository> : ViewModel(), IViewModel {
             }
         }
         // 统一执行错误回调
-        listener.errorAction?.invoke(e)
-        listener.errorActionWithMessage?.invoke(errorMessage)
+        listener.errorAction?.invoke(e, errorMessage)
 
         // 更新状态并通知
         stateResponse.apply {

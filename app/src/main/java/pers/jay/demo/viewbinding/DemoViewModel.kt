@@ -15,7 +15,6 @@ class DemoViewModel : BaseViewModel<DemoRepo>() {
             }
             onResult { LogUtils.i(TAG, "onResult") }
             onEmpty { LogUtils.i(TAG, "onEmpty") }
-            onErrorWithMessage { LogUtils.i(TAG, "onErrorWithMessage") }
             onCompletion { LogUtils.i(TAG, "onCompletion") }
         }
     }
@@ -28,8 +27,9 @@ class DemoViewModel : BaseViewModel<DemoRepo>() {
             }
             onResult { LogUtils.i(TAG, "onResult") }
             onEmpty { LogUtils.i(TAG, "onEmpty") }
-            onErrorWithMessage { LogUtils.i(TAG, "onErrorWithMessage") }
-            onError { LogUtils.i(TAG, "onError $it") }
+            onError { _, it ->
+                LogUtils.i(TAG, "onError $it")
+            }
             onCompletion { LogUtils.i(TAG, "onCompletion") }
         }
     }

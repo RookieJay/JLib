@@ -90,18 +90,16 @@ abstract class LoadSirLiveDataObserver<T>(statusView: View?) : Observer<BaseResp
                 DataState.REQUEST_ERROR -> {
                     //请求错误
                     val error = response.error ?: Exception("request error")
-                    onError(error)
-                    onErrorWithMessage(error.message.toString())
+                    onError(error, error.message.toString())
                 }
                 DataState.BUSS_ERROR -> {
                     //请求错误
                     val error = response.error ?: Exception("buss error")
-                    onError(error)
-                    onErrorWithMessage(error.message.toString())
+                    onError(error, error.message.toString())
                 }
                 else -> {
-                    onErrorWithMessage("Unknown DataState: $dataState")
-
+                    val msg = "Unknown DataState: $dataState"
+                    onError(Exception(msg), msg)
                 }
             }
             // 加载不同状态界面，最终转化为实际ui操作
@@ -125,12 +123,10 @@ abstract class LoadSirLiveDataObserver<T>(statusView: View?) : Observer<BaseResp
 
     /**
      * 请求错误
+     * @param throwable 错误
+     * @param msg 错误信息(可能与throwable错误信息不同)
      */
-    open fun onErrorWithMessage(msg: String) {
-
-    }
-
-    open fun onError(throwable: Throwable) {
+    open fun onError(throwable: Throwable, msg: String) {
 
     }
 

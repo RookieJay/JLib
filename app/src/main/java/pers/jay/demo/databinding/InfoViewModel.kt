@@ -22,9 +22,6 @@ class InfoViewModel : BaseViewModel<InfoModel>() {
             onEmpty {
 
             }
-            onErrorWithMessage {
-
-            }
         }.apply {
             this.bussErrorHandle { response ->
                 if (response.code == 0) {

@@ -49,15 +49,12 @@ abstract class BaseStateLiveDataObserver<T>() : Observer<BaseResponse<T>> {
                 DataState.REQUEST_ERROR -> {
                     // 请求错误
                     val error = response.error ?: Exception("request error")
-                    onError(error)
-                    // 给出友好提示，原message可从onError获取
-                    onErrorWithMessage(error.getRequestErrorMsg())
+                    onError(error, error.getRequestErrorMsg())
                 }
                 DataState.BUSS_ERROR -> {
                     // 业务异常
                     val error = response.error ?: Exception("buss error")
-                    onError(error)
-                    onErrorWithMessage(error.message.toString())
+                    onError(error, error.message.toString())
                 }
                 DataState.COMPLETED -> {
                     // 请求结束（无论成功/失败/异常）
@@ -99,12 +96,10 @@ abstract class BaseStateLiveDataObserver<T>() : Observer<BaseResponse<T>> {
 
     /**
      * 请求错误
+     * @param throwable 错误
+     * @param msg 错误信息(可能与throwable错误信息不同)
      */
-    open fun onErrorWithMessage(msg: String) {
-
-    }
-
-    open fun onError(throwable: Throwable) {
+    open fun onError(throwable: Throwable, msg: String) {
 
     }
 

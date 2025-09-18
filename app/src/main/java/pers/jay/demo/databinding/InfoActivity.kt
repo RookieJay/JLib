@@ -34,14 +34,11 @@ class InfoActivity : BaseVMActivity<ActivityInfoBinding, InfoViewModel>() {
             onResult { it ->
                 mBinding.tab = it[0]
             }
-            onErrorWithMessage {
+            onError { _, it ->
+                LogUtils.e(TAG, "onError: $it")
                 val errorTab = Tab()
                 errorTab.name = it
                 mBinding.tab = errorTab
-                LogUtils.e(TAG, "onErrorWithMessage $it")
-            }
-            onError {
-                LogUtils.e(TAG, "onError: $it")
             }
         }
     }

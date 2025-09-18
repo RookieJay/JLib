@@ -23,6 +23,8 @@ class WanResponse<T> : BaseResponse<T>() {
     @Json(name = "data")
     override var data: T? = null
 
+    var e: Throwable? = null
+
     override fun isSuccessful() = code == 0
 
 }

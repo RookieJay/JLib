@@ -48,12 +48,8 @@ open class StateLiveData<T> : MutableLiveData<BaseResponse<T>>() {
                 listener.emptyAction?.invoke()
             }
 
-            override fun onError(throwable: Throwable) {
-                listener.errorAction?.invoke(throwable)
-            }
-
-            override fun onErrorWithMessage(msg: String) {
-                listener.errorActionWithMessage?.invoke(msg)
+            override fun onError(throwable: Throwable, msg: String) {
+                listener.errorAction?.invoke(throwable, msg)
             }
 
             override fun onCompletion() {

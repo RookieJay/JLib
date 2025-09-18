@@ -52,13 +52,10 @@ class LoadSirLiveData<T>: StateLiveData<T>() {
                 listener.emptyAction?.invoke()
             }
 
-            override fun onError(throwable: Throwable) {
-                listener.errorAction?.invoke(throwable)
+            override fun onError(throwable: Throwable, msg: String) {
+                listener.errorAction?.invoke(throwable, msg)
             }
 
-            override fun onErrorWithMessage(msg: String) {
-                listener.errorActionWithMessage?.invoke(msg)
-            }
 
             override fun onCompletion() {
                 listener.completeAction?.invoke()
